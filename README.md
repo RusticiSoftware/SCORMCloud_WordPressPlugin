@@ -14,9 +14,13 @@ In addition to the functionality found in the SCORM Cloud For WordPress plugin, 
 
 Visit the <a href='http://www.scorm.com/scorm-solved/scorm-cloud/'>SCORM Cloud website</a> to learn more about SCORM Cloud.
 
+## Repos
+
+This github repository holds the development trunk, but it is also should be considered stable and ready for use.  Versions are maintained at the wordpress site <http://wordpress.org/extend/plugins/scormcloud/>, but this repo should represent the latest in both places.
+
 ## Installation
 
-You can download and install SCORM Cloud For WordPress using the built in WordPress plugin installer. If you download SCORM Cloud For WordPress manually, make sure it is uploaded to "/wp-content/plugins/scormcloud/".
+You can download and install SCORM Cloud For WordPress using the built in WordPress plugin installer. If you download SCORM Cloud For WordPress manually, make sure the 'scormcloud' folder is uploaded to "/wp-content/plugins/".
 
 Activate SCORM Cloud For WordPress in the "Plugins" admin panel using the "Activate" or "Network Activate"link. 
 
