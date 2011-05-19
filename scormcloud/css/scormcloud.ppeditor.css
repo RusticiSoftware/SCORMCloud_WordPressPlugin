@@ -1,0 +1,26 @@
+body {font-family:'Lucida Grande','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:.8em;}
+
+.ditch-tab-container {height:350px;/*overflow-x:hidden;overflow-y:auto;*/
+border-bottom:1px solid #DFDFDF;
+/*border-left:1px solid #754737;*/
+}
+
+form>div>table {width:100%;}
+
+.ditch-tab-wrap {height:57px;}
+
+.ditch-tab-skin-default .ditch-tab-pane-wrap,.ditch-tab-pane-wrap {
+border:0;
+padding:8px;
+position:relative;
+z-index:9;
+overflow-x:hidden;overflow-y:auto;height:275px;
+}
+
+.ditch-prev-tab-button, .ditch-next-tab-button, input[type="submit"]{margin-top:5px;}
+
+input[type="submit"]{width:80px;}
+hr {color:#DFDFDF;}
+
+.ditch-tab-skin-default .ditch-tab-wrap .ditch-unfocused a:link, .ditch-tab-skin-default .ditch-tab-wrap .ditch-unfocused a:visited {color:#888888;}
+.ditch-tab-skin-default .ditch-tab a:link, .ditch-tab-skin-default .ditch-tab a:visited {color:#333333;font-weight:bold;}

@@ -1,0 +1,39 @@
+
+#embedTrainingDialog {width:100%; height:100%;}
+#embedTrainingDialog h1{margin-bottom:30px;}
+#embedTrainingDialog .labelheader {font-size:1.1em;font-weight:bold;}
+#embedTrainingDialog .selectOptionsDiv{display:none;margin-top:10px;}
+#embedTrainingDialog .selectOptionsDiv table {margin-top:10px;}
+#embedTrainingDialog .selectOptionsDiv table td.label {vertical-align:top;padding-right:10px;}
+#embedTrainingDialog input[type='text'] {width:400px}
+#embedTrainingDialog textarea {width:400px;height:80px;}
+#embedTrainingDialog input.generateTrainingTag {margin-bottom:5px;font-weight:bold;}
+#embedTrainingDialog input[type='checkbox'] {margin:10px}
+#embedTrainingDialog .previewPostEmbed {font-size:.9em;margin-left:10px;}
+#embedTrainingDialog .previewDiv {display:none;margin:10px auto;width:430px;}
+#embedTrainingDialog .previewDiv input[type='text']{width:120px;}
+#embedTrainingDialog .previewDiv p.inputs {display:none;}
+
+
+.scormCloudInvitation {border:1px solid #888888;padding:10px 10px 0;background-color:#cccccc;position:relative;text-align:center;
+-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;}
+.scormCloudInvitation h3 {margin-top:0;}
+.scormCloudInvitation .center {text-align:center;}
+.scormCloudInvitation p.description {font-size:.9em;color:#555555;}
+.scormCloudInvitation p.inputs {line-height:1.8em;}
+.scormCloudInvitation input[type='text'] {border-width:0px;}
+.scormCloudInvitation input[type='button'] {font-size:1.3em;margin-bottom:5px;}
+.scormCloudInvitation table.result_table {width:100%; text-align:center;background-color:#FFFFFF; margin-bottom:5px;
+-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;border:1px solid #AAAAAA;}
+.scormCloudInvitation table.result_table td {}
+.scormCloudInvitation table.result_table td.head {text-decoration:underline;color:#555555;}
+.scormCloudInvitation .green, .scormCloudInvitation  .passed, .scormCloudInvitation  .complete, .scormCloudInvitation  .correct {color:#41A317;}
+.scormCloudInvitation .red, .scormCloudInvitation  .failed, .scormCloudInvitation  .incorrect {color:#F62817;}
+.scormCloudInvitation .incomplete {color:#808080;}
+.scormCloudInvitation .unknown {color:#C0C0C0;}
+.scormCloudInvitation .serviceCredit {font-size:.7em;}
+.scormCloudInvitation .courseInfo{border:1px solid #AAAAAA;padding:2px;margin:5px auto;width:80%;background-color:#DDDDDD;color:#555555;text-align:left;
+-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+.scormCloudInvitation .courseInfo div.duration { font-size:.8em;}
+.scormCloudInvitation .courseInfo div.desc {font-style:italic; font-size:.9em;}
+.scormCloudInvitation .inviteMessage{display:none;margin:5px 0;color:#F62817;}

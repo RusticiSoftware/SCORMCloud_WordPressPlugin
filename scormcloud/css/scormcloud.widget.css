@@ -1,0 +1,25 @@
+.courselistDiv {margin-left:5px;}
+.courselistDiv .helpMsg {margin:3px 0;}
+
+.courselistDiv .usercourseblock {margin-bottom:10px;}
+
+.courselistDiv .usercourseblock .showDetails {margin-left:10px; white-space:nowrap;}
+.courselistDiv .usercourseblock .courseTitle {font-size:1.1em;font-weight:bold;padding: 2px 0px 5px 0px;}
+
+.courselistDiv .courseDetails {padding:2px;margin:0 0 2px 5px; display:none;}
+
+.courselistDiv .courseDetails .passed, .courselistDiv .courseDetails  .complete{color:#41A317;}
+.courselistDiv .courseDetails .failed, .courselistDiv .courseDetails .incorrect {color:#F62817;}
+.courselistDiv .courseDetails .incomplete {color:#808080;}
+.courselistDiv .courseDetails .unknown {color:#C0C0C0;}
+
+.courselistDiv .courseDetails .left {float:left;margin-left:5px;}
+.courselistDiv .courseDetails .left.first {margin-left:0;}
+.courselistDiv .courseDetails .clear {clear:both;}
+
+.courselistDiv .anonlaunchdiv {display:none;margin-top:5px;padding-left:5px;background-color:#DDDDDD;}
+.courselistDiv .anonlaunchdiv input[type='button']  {margin-top:5px;}
+.courselistDiv .anonlaunchdiv .launchMessage {display:none;color:#F62817;}
+
+.courselistDiv .catalogMoreInfo {font-size:.9em;}
+.courselistDiv .catalog.moreInfo {display:none;font-size:.9em;}
