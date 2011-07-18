@@ -140,7 +140,7 @@ if ($isValidAccount){
             
             $j.ajax({
 			type: "POST",
-			url: "<? echo get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
+			url: "<?php echo get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
 			data: 	"action=addPostInvite" + 
 					"&courseid=" + courseId +
                     "&coursetitle=" + courseTitle +
