@@ -1,7 +1,8 @@
 <?PHP
 
 function scormcloud_getScormEngineService(){
-	require_once('SCORMAPI/ScormEngineService.php');
+	require_once('SCORMCloud_PHPLibrary/ScormEngineService.php');
+	require_once('SCORMCloud_PHPLibrary/ScormEngineUtilities.php');
 	
     if (scormcloud_isScormCloudNetworkManaged()){
         $appid = get_site_option('scormcloud_appid');  
@@ -14,12 +15,14 @@ function scormcloud_getScormEngineService(){
         $engine_url = get_option('scormcloud_engine_url');
     }
     
+    $origin = ScormEngineUtilities::getCanonicalOriginString('Rustici Software', 'WordPress', '1.0.6.6');
+    
     //arbitrary number 17 is the length of 'EngineWebServices'
     if (strlen($engine_url) < 17){
         $engine_url = "http://cloud.scorm.com/EngineWebServices";
     }
     
-	return new ScormEngineService($engine_url,$appid,$secretkey);
+	return new ScormEngineService($engine_url,$appid,$secretkey,$origin);
 }
 
 

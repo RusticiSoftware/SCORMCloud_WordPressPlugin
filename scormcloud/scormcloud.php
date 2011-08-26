@@ -186,7 +186,7 @@
 	function scormcloud_updateLearnerInfo( $userId){
 		global $wpdb;
 	    require_once('scormcloud.wp.php');
-		require_once('SCORMAPI/DebugLogger.php');
+		require_once('SCORMCloud_PHPLibrary/DebugLogger.php');
 		$ScormService = scormcloud_getScormEngineService();
 		$regService = $ScormService->getRegistrationService();
 		$userData = get_userdata($userId);
