@@ -2,13 +2,12 @@
 
 $inviteId = $_GET['inviteid'];
 
-$querystr = "SELECT inv.*, count(reg.reg_id) as reg_count FROM ".scormcloud_getDBPrefix()."scormcloudinvitations inv
-                LEFT OUTER JOIN ".scormcloud_getDBPrefix()."scormcloudinvitationregs reg ON inv.invite_id = reg.invite_id
-                WHERE inv.invite_id = '$inviteId'
-                GROUP BY inv.invite_id";
-
-$invites = $wpdb->get_results($querystr, OBJECT);
-$invite = $invites[0];
+$invTable = scormcloud_getTableName('scormcloudinvitations');
+$regTable = scormcloud_getTableName('scormcloudinvitationregs');
+$query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
+                         LEFT OUTER JOIN '.$regTable.' reg ON inv.invite_id = reg.invite_id
+                         WHERE inv.invite_id = %s GROUP BY inv.invite_id', array($inviteId));
+$invite = $wpdb->get_row($query, OBJECT);
 
 
 ?>
@@ -209,8 +208,8 @@ $reportageViewAllUrl = $rptService->GetReportUrl($rptAuth, $reportageUrl);
 
 <?php
 
-$querystr = "SELECT * FROM ".scormcloud_getDBPrefix()."scormcloudinvitationregs WHERE invite_id = '$inviteId' ORDER BY update_date DESC";
-$inviteRegs = $wpdb->get_results($querystr, OBJECT);
+$query = $wpdb->prepare('SELECT * FROM '.$regTable.' WHERE invite_id = %s ORDER BY update_date DESC', array($inviteId));
+$inviteRegs = $wpdb->get_results($query, OBJECT);
 
 $regService = $ScormService->getRegistrationService();
 $regsXMLStr = $regService->GetRegistrationListResults($inviteId."-.*",$invite->course_id,0);

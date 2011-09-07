@@ -216,13 +216,12 @@ jQuery("#btnAddRegistration").click(function(){
 
 <?php
 
-$querystr = "SELECT inv.*, count(reg.reg_id) as reg_count FROM ".scormcloud_getDBPrefix()."scormcloudinvitations inv
-                LEFT OUTER JOIN ".scormcloud_getDBPrefix()."scormcloudinvitationregs reg ON inv.invite_id = reg.invite_id
-                WHERE inv.blog_id = '".$GLOBALS['blog_id']."'
-                GROUP BY inv.invite_id
-                ORDER BY inv.create_date DESC";
-                
-$invites = $wpdb->get_results($querystr, OBJECT);
+$invTable = scormcloud_getTableName('scormcloudinvitations');
+$regTable = scormcloud_getTableName('scormcloudinvitationregs');
+$query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
+						 LEFT OUTER JOIN '.$regTable.' reg ON inv.invite_id = reg.invite_id
+						 WHERE inv.blog_id = %s GROUP BY inv.invite_id ORDER BY inv.create_date DESC', array($GLOBALS['blog_id']));
+$invites = $wpdb->get_results($query, OBJECT);
 
 echo '<table class="widefat" cellspacing="0" id="InvitationListTable" >';
 echo '<thead>';

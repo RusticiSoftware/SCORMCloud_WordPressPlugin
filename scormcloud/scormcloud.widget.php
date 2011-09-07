@@ -47,11 +47,13 @@
                 $ScormService = scormcloud_getScormEngineService();
                 $regService = $ScormService->getRegistrationService();
                 
-                $regs = $wpdb->get_results("SELECT reg.reg_id,inv.course_title,inv.course_id, inv.active, reg.update_date FROM ".scormcloud_getDBPrefix()."scormcloudinvitationregs reg
-                                           JOIN ".scormcloud_getDBPrefix()."scormcloudinvitations inv ON reg.invite_id = inv.invite_id
-                                           WHERE user_id = '".$current_user->ID."' AND inv.blog_id = '".$GLOBALS['blog_id']."'
-                                           ORDER BY reg.update_date DESC");
-                
+                $invTable = scormcloud_getTableName('scormcloudinvitations');
+                $regTable = scormcloud_getTableName('scormcloudinvitationregs');
+                $query = $wpdb->prepare('SELECT reg.reg_id, inv.course_title, inv.course_id, inv.active, reg.update_date FROM '.$regTable.' reg
+                                         JOIN '.$invTable.' inv ON reg.invite_id = inv.invite_id
+                                         WHERE user_id = %s AND inv.blog_id = %s ORDER BY reg.update_date DESC', 
+                                        array($current_user->ID, $GLOBALS['blog_id']));
+                $regs = $wpdb->get_results($query, OBJECT);
                 //echo count($regs);
                 
                 echo '<div class="courselistDiv">';

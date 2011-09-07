@@ -16,13 +16,10 @@ function scormcloud_makeBlogEntry($content){
         
         $inviteId = substr($tagString,21,strlen($tagString) - 22);
         
-        $querystr = "SELECT * FROM ".scormcloud_getDBPrefix()."scormcloudinvitations WHERE invite_id = '".$inviteId."'";
-        $invites = $wpdb->get_results($querystr, OBJECT);
-        if (count($invites) == 0){
+        $invite = scormcloud_getInvitation($inviteId);
+        if ($invite == null) {
             $content = str_replace($tagString,'',$content);
         }
-        
-        $invite = $invites[0];
         
         $inviteHtml = "<div class='scormCloudInvitation' key='$inviteId'>";
         $inviteHtml .= "<h3>".stripcslashes($invite->header)."</h3>";
@@ -83,10 +80,11 @@ function scormcloud_makeBlogEntry($content){
                 }
             } else {
                 $userId = $current_user->ID;
-                $querystr = "SELECT reg_id FROM ".scormcloud_getDBPrefix()."scormcloudinvitationregs WHERE invite_id = '$inviteId' AND user_id = '$userId' ORDER BY update_date DESC";
-                $regs = $wpdb->get_results($querystr, OBJECT);
-                if (count($regs) > 0){
-                    $regId = $regs[0]->reg_id;
+                $query = $wpdb->prepare('SELECT reg_id FROM '.scormcloud_getTableName('scormcloudinvitationregs').' WHERE invite_id = %s AND
+                                         user_id = %s ORDER BY update_date DESC', array($inviteId, $userId));
+                $reg = $wpdb->get_row($query, OBJECT);
+                if ($reg != null){
+                    $regId = $reg->reg_id;
                     
                     $regService = $ScormService->getRegistrationService();
                     $regResultsXmlStr = $regService->GetRegistrationResult($regId,0,0);
@@ -156,12 +154,8 @@ function scormcloud_UpdatePostInvite($postId){
     foreach($cloudTags as $tagString){
         $inviteId = substr($tagString,21,strlen($tagString) - 22);
         
-        $querystr = "UPDATE ".scormcloud_getDBPrefix()."scormcloudinvitations SET post_id = '$postId' WHERE invite_id = '$inviteId'";
-        $wpdb->query($querystr);
-        
-        
-        
-        
+        $wpdb->update(scormcloud_getTableName('scormcloudinvitations'),
+                      array('post_id' => $postId, 'invite_id' => $inviteId));
     }
     
 }

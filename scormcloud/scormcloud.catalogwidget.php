@@ -76,14 +76,15 @@
                     $courseTitle = $course->getTitle();
                     
                     if(isset($current_user->user_login) && $current_user->user_login != '') {
-                        $regs = $wpdb->get_results("SELECT reg.reg_id,inv.course_title,inv.course_id, inv.active, reg.update_date FROM ".scormcloud_getDBPrefix()."scormcloudinvitationregs reg
-                                               JOIN ".scormcloud_getDBPrefix()."scormcloudinvitations inv ON reg.invite_id = inv.invite_id
-                                               WHERE reg.user_id = '".$current_user->ID."' AND inv.course_id = '".$courseId."'
-                                               ORDER BY reg.update_date DESC");
+                        $invTable = scormcloud_getTableName('scormcloudinvitations');
+                        $regTable = scormcloud_getTableName('scormcloudinvitationregs');
+                        $query = $wpdb->prepare('SELECT reg.reg_id, inv.course_title, inv.course_id, inv.active, reg.update_date FROM '.$regTable.' reg
+                                                 JOIN '.$invTable.' inv ON reg.invite_id = inv.invite_id
+                                                 WHERE reg.user_id = %s AND inv.course_id = %s ORDER BY reg.update_date DESC',
+                                                array($current_user->ID, $courseId));
+                        $reg = $wpdb->get_row($query, OBJECT);
                         
-                        if (count($regs) > 0){
-                            
-                            $reg = $regs[0];
+                        if ($reg != null) {
                             $regId = $reg->reg_id;
                             $regResultsXmlStr = $regService->GetRegistrationResult($regId,0,0);
                             $resXml = simplexml_load_string($regResultsXmlStr);

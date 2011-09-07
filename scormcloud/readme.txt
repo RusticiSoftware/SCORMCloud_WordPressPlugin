@@ -49,6 +49,9 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 == Changelog ==
 
+= 1.0.7 =
+* Fixes some security vulnerabilities.
+
 = 1.0.6.6 =
 * Small update to fix a potentially troublesome php tag in embedTrainig.php.
 
@@ -93,6 +96,9 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 * Original Release.
 
 == Upgrade Notice ==
+
+= 1.0.7 =
+* Critical security vulnerability fixes. Upgrade immediately.
 
 = 1.0.6.6 =
 * Small update to fix a potentially troublesome php tag. Not needed if you are embedding trainings in posts without issue.
