@@ -1,9 +1,9 @@
 === Plugin Name ===
-Contributors: troyef
+Contributors: troyef, stuartchilds
 Tags: elearning, learning, scorm, aicc, education, training, cloud
 Requires at least: 2.9
 Tested up to: 3.2.1
-Stable tag: 1.0.6.6
+Stable tag: 1.0.7
 
 Tap the power of SCORM to deliver and track training right from your WordPress-powered site.
 
