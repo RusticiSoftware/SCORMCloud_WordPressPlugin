@@ -157,7 +157,7 @@ function scormcloud_ensureArray($default, $val) {
 function scormcloud_getInvitation() {
     $callArgs = array('scormcloudinvitations'); // Table name
     $args = func_get_args();
-    $args[0] = scormcloud_ensureArray('invite_id', $args[0]);
+    $args = scormcloud_ensureArray('invite_id', $args[0]);
     array_push($callArgs, $args);
     return call_user_func_array('scormcloud_getRow', $callArgs);
 }
@@ -172,7 +172,7 @@ function scormcloud_getInvitation() {
 function scormcloud_getInvitationReg() {
     $callArgs = array('scormcloudinvitationregs'); // Table name
     $args = func_get_args();
-    $args[0] = scormcloud_ensureArray('reg_id', $args[0]);
+    $args = scormcloud_ensureArray('reg_id', $args[0]);
     array_push($callArgs, $args);
     return call_user_func_array('scormcloud_getRow', $args);
 }
