@@ -155,7 +155,7 @@ function scormcloud_UpdatePostInvite($postId){
         $inviteId = substr($tagString,21,strlen($tagString) - 22);
         
         $wpdb->update(scormcloud_getTableName('scormcloudinvitations'),
-                      array('post_id' => $postId, 'invite_id' => $inviteId));
+                      array('post_id' => $postId), array('invite_id' => $inviteId));
     }
     
 }

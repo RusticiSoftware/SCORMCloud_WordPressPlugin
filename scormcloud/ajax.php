@@ -553,7 +553,7 @@ switch($action)
         $active = $_POST['active'];
         
         $wpdb->update(scormcloud_getTableName('scormcloudinvitations'),
-                      array('active' => $active, 'invite_id' => $inviteId));
+                      array('active' => $active), array('invite_id' => $inviteId));
         
         break;
     
