@@ -9,7 +9,11 @@ require_once(ABSPATH . 'wp-admin/admin.php');
 
 require_once('scormcloud.wp.php');
 $ScormService = scormcloud_getScormEngineService();
-$isValidAccount = $ScormService->isValidAccount();
+try {
+    $isValidAccount = $ScormService->isValidAccount();
+} catch (Exception $e) {
+    $isValidAccount = false;
+}
 
 echo '<div class="scormcloud-admin-page courses">';
 

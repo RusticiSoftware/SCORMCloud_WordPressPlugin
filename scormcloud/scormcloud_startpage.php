@@ -13,7 +13,11 @@ echo '<div class="scormcloud-admin-page startpage">';
 require_once('scormcloud.wp.php');
 $ScormService = scormcloud_getScormEngineService();
 
+try {
     $isValidAccount = $ScormService->isValidAccount();
+} catch (Exception $e) {
+    $isValidAccount = false;
+}
 
 if ($isValidAccount){
 	//Reportage Includes

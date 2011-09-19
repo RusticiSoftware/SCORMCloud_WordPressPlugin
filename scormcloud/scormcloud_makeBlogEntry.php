@@ -12,7 +12,11 @@ function scormcloud_makeBlogEntry($content){
     foreach($cloudTags as $tagString){
         require_once('scormcloud.wp.php');
         $ScormService = scormcloud_getScormEngineService();
-        $isValidAccount = $ScormService->isValidAccount();
+        try {
+            $isValidAccount = $ScormService->isValidAccount();
+        } catch (Exception $e) {
+            $isValidAccount = false;
+        }
         
         $inviteId = substr($tagString,21,strlen($tagString) - 22);
         
