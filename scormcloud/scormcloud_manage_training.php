@@ -1,9 +1,9 @@
 <?php
 
 if ( defined('ABSPATH') )
-	require_once(ABSPATH . 'wp-load.php');
+require_once(ABSPATH . 'wp-load.php');
 else
-	require_once('../../../wp-load.php');
+require_once('../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/includes/admin.php');
 
 global $wpdb;
@@ -20,58 +20,63 @@ if (isset($_GET['inviteid'])){
     include('scormcloud_training_details.php');
 } else {
 
-$regsRemaining = scormcloud_regsRemaining();
+    $regsRemaining = scormcloud_regsRemaining();
 
 
-?>
+    ?>
 <div class="scormcloud-admin-page trainings">
-    
+
 <h2><?php _e("SCORM Cloud Training","scormcloud"); ?></h2>
-<?php
-if ($isValidAccount){
-    if ($regsRemaining < 1){
-        echo "<div>
+    <?php
+    if ($isValidAccount){
+        if ($regsRemaining < 1){
+            echo "<div>
             <h3>".__("The maximum number of registrations for this account has been reached.  Visit the <a href='https://cloud.scorm.com'>SCORM Cloud site</a> to upgrade your account.","scormcloud")."</h3>
         </div>";
-    } else {
-    
-?>
+        } else {
+
+            ?>
 
 
 <div class='meta-box-sortables'>
 <div class='reportageWrapper postbox '>
-<div title='<?php _e("Click to toggle","scormcloud"); ?>' class='handlediv'><br></div><h3 class='hndle'><span><?php _e("Quick Create Training","scormcloud"); ?></span></h3>
+<div title='<?php _e("Click to toggle","scormcloud"); ?>'
+	class='handlediv'><br>
+</div>
+<h3 class='hndle'><span><?php _e("Quick Create Training","scormcloud"); ?></span></h3>
 <div class='inside'>
 
-    
-    <div id="NewRegistrationForm">
-        <h4><?php _e("Select a course:","scormcloud"); ?> </h4>
-    <select class="courseSelector">
-        
-    <?php
-        $coursesFilter = (scormcloud_isScormCloudNetworkManaged() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
-        $ScormService = scormcloud_getScormEngineService();
-        echo "<option value='-1'></option>";
-        $courseService = $ScormService->getCourseService();
-        $allResults = $courseService->GetCourseList($coursesFilter);
-        foreach($allResults as $course){
-            echo "<option value='".$course->getCourseId()."'>".$course->getTitle()."</option>";
-        }
-        
-    ?>
-    </select>
-    
-    <h4><?php _e("Select learner(s):","scormcloud"); ?> </h4>
-        <table class="learnerSelection"><tr>
-            <td>
-                <div><input type='radio' name='learnerPopulationType' value='allUsers' /><?php _e("All Users","scormcloud"); ?></div>
-                
-            </td>
-            <td>
-                <div><input type='radio' name='learnerPopulationType' value='selectUsers' /><?php _e("Select User(s)","scormcloud"); ?></div>
-                <ul class="userHolder selectionHolder"></ul>
-                <?php
-                $userArgs = array('show_option_none' => ' ',
+
+<div id="NewRegistrationForm">
+<h4><?php _e("Select a course:","scormcloud"); ?></h4>
+<select class="courseSelector">
+
+<?php
+$coursesFilter = (scormcloud_isScormCloudNetworkManaged() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
+$ScormService = scormcloud_getScormEngineService();
+echo "<option value='-1'></option>";
+$courseService = $ScormService->getCourseService();
+$allResults = $courseService->GetCourseList($coursesFilter);
+foreach($allResults as $course){
+    echo "<option value='".$course->getCourseId()."'>".$course->getTitle()."</option>";
+}
+
+?>
+</select>
+
+<h4><?php _e("Select learner(s):","scormcloud"); ?></h4>
+<table class="learnerSelection">
+	<tr>
+		<td>
+		<div><input type='radio' name='learnerPopulationType' value='allUsers' /><?php _e("All Users","scormcloud"); ?></div>
+
+		</td>
+		<td>
+		<div><input type='radio' name='learnerPopulationType'
+			value='selectUsers' /><?php _e("Select User(s)","scormcloud"); ?></div>
+		<ul class="userHolder selectionHolder"></ul>
+		<?php
+		$userArgs = array('show_option_none' => ' ',
                                     'orderby'          => 'display_name',
                                     'order'            => 'ASC',
                                     'multi'            => 0,
@@ -79,32 +84,34 @@ if ($isValidAccount){
                                     'echo'             => 1,
                                     'selected'         => -1,
                                     'class'            =>  'userSelector');
-                wp_dropdown_users($userArgs);
-                
-                ?>
-                
-            </td>
-            <td class='lastCol'>
-                <div><input type='radio' name='learnerPopulationType' value='selectRoles' /><?php _e("Select Role(s)","scormcloud"); ?></div>
-                <ul class="roleHolder selectionHolder"></ul>
-                <select class="roleSelector">
-                    <option selected value='-1'></option>
-                <?php
-                    $roleArgs=array();
-                    wp_dropdown_roles();
-                    
-                ?>
-                </select>
-            </td>
-            
-        </tr></table>
-            
-    
-    <p><input id="btnAddRegistration" type="button" value="<?php _e("Create Training","scormcloud"); ?>" /><span class='createTrainingMessage'>message</span></p>
-    </div>
+		wp_dropdown_users($userArgs);
 
-    
-</div></div>
+		?></td>
+		<td class='lastCol'>
+		<div><input type='radio' name='learnerPopulationType'
+			value='selectRoles' /><?php _e("Select Role(s)","scormcloud"); ?></div>
+		<ul class="roleHolder selectionHolder"></ul>
+		<select class="roleSelector">
+			<option selected value='-1'></option>
+			<?php
+			$roleArgs=array();
+			wp_dropdown_roles();
+
+			?>
+		</select></td>
+
+	</tr>
+</table>
+
+
+<p><input id="btnAddRegistration" type="button"
+	value="<?php _e("Create Training","scormcloud"); ?>" /><span
+	class='createTrainingMessage'>message</span></p>
+</div>
+
+
+</div>
+</div>
 <script language="javascript">
 
 function scormcloud_showCreateTrainingMessage(msg,msgclass,hide){
@@ -201,92 +208,86 @@ jQuery("#btnAddRegistration").click(function(){
     
 });
    
-</script>
-
-<?php
-    }
-} else {
-     echo "<div>
+</script> <?php
+        }
+    } else {
+        echo "<div>
             <h3>".__("Please configure your SCORM Cloud settings to add registrations.","scormcloud")."</h3>
         </div>";
-    echo '<div class="settingsPageLink"><a href="'.get_option( 'siteurl' ).'/wp-admin/admin.php?page=scormcloudsettings" 
+        echo '<div class="settingsPageLink"><a href="'.get_option( 'siteurl' ).'/wp-admin/admin.php?page=scormcloudsettings"
 				title="'.__("Click here to configure your SCORM Cloud plugin.","scormcloud").'">'.__("Click Here to go to the settings page.","scormcloud").'</a></div>';
-    
-}
-?>
-    
-    
+
+    }
+    ?>
+
+
 <h3><?php _e("SCORM Cloud Training History","scormcloud"); ?></h3>
 
-<?php
+    <?php
 
-$invTable = scormcloud_getTableName('scormcloudinvitations');
-$regTable = scormcloud_getTableName('scormcloudinvitationregs');
-$query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
+    $invTable = scormcloud_getTableName('scormcloudinvitations');
+    $regTable = scormcloud_getTableName('scormcloudinvitationregs');
+    $query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
 						 LEFT OUTER JOIN '.$regTable.' reg ON inv.invite_id = reg.invite_id
 						 WHERE inv.blog_id = %s GROUP BY inv.invite_id ORDER BY inv.create_date DESC', array($GLOBALS['blog_id']));
-$invites = $wpdb->get_results($query, OBJECT);
+    $invites = $wpdb->get_results($query, OBJECT);
 
-echo '<table class="widefat" cellspacing="0" id="InvitationListTable" >';
-echo '<thead>';
-echo '<tr class="thead"><th class="manage-column">'.__("Course Title","scormcloud").'</th>
+    echo '<table class="widefat" cellspacing="0" id="InvitationListTable" >';
+    echo '<thead>';
+    echo '<tr class="thead"><th class="manage-column">'.__("Course Title","scormcloud").'</th>
         <th class="manage-column">'.__("Post Title","scormcloud").'</th>
         <th class="manage-column">'.__("Create/Publish Date","scormcloud").'</th>
         <th class="manage-column">'.__("Learners","scormcloud").'</th>
         <th class="manage-column">&nbsp;</th>
         <th class="manage-column">&nbsp;</th></tr>';
-echo '</thead>';
-foreach ($invites as $invite)
-{
-	
-	echo "<tr class='regRow' key='".$invite->invite_id."'>";
-    echo "<td class='title'><a title='".__("Click to view details of this invitation.","scormcloud")."' href='".get_option( 'siteurl' )."/wp-admin/admin.php?page=scormcloudtraining&inviteid=".$invite->invite_id."'>".__($invite->course_title)."</a></td>";
-    
-    if ($invite->post_id == "__direct_invite__"){
-        echo "<td>".__("User Invitation","scormcloud")."</td>";
-        echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($invite->create_date))."'>".$invite->create_date."</span></td>";
-    } elseif ($invite->post_id == "__catalog_widget__"){
-        echo "<td>".__("Catalog Widget","scormcloud")."</td>";
-        echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($invite->create_date))."'>".$invite->create_date."</span></td>";
-    } else {
-		$postInfo = get_post($invite->post_id);
-        if ($postInfo != null){
-			echo "<td><a title='".__('Click to edit this post.',"scormcloud")."' href='".get_option( 'siteurl' )."/wp-admin/post.php?action=edit&post=".$invite->post_id."'>".$postInfo->post_title."</a></td>";
-        	echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($postInfo->post_date))."'>".$postInfo->post_date."</span></td>";
-		} else {
-			echo "<td>".__("","scormcloud")."</td>";
-	        echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($invite->create_date))."'>".$invite->create_date."</span></td>";
-			
-		}
-    }
-    if ($invite->reg_count > 0){
-        if ($isValidAccount){
-            echo "<td><a href='#' key='".$invite->invite_id."' class='viewRegsLink' >".$invite->reg_count." ".(($invite->reg_count != 1 ? __("Learners","scormcloud") : __("Learner","scormcloud")).__("(view)","scormcloud"))."</a></td>";
-            echo "<td><a href='#' key='".$invite->invite_id."' class='viewReportageLink' >".__("View Results Report","scormcloud")."</a></td>";
+    echo '</thead>';
+    foreach ($invites as $invite)
+    {
+
+        echo "<tr class='regRow' key='".$invite->invite_id."'>";
+        echo "<td class='title'><a title='".__("Click to view details of this invitation.","scormcloud")."' href='".get_option( 'siteurl' )."/wp-admin/admin.php?page=scormcloudtraining&inviteid=".$invite->invite_id."'>".__($invite->course_title)."</a></td>";
+
+        if ($invite->post_id == "__direct_invite__"){
+            echo "<td>".__("User Invitation","scormcloud")."</td>";
+            echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($invite->create_date))."'>".$invite->create_date."</span></td>";
+        } elseif ($invite->post_id == "__catalog_widget__"){
+            echo "<td>".__("Catalog Widget","scormcloud")."</td>";
+            echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($invite->create_date))."'>".$invite->create_date."</span></td>";
         } else {
-            echo "<td colspan='2'>".$invite->reg_count." ".($invite->reg_count != 1 ? __("Learners","scormcloud") : __("Learner","scormcloud"))."</td>";
-            
+            $postInfo = get_post($invite->post_id);
+            if ($postInfo != null){
+                echo "<td><a title='".__('Click to edit this post.',"scormcloud")."' href='".get_option( 'siteurl' )."/wp-admin/post.php?action=edit&post=".$invite->post_id."'>".$postInfo->post_title."</a></td>";
+                echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($postInfo->post_date))."'>".$postInfo->post_date."</span></td>";
+            } else {
+                echo "<td>".__("","scormcloud")."</td>";
+                echo "<td><span class='localizeDate' format= 'mmmm d, yyyy h:MM TT' utcdate='".date("d M Y H:i:s", strtotime($invite->create_date))."'>".$invite->create_date."</span></td>";
+                 
+            }
         }
-    } else {
-        echo "<td colspan='2'>0 ".__("Learners","scormcloud")."</td>";
+        if ($invite->reg_count > 0){
+            if ($isValidAccount){
+                echo "<td><a href='#' key='".$invite->invite_id."' class='viewRegsLink' >".$invite->reg_count." ".(($invite->reg_count != 1 ? __("Learners","scormcloud") : __("Learner","scormcloud")).__("(view)","scormcloud"))."</a></td>";
+                echo "<td><a href='#' key='".$invite->invite_id."' class='viewReportageLink' >".__("View Results Report","scormcloud")."</a></td>";
+            } else {
+                echo "<td colspan='2'>".$invite->reg_count." ".($invite->reg_count != 1 ? __("Learners","scormcloud") : __("Learner","scormcloud"))."</td>";
+
+            }
+        } else {
+            echo "<td colspan='2'>0 ".__("Learners","scormcloud")."</td>";
+        }
+        echo "<td><span class='activeText' key='".$invite->invite_id."'>".($invite->active == 1 ? __("Active","scormcloud") : __("Inactive","scormcloud"))."</span>";
+        if ($invite->active != 2){
+            echo "(<a href='#' key='".$invite->invite_id."' class='activateLink' active='".$invite->active."' >".($invite->active == 1 ? __("click to deactivate","scormcloud") : __("click to activate","scormcloud"))."</a>)";
+        }
+        echo "</td>";
+
+
+        //$user_info = get_userdata($reg->user_id);
+        //echo $user_info->display_name;
+        echo '</tr>';
     }
-    echo "<td><span class='activeText' key='".$invite->invite_id."'>".($invite->active == 1 ? __("Active","scormcloud") : __("Inactive","scormcloud"))."</span>";
-    if ($invite->active != 2){
-        echo "(<a href='#' key='".$invite->invite_id."' class='activateLink' active='".$invite->active."' >".($invite->active == 1 ? __("click to deactivate","scormcloud") : __("click to activate","scormcloud"))."</a>)";
-    }
-    echo "</td>";
-    
-    
-    //$user_info = get_userdata($reg->user_id);
-	//echo $user_info->display_name;
-	echo '</tr>';
-}
-echo '</table>';
-?>
-
-
-
-<script language="javascript">
+    echo '</table>';
+    ?> <script language="javascript">
 
 jQuery(".viewReportageLink").click(function(){
 	var invId = jQuery(this).attr('key');;
@@ -384,7 +385,6 @@ function Scormcloud_loadRegReport(invId,regId){
 
 
 
-</script>
-</div>
+</script></div>
 
-<?php  } ?>
+    <?php  } ?>

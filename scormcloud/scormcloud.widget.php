@@ -65,6 +65,7 @@
                 }
                 $coursesDisplayed = array();
                 foreach ($regs as $reg) {
+                    try {
 					if ($limitregs && in_array($reg->course_id,$coursesDisplayed)){
 						continue;
 					} else {
@@ -110,7 +111,9 @@
                     
 	                    echo '</div>';
 					}
-                    
+                    } catch (Exception $e) {
+                        echo '<span>'.$e->getMessage().'</span>';
+                    }
 				}
 				echo '</div>';
 				//echo '<script language="javascript">'.$widgetscript.'</script>';
