@@ -1,9 +1,11 @@
 <?php
 
+require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
+
 $inviteId = $_GET['inviteid'];
 
-$invTable = scormcloud_getTableName('scormcloudinvitations');
-$regTable = scormcloud_getTableName('scormcloudinvitationregs');
+$invTable = ScormCloudDatabase::get_invitations_table();
+$regTable = ScormCloudDatabase::get_registrations_table();
 $query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
                          LEFT OUTER JOIN '.$regTable.' reg ON inv.invite_id = reg.invite_id
                          WHERE inv.invite_id = %s GROUP BY inv.invite_id', array($inviteId));

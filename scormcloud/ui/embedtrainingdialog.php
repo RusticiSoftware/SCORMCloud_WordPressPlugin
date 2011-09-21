@@ -14,9 +14,9 @@ require_once($wp_path . $slash . 'wp-admin' . $slash . 'admin.php');
 global $wpdb;
 
 
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
 
-require_once('scormcloud.wp.php');
-$ScormService = scormcloud_getScormEngineService();
+$ScormService = ScormCloudPlugin::get_cloud_service();
 try {
     $isValidAccount = $ScormService->isValidAccount();
 } catch (Exception $e) {
@@ -35,7 +35,7 @@ if ($isValidAccount){
 <?php
 
 echo "<option value=''></option>";
-$coursesFilter = (scormcloud_isScormCloudNetworkManaged() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
+$coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
 $courseService = $ScormService->getCourseService();
 $allResults = $courseService->GetCourseList($coursesFilter);
 foreach($allResults as $course){

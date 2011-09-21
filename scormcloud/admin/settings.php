@@ -1,8 +1,6 @@
 <?php
 
-require_once('scormcloud.wp.php');
-
-
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
 
 if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     //Form data sent
@@ -15,7 +13,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     $secretkey = $_POST['scormcloud_secretkey'];
     $player_cssurl = $_POST['scormcloud_player_cssurl'];
 
-    if (scormcloud_isScormCloudNetworkManaged()){
+    if (ScormCloudPlugin::is_network_managed()){
         $sharecourses = $_POST['scormcloud_sharecourses'];
 
         update_site_option('scormcloud_dbhost', $dbhost);
@@ -41,8 +39,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 
     }
 
-    require_once('scormcloud.wp.php');
-    $ScormService = scormcloud_getScormEngineService();
+    $ScormService = ScormCloudPlugin::get_cloud_service();
 
     if (!$ScormService->isValidUrl()){
         echo "<div class='updated'><p class='failed'><strong>". __("Invalid Service Url.  Check your URL and try again or clear out the bad URL and the default URL will be used.","scormcloud")."</strong></p></div>";
@@ -63,8 +60,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 
 
 } else {
-    require_once('scormcloud.wp.php');
-    $ScormService = scormcloud_getScormEngineService();
+    $ScormService = ScormCloudPlugin::get_cloud_service();
 
     try {
         if (!$ScormService->isValidUrl()) {
@@ -77,7 +73,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     }
 
     //Normal page display
-    if (scormcloud_isScormCloudNetworkManaged()){
+    if (ScormCloudPlugin::is_network_managed()){
         $dbhost = get_site_option('scormcloud_dbhost');
         $dbname = get_site_option('scormcloud_dbname');
         $dbuser = get_site_option('scormcloud_dbuser');
@@ -131,7 +127,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 	value="<?php echo $player_cssurl; ?>" size="50"> <br />
 <em><?php _e(" ex: http://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css","scormcloud" ); ?></em></p>
 <?php
-if (scormcloud_isScormCloudNetworkManaged()){ ?>
+if (ScormCloudPlugin::is_network_managed()){ ?>
 <p><input type="checkbox" name="scormcloud_sharecourses"
 <?php echo ($sharecourses ? "checked" : ""); ?> /><?php _e(" Share courses among all sites.","scormcloud" ); ?></p>
 <?php } ?>

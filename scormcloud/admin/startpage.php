@@ -10,8 +10,8 @@ global $wpdb;
 
 echo '<div class="scormcloud-admin-page startpage">';
 
-require_once('scormcloud.wp.php');
-$ScormService = scormcloud_getScormEngineService();
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
+$ScormService = ScormCloudPlugin::get_cloud_service();
 
 try {
     $isValidAccount = $ScormService->isValidAccount();

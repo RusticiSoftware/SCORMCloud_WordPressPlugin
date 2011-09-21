@@ -1,5 +1,8 @@
 <?php
-	
+
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
+require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
+
 	class ScormCloudRegistrationsWidget extends WP_Widget
 	{
 		/**
@@ -43,12 +46,11 @@
 			}
 			else
 			{
-                require_once('scormcloud.wp.php');
-                $ScormService = scormcloud_getScormEngineService();
+                $ScormService = ScormCloudPlugin::get_cloud_service();
                 $regService = $ScormService->getRegistrationService();
                 
-                $invTable = scormcloud_getTableName('scormcloudinvitations');
-                $regTable = scormcloud_getTableName('scormcloudinvitationregs');
+                $invTable = ScormCloudDatabase::get_invitations_table();
+                $regTable = ScormCloudDatabase::get_registrations_table();
                 $query = $wpdb->prepare('SELECT reg.reg_id, inv.course_title, inv.course_id, inv.active, reg.update_date FROM '.$regTable.' reg
                                          JOIN '.$invTable.' inv ON reg.invite_id = inv.invite_id
                                          WHERE user_id = %s AND inv.blog_id = %s ORDER BY reg.update_date DESC', 

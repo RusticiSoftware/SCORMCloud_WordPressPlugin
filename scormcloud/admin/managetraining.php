@@ -1,15 +1,17 @@
 <?php
 
-if ( defined('ABSPATH') )
+if (defined('ABSPATH'))
 require_once(ABSPATH . 'wp-load.php');
 else
 require_once('../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/includes/admin.php');
 
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
+require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
+
 global $wpdb;
 
-require_once('scormcloud.wp.php');
-$ScormService = scormcloud_getScormEngineService();
+$ScormService = ScormCloudPlugin::get_cloud_service();
 try {
     $isValidAccount = $ScormService->isValidAccount();
 } catch (Exception $e) {
@@ -17,10 +19,10 @@ try {
 }
 
 if (isset($_GET['inviteid'])){
-    include('scormcloud_training_details.php');
+    include('trainingdetails.php');
 } else {
 
-    $regsRemaining = scormcloud_regsRemaining();
+    $regsRemaining = ScormCloudPlugin::remaining_registrations();
 
 
     ?>
@@ -52,8 +54,8 @@ if (isset($_GET['inviteid'])){
 <select class="courseSelector">
 
 <?php
-$coursesFilter = (scormcloud_isScormCloudNetworkManaged() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
-$ScormService = scormcloud_getScormEngineService();
+$coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
+$ScormService = ScormCloudPlugin::get_cloud_service();
 echo "<option value='-1'></option>";
 $courseService = $ScormService->getCourseService();
 $allResults = $courseService->GetCourseList($coursesFilter);
@@ -225,8 +227,8 @@ jQuery("#btnAddRegistration").click(function(){
 
     <?php
 
-    $invTable = scormcloud_getTableName('scormcloudinvitations');
-    $regTable = scormcloud_getTableName('scormcloudinvitationregs');
+    $invTable = ScormCloudDatabase::get_invitations_table();
+    $regTable = ScormCloudDatabase::get_registrations_table();
     $query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
 						 LEFT OUTER JOIN '.$regTable.' reg ON inv.invite_id = reg.invite_id
 						 WHERE inv.blog_id = %s GROUP BY inv.invite_id ORDER BY inv.create_date DESC', array($GLOBALS['blog_id']));

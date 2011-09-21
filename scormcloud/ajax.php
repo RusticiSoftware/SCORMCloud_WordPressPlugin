@@ -5,10 +5,11 @@ else
 require_once('../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/includes/admin.php');
 
-require_once('scormcloud.wp.php');
 require_once('scormcloud.deprecatedFunctions.php');
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
+require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 
-$ScormService = scormcloud_getScormEngineService();
+$ScormService = ScormCloudPlugin::get_cloud_service();
 $action = $_POST['action'];
 
 global $current_user;
@@ -34,7 +35,7 @@ switch($action)
         $require_login = 1;
         $show_course_info = 0;
          
-        $wpdb->insert(scormcloud_getTableName('scormcloudinvitations'),
+        $wpdb->insert(ScormCloudDatabase::get_invitations_table(),
         array('invite_id' => $inviteId,
                             'blog_id' => $GLOBALS['blog_id'],
                             'app_id' => $appId,
@@ -84,7 +85,7 @@ switch($action)
 
             $xml = simplexml_load_string($response);
             if (isset($xml->success)){
-                $wpdb->insert(scormcloud_getTableName('scormcloudinvitationregs'),
+                $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
                 array('invite_id' => $inviteId,
                                     'reg_id' => $regid,
                                     'user_id' => $userData->ID,
@@ -113,7 +114,7 @@ switch($action)
         $require_login = $_POST['requirelogin'];
         $show_course_info = $_POST['showcourseinfo'];
 
-        $wpdb->insert(scormcloud_getTableName('scormcloudinvitations'),
+        $wpdb->insert(ScormCloudDatabase::get_invitations_table(),
         array('invite_id' => $inviteId,
                             'blog_id' => $GLOBALS['blog_id'],
                             'app_id' => $appId,
@@ -138,7 +139,7 @@ switch($action)
         $require_login = $_POST['requirelogin'];
         $show_course_info = $_POST['showcourseinfo'];
 
-        $wpdb->update(scormcloud_getTableName('scormcloudinvitations'),
+        $wpdb->update(ScormCloudDatabase::get_invitations_table(),
         array('header' => $header,
                               'description' => $description,
                               'require_login' => (int)$require_login,
@@ -155,7 +156,7 @@ switch($action)
         $inviteId = $_POST['inviteid'];
         $returnUrl = $_POST['returnurl'];
 
-        $invite = scormcloud_getInvitation($inviteId);
+        $invite = ScormCloudDatabase::get_invitation($inviteId);
 
         $appId = $invite->app_id;
         $courseId = $invite->course_id;
@@ -188,7 +189,7 @@ switch($action)
 
         $regService = $ScormService->getRegistrationService();
 
-        $inviteReg = scormcloud_getInvitationReg(array('invite_id' => $inviteId, 'user_email' => $user_email));
+        $inviteReg = ScormCloudDatabase::get_invitation_reg(array('invite_id' => $inviteId, 'user_email' => $user_email));
         if ($inviteReg != null) {
             $regid = (string)$inviteReg->reg_id;
         } else {
@@ -197,7 +198,7 @@ switch($action)
             //create the cloud registration
             $regService->CreateRegistration($regid, $courseId, $user_email, $user_first_name, $user_last_name,$user_email);
 
-            $wpdb->insert(scormcloud_getTableName('scormcloudinvitationregs'),
+            $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
             array('invite_id' => $inviteId,
                                 'reg_id' => $regid,
                                 'user_email' => $user_email));
@@ -234,7 +235,7 @@ switch($action)
             $bpActivityId = bp_activity_add($activityArgs);
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
-        $cssUrl = (scormcloud_isScormCloudNetworkManaged()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 
@@ -259,7 +260,7 @@ switch($action)
             $user_last_name = $current_user->display_name;
         }
 
-        $invite = scormcloud_getInvitation($inviteId);
+        $invite = ScormCloudDatabase::get_invitation($inviteId);
 
         $courseId = $invite->course_id;
 
@@ -294,7 +295,7 @@ switch($action)
         $regService = $ScormService->getRegistrationService();
         $regService->CreateRegistration($regid, $courseId, $user_email, $user_first_name, $user_last_name,$user_email);
 
-        $wpdb->insert(scormcloud_getTableName('scormcloudinvitationregs'),
+        $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
         array('invite_id' => $inviteId,
                                 'reg_id' => $regid,
                                 'user_id' => $current_user->ID,
@@ -332,7 +333,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (scormcloud_isScormCloudNetworkManaged()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 
@@ -349,7 +350,7 @@ switch($action)
         $returnUrl = $_POST['returnurl'];
         $widgetName = isset($_POST['widgetname']) ? $_POST['widgetname'] : null;
 
-        $inviteReg = scormcloud_getInvitationReg($regid);
+        $inviteReg = ScormCloudDatabase::get_invitation_reg($regid);
 
         $regTags = $GLOBALS['blog_id'].','.(string)$inviteReg->invite_id;
 
@@ -359,7 +360,7 @@ switch($action)
 
         if (function_exists("bp_activity_add")){
             global $bp;
-            $invite = scormcloud_getInvitation($inviteReg->invite_id);
+            $invite = ScormCloudDatabase::get_invitation($inviteReg->invite_id);
 
 
             $from_user_link = bp_core_get_userlink( $bp->loggedin_user->id );
@@ -393,7 +394,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (scormcloud_isScormCloudNetworkManaged()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,null,$learnerTags,$regTags);
         //echo 'regtags:'.$regTags;
@@ -413,7 +414,7 @@ switch($action)
         $courseId = $_POST['courseid'];
         $returnUrl = $_POST['returnurl'];
 
-        $cssUrl = (scormcloud_isScormCloudNetworkManaged()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
 
         $courseService = $ScormService->getCourseService();
         echo $courseService->GetPreviewUrl($courseId,$returnUrl, $cssUrl);
@@ -423,8 +424,8 @@ switch($action)
     case "deletecourse":
         $courseId = $_POST['courseid'];
 
-        $invTable = scormcloud_getTableName('scormcloudinvitations');
-        $regTable = scormcloud_getTableName('scormcloudinvitationregs');
+        $invTable = ScormCloudDatabase::get_invitations_table();
+        $regTable = ScormCloudDatabase::get_registrations_table();
         $query = $wpdb->prepare('DELETE r FROM '.$invTable.' AS i LEFT JOIN '.$regTable.' AS r ON i.invite_id = r.invite_id WHERE course_id = %s',
         array($courseId));
         $wpdb->query($query);
@@ -449,8 +450,8 @@ switch($action)
     $inviteId = $_POST['inviteid'];
     $regId = $_POST['regid'];
 
-    $query = $wpdb->prepare('SELECT inv.course_id, reg.user_email FROM '.scormcloud_getTableName('scormcloudinvitations').' inv
-        	JOIN '.scormcloud_getTableName('scormcloudinvitationregs').' reg ON inv.invite_id = reg.invite_id
+    $query = $wpdb->prepare('SELECT inv.course_id, reg.user_email FROM '.ScormCloudDatabase::get_invitations_table().' inv
+        	JOIN '.ScormCloudDatabase::get_registrations_table().' reg ON inv.invite_id = reg.invite_id
         	WHERE reg.invite_id = %s AND reg.reg_id = %s', array($inviteId, $regId));
     $invite = $wpdb->get_row($query, OBJECT);
 
@@ -488,8 +489,8 @@ switch($action)
 
         $inviteId = $_POST['inviteid'];
 
-        $invTable = scormcloud_getTableName('scormcloudinvitations');
-        $regTable = scormcloud_getTableName('scormcloudinvitationregs');
+        $invTable = ScormCloudDatabase::get_invitations_table();
+        $regTable = ScormCloudDatabase::get_registrations_table();
         $query = $wpdb->prepare('SELECT reg.*, inv.course_id FROM '.$regTable.' reg JOIN '.$invTable.' inv
         						 ON reg.invite_id = inv.invite_id
         						 WHERE reg.invite_id = %s ORDER BY reg.update_date DESC', array($inviteId));
@@ -555,7 +556,7 @@ switch($action)
         $inviteId = $_POST['inviteid'];
         $active = $_POST['active'];
 
-        $wpdb->update(scormcloud_getTableName('scormcloudinvitations'),
+        $wpdb->update(ScormCloudDatabase::get_invitations_table(),
         array('active' => $active), array('invite_id' => $inviteId));
 
         break;
@@ -588,7 +589,7 @@ switch($action)
         $require_login = 0;
         $show_course_info = 0;
 
-        $wpdb->insert(scormcloud_getTableName('scormcloudinvitations'),
+        $wpdb->insert(ScormCloudDatabase::get_invitations_table(),
         array('invite_id' => $inviteId,
                             'blog_id' => $GLOBALS['blog_id'],
                             'app_id' => $appId,
@@ -610,7 +611,7 @@ switch($action)
         $regService = $ScormService->getRegistrationService();
         $regService->CreateRegistration($regid, $courseId, $user_email, $user_first_name, $user_last_name,$user_email);
          
-        $wpdb->insert(scormcloud_getTableName('scormcloudinvitationregs'),
+        $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
         array('invite_id' => $inviteId,
                                 'reg_id' => $regid,
                                 'user_id' => $current_user->ID,
@@ -643,7 +644,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (scormcloud_isScormCloudNetworkManaged()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 
@@ -668,8 +669,8 @@ switch($action)
 
         $regService = $ScormService->getRegistrationService();
 
-        $query = $wpdb->prepare('SELECT r.reg_id, r.invite_id FROM '.scormcloud_getTableName('scormcloudinvitations').' i
-                                 JOIN '.scormcloud_getTableName('scormcloudinvitationregs').' r ON i.invite_id = r.invite_id
+        $query = $wpdb->prepare('SELECT r.reg_id, r.invite_id FROM '.ScormCloudDatabase::get_invitations_table().' i
+                                 JOIN '.ScormCloudDatabase::get_registrations_table().' r ON i.invite_id = r.invite_id
                                  WHERE r.user_email = %s AND i.course_id = %s', array($user_email, $courseId));
         $inviteReg = $wpdb->get_row($query, OBJECT);
         if ($inviteReg != null) {
@@ -681,8 +682,7 @@ switch($action)
 
             $require_login = 0;
             $show_course_info = 0;
-            //error_log(scormcloud_getDBPrefix());
-            $wpdb->insert(scormcloud_getTableName('scormcloudinvitations'),
+            $wpdb->insert(ScormCloudDatabase::get_invitations_table(),
             array('invite_id' => $inviteId,
                             'blog_id' => $GLOBALS['blog_id'],
                             'app_id' => $appId,
@@ -698,7 +698,7 @@ switch($action)
             //create the cloud registration
             $regService->CreateRegistration($regid, $courseId, $user_email, $user_first_name, $user_last_name, $user_email);
 
-            $wpdb->insert(scormcloud_getTableName('scormcloudinvitationregs'),
+            $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
             array('invite_id' => $inviteId,
                                 'reg_id' => $regid,
                                 'user_email' => $user_email),
@@ -735,7 +735,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (scormcloud_isScormCloudNetworkManaged()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 

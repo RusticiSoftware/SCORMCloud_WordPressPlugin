@@ -20,8 +20,8 @@ else
 require_once('../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/includes/admin.php');
 
-require_once('scormcloud.wp.php');
-$ScormService = scormcloud_getScormEngineService();
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
+$ScormService = ScormCloudPlugin::get_cloud_service();
 
 $scormcloudid = $_GET['courseid'];
 $mode = $_GET['mode'];
