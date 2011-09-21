@@ -25,27 +25,6 @@ function scormcloud_getScormEngineService(){
     return new ScormEngineService($engine_url,$appid,$secretkey,$origin);
 }
 
-
-function scormcloud_getCourseLaunchTime($regid){
-
-    $ScormService = scormcloud_getScormEngineService();
-    $regService = $ScormService->getRegistrationService();
-
-    $resultArray = $regService->GetLaunchHistory($regid);
-
-    if (count($resultArray) > 0){
-        return cloud_convertTimeToInt($resultArray[0]->getLaunchTime());
-    }
-}
-
-
-//input format 2009-08-11T19:01:50.081+0000
-function scormcloud_convertTimeToInt($str){
-    //echo 'hour: '.substr($str,11,2).'<br/>';
-    //echo 'minute: '.substr($str,14,2).'<br/>';
-    return mktime(substr($str,11,2),substr($str,14,2),substr($str,17,2),substr($str,5,2),substr($str,8,2), substr($str,0,4));
-}
-
 function scormcloud_isScormCloudNetworkManaged(){
     if (!function_exists('get_site_option')) return false;
     if (get_site_option('scormcloud_networkManaged') != null){
