@@ -4,10 +4,6 @@ require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
 
 if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     //Form data sent
-    $dbhost = isset($_POST['scormcloud_dbhost']) ? $_POST['scormcloud_dbhost'] : null;
-    $dbname = isset($_POST['scormcloud_dbname']) ? $_POST['scormcloud_dbname'] : null;
-    $dbuser = isset($_POST['scormcloud_dbuser']) ? $_POST['scormcloud_dbuser'] : null;
-    $dbpwd = isset($_POST['scormcloud_dbpwd']) ? $_POST['scormcloud_dbpwd'] : null;
     $appid = $_POST['scormcloud_appid'];
     $engine_url = $_POST['scormcloud_engine_url'];
     $secretkey = $_POST['scormcloud_secretkey'];
@@ -16,10 +12,6 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     if (ScormCloudPlugin::is_network_managed()){
         $sharecourses = $_POST['scormcloud_sharecourses'];
 
-        update_site_option('scormcloud_dbhost', $dbhost);
-        update_site_option('scormcloud_dbname', $dbname);
-        update_site_option('scormcloud_dbuser', $dbuser);
-        update_site_option('scormcloud_dbpwd', $dbpwd);
         update_site_option('scormcloud_appid', $appid);
         update_site_option('scormcloud_engine_url', $engine_url);
         update_site_option('scormcloud_secretkey', $secretkey);
@@ -28,10 +20,6 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 
 
     } else {
-        update_option('scormcloud_dbhost', $dbhost);
-        update_option('scormcloud_dbname', $dbname);
-        update_option('scormcloud_dbuser', $dbuser);
-        update_option('scormcloud_dbpwd', $dbpwd);
         update_option('scormcloud_appid', $appid);
         update_option('scormcloud_engine_url', $engine_url);
         update_option('scormcloud_secretkey', $secretkey);
@@ -74,10 +62,6 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 
     //Normal page display
     if (ScormCloudPlugin::is_network_managed()){
-        $dbhost = get_site_option('scormcloud_dbhost');
-        $dbname = get_site_option('scormcloud_dbname');
-        $dbuser = get_site_option('scormcloud_dbuser');
-        $dbpwd = get_site_option('scormcloud_dbpwd');
         $appid = get_site_option('scormcloud_appid');
         $secretkey = get_site_option('scormcloud_secretkey');
         $engine_url = (strlen(get_site_option('scormcloud_engine_url')) > 0) ? get_site_option('scormcloud_engine_url') : "http://cloud.scorm.com/EngineWebServices";
@@ -85,10 +69,6 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
         $sharecourses = get_site_option('scormcloud_sharecourses');
 
     } else {
-        $dbhost = get_option('scormcloud_dbhost');
-        $dbname = get_option('scormcloud_dbname');
-        $dbuser = get_option('scormcloud_dbuser');
-        $dbpwd = get_option('scormcloud_dbpwd');
         $appid = get_option('scormcloud_appid');
         $secretkey = get_option('scormcloud_secretkey');
         $engine_url = (strlen(get_option('scormcloud_engine_url')) > 0) ? get_option('scormcloud_engine_url') : "http://cloud.scorm.com/EngineWebServices";
