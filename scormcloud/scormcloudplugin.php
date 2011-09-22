@@ -38,21 +38,21 @@ class ScormCloudPlugin
     
     public static function is_network_managed() {
         if (!function_exists('get_site_option')) return false;
-        if (get_site_option('scormcloud_networkManaged') != null){
-            return (bool)get_site_option('scormcloud_networkManaged');
+        if (get_site_option('scormcloud_networkmanaged') != null){
+            return (bool)get_site_option('scormcloud_networkmanaged');
         } else return false;
     }
     
-    public static function get_cloud_service() {
+    public static function get_cloud_service($force_network_settings=false) {
         require_once('SCORMCloud_PHPLibrary/ScormEngineService.php');
         require_once('SCORMCloud_PHPLibrary/ScormEngineUtilities.php');
     
-        if (ScormCloudPlugin::is_network_managed()){
+        if (ScormCloudPlugin::is_network_managed() || $force_network_settings) {
             $appid = get_site_option('scormcloud_appid');
             $secretkey = get_site_option('scormcloud_secretkey');
             $engine_url = get_site_option('scormcloud_engine_url');
     
-        }else{
+        } else {
             $appid = get_option('scormcloud_appid');
             $secretkey = get_option('scormcloud_secretkey');
             $engine_url = get_option('scormcloud_engine_url');

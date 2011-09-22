@@ -50,7 +50,15 @@ echo "</div>";
 
 if (!$isValidAccount){
 
-    echo '<div class="settingsPageLink"><a href="'.get_option( 'siteurl' ).'/wp-admin/admin.php?page=scormcloudsettings"
+    if (is_super_admin())
+    {
+        $settings_url = get_option('siteurl').'/wp-admin/network/admin.php?page=scormcloud/network-admin/settings';
+    }
+    else
+    {
+        $settings_url = get_option('siteurl').'/wp-admin/admin.php?page=scormcloud/admin/settings';
+    }
+    echo '<div class="settingsPageLink"><a href="'.$settings_url.'"
 				title="'. __("Click here to configure your SCORM Cloud plugin.","scormcloud").'">'. __("Click Here to go to the settings page to configure the SCORM Cloud wordpress Plugin.","scormcloud").'</a></div>';
 
 }

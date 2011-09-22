@@ -247,7 +247,7 @@ jQuery("#btnAddRegistration").click(function(){
     {
 
         echo "<tr class='regRow' key='".$invite->invite_id."'>";
-        echo "<td class='title'><a title='".__("Click to view details of this invitation.","scormcloud")."' href='".get_option( 'siteurl' )."/wp-admin/admin.php?page=scormcloudtraining&inviteid=".$invite->invite_id."'>".__($invite->course_title)."</a></td>";
+        echo "<td class='title'><a title='".__("Click to view details of this invitation.","scormcloud")."' href='".get_option( 'siteurl' )."/wp-admin/admin.php?page=scormcloud/manage_training&inviteid=".$invite->invite_id."'>".__($invite->course_title)."</a></td>";
 
         if ($invite->post_id == "__direct_invite__"){
             echo "<td>".__("User Invitation","scormcloud")."</td>";

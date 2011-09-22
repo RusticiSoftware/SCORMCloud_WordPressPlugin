@@ -23,10 +23,12 @@ class ScormCloudAdminUi
     {
         self::enqueue_admin_includes();
     
-        ScormCloudPlugin::$hooks[] = add_menu_page('SCORM Cloud Overview', 'SCORM Cloud', 'publish_posts', __FILE__, array(__CLASS__, 'show_start_page'));
-        ScormCloudPlugin::$hooks[] = add_submenu_page(__FILE__, 'SCORM Cloud Courses', 'Courses', 'publish_posts', 'scormcloudcourses', array(__CLASS__, 'show_manage_courses'));
-        ScormCloudPlugin::$hooks[] = add_submenu_page(__FILE__, 'SCORM Cloud Training', 'Training', 'publish_posts', 'scormcloudtraining', array(__CLASS__, 'show_manage_training'));
-        ScormCloudPlugin::$hooks[] = add_submenu_page(__FILE__, 'SCORM Cloud Settings', 'Settings', 'publish_posts', 'scormcloudsettings', array(__CLASS__, 'show_settings'));
+        $topslug = 'scormcloud/admin';
+        $plugin_hooks =& ScormCloudPlugin::$hooks;
+        $plugin_hooks[] = add_menu_page('SCORM Cloud Overview', 'SCORM Cloud', 'publish_posts', $topslug, array(__CLASS__, 'show_start_page'));
+        $plugin_hooks[] = add_submenu_page($topslug, 'SCORM Cloud Courses', 'Courses', 'publish_posts', 'scormcloud/manage_courses', array(__CLASS__, 'show_manage_courses'));
+        $plugin_hooks[] = add_submenu_page($topslug, 'SCORM Cloud Training', 'Training', 'publish_posts', 'scormcloud/manage_training', array(__CLASS__, 'show_manage_training'));
+        $plugin_hooks[] = add_submenu_page($topslug, 'SCORM Cloud Settings', 'Settings', 'publish_posts', 'scormcloud/admin/settings', array(__CLASS__, 'show_settings'));
         
         add_action('contextual_help', array(__CLASS__, 'contextual_help'), 10, 3);
     }
@@ -35,8 +37,10 @@ class ScormCloudAdminUi
     {
         self::enqueue_admin_includes();
     
-        ScormCloudPlugin::$hooks[] = add_menu_page('SCORM Cloud Overview', 'SCORM Cloud', 'publish_posts', __FILE__, array(__CLASS__, 'show_start_page'));
-        ScormCloudPlugin::$hooks[] = add_submenu_page(__FILE__, 'SCORM Cloud Settings', 'Settings', 'publish_posts', 'scormcloudsettings', array(__CLASS__, 'show_settings'));
+        $topslug = 'scormcloud/network-admin';
+        $plugin_hooks =& ScormCloudPlugin::$hooks;
+        $plugin_hooks[] = add_menu_page('SCORM Cloud Overview', 'SCORM Cloud', 'publish_posts', $topslug, array(__CLASS__, 'show_start_page'));
+        $plugin_hooks[] = add_submenu_page($topslug, 'SCORM Cloud Settings', 'Settings', 'publish_posts', 'scormcloud/network-admin/settings', array(__CLASS__, 'show_network_settings'));
         
         add_action('contextual_help', array(__CLASS__, 'contextual_help'), 10, 3);
     }
@@ -61,6 +65,11 @@ class ScormCloudAdminUi
         include('settings.php');
     }
     
+    public static function show_network_settings()
+    {
+        include('network_settings.php');
+    }
+    
     public static function set_js_vars()
     {
         ?>
@@ -79,7 +88,12 @@ class ScormCloudAdminUi
     public static function contextual_help($text, $screen_id, $screen)
     {
         $plugin_hooks = ScormCloudPlugin::$hooks;
-        if (in_array($screen_id,$plugin_hooks) ){
+        
+        if (substr($screen_id, -8) == '-network') {
+            $screen_id = substr_replace($screen_id, '', -8);
+        }
+        
+        if (in_array($screen_id, $plugin_hooks)){
     
             $helpHtml = "<div class='sc_helpPanel'>";
             $helpHtml .= "<h2>SCORM Cloud Hints and Tips</h2>";
@@ -91,13 +105,14 @@ class ScormCloudAdminUi
     
             switch ($plugin_page){
     
-                case 'scormcloud/scormcloud.php':
+                case 'scormcloud/network-admin':
+                case 'scormcloud/admin':
                     $helpHtml .= "<p><span class='emph'>Overall Reportage Summary</span> is a results report for all trainings in your wordpress plugin.
     	            Note that the results are not reported in real time but are current as of the given date.  You can view the full report in the Reportage site by clicking the 'Scorm Cloud Reportage' link under the page header.";
                     $helpHtml .= "</p>";
                     break;
     
-                case 'scormcloudcourses':
+                case 'scormcloud/manage_courses':
                     $helpHtml .= "<p><span class='emph'>Import a new course</span> provides functionality to upload a course to the SCORM Cloud for use in trainings in wordpress.
     	            Files uploaded should be zipped up SCORM or AICC course packages.</p>";
                     $helpHtml .= "<p><span class='emph'>All Courses</span> lists all of the courses available for training in wordpress.  This list comes from the SCORM Cloud, and the courses can also be managed on the SCORM Cloud site.
@@ -109,7 +124,7 @@ class ScormCloudAdminUi
     	            </ul></p>";
                     break;
     
-                case 'scormcloudtraining':
+                case 'scormcloud/manage_training':
     
                     if (isset($_GET['inviteid'])){
                         $helpHtml .= "<p>Clicking the <span class='emph'>click to activate/deactivate</span> link will set the training as launchable or not launchable.</p>";
@@ -142,12 +157,19 @@ class ScormCloudAdminUi
                     }
                     break;
     
-                case 'scormcloudsettings':
-                    $helpHtml .= "<p>The <span class='emph'>Cloud Engine URL</span> is set with a default value that does not need to be changed for most users.</p>";
-                    $helpHtml .= "<p>The <span class='emph'>App Id</span> and <span class='emph'>Secret Key</span> can both be found by going to your <a href='http://cloud.scorm.com/sc/user/Apps'>Apps Page</a> on the SCORM Cloud site.
-    	            These values are randomly generated unique strings that tie this wordpress plugin to your SCORM Cloud account.</p>";
+                case 'scormcloud/admin/settings':
+                    $helpHtml .= '<p>The <span class="emph">App Id</span> and <span class="emph">Secret Key</span> can both be found by going to your <a href="http://cloud.scorm.com/sc/user/Apps">Apps Page</a> on the SCORM Cloud site. These values are essentially the "username and password" for WordPress to access your SCORM Cloud account.</p>';
+                    $helpHtml .= '<p>The <span class="emph">Cloud Engine URL</span> is set with a default value that does not need to be changed for most users.</p>';
+                    $helpHtml .= '<p>The <span class="emph">SCORM Player Stylesheet URL</span> controls the CSS stylesheet used to style the user interface of the SCORM player.</p>';
                     break;
-    
+                    
+                case 'scormcloud/network-admin/settings':
+                    $helpHtml .= '<p>The <span class="emph">App Id</span> and <span class="emph">Secret Key</span> can both be found by going to your <a href="http://cloud.scorm.com/sc/user/Apps">Apps Page</a> on the SCORM Cloud site. These values are essentially the "username and password" for WordPress to access your SCORM Cloud account.</p>';
+                    $helpHtml .= '<p><span class="emph">Use same SCORM Cloud account across all sites:</span> If enabled, all sites in the network will use the SCORM Cloud account credentials and Engine URL and administrators for those sites will not be able to change these settings.</p>';
+                    $helpHtml .= '<p><span class="emph">Share courses among all sites:</span> If enabled, all sites will use and upload to the same course library on the SCORM Cloud for creating training.</p>';
+                    $helpHtml .= '<p>The <span class="emph">Cloud Engine URL</span> is set with a default value that does not need to be changed for most users.</p>';
+                    break;
+                    
                 default:
                     $helpHtml .= "<p><span class='emph'></span></p>";
                     break;

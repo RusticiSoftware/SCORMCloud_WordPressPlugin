@@ -8,13 +8,13 @@ $invTable = ScormCloudDatabase::get_invitations_table();
 $regTable = ScormCloudDatabase::get_registrations_table();
 $query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
                          LEFT OUTER JOIN '.$regTable.' reg ON inv.invite_id = reg.invite_id
-                         WHERE inv.invite_id = %s GROUP BY inv.invite_id', array($inviteId));
+                         WHERE inv.invite_id = %s AND inv.app_id = %s GROUP BY inv.invite_id', array($inviteId, ScormCloudPlugin::get_wp_option('scormcloud_appid')));
 $invite = $wpdb->get_row($query, OBJECT);
 
 
 ?>
 <div class="scormcloud-admin-page trainingDetail"><a class='backLink'
-	href='<?php echo get_option( 'siteurl' )."/wp-admin/admin.php?page=scormcloudtraining"; ?>'><?php _e("Go back to all trainings","scormcloud"); ?></a>
+	href='<?php echo get_option( 'siteurl' )."/wp-admin/admin.php?page=scormcloud/manage_training"; ?>'><?php _e("Go back to all trainings","scormcloud"); ?></a>
 
 <h2><?php echo __("Training Details for","scormcloud").' "'.$invite->course_title; ?>"</h2>
 <div class="invitationStatus"><?php
