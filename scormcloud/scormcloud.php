@@ -19,5 +19,6 @@ register_activation_hook(__FILE__, array('ScormCloudPlugin', 'activate'));
 register_deactivation_hook(__FILE__, array('ScormCloudPlugin', 'deactivate'));
 register_uninstall_hook(__FILE__, array('ScormCloudPlugin', 'uninstall'));
 
+add_action('plugins_loaded', array('ScormCloudPlugin', 'update_check'));
 add_action('init', array('ScormCloudPlugin', 'initialize'));
 

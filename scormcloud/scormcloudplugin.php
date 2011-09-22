@@ -1,6 +1,7 @@
 <?php
 
 require_once(SCORMCLOUD_BASE.'scormcloudui.php');
+require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 
 class ScormCloudPlugin
 {
@@ -34,6 +35,11 @@ class ScormCloudPlugin
 
         add_action('save_post', array('ScormCloudContentHandler', 'update_post_invite'));
         add_action('profile_update', array('ScormCloudContentHandler', 'update_learner_info'));
+    }
+    
+    public static function update_check()
+    {
+        ScormCloudDatabase::update_check();
     }
     
     public static function is_network_managed() {

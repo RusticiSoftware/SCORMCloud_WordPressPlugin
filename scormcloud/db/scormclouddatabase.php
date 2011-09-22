@@ -1,9 +1,9 @@
 <?php
 
-require_once(SCORMCLOUD_BASE.'utils.php');
-
 class ScormCloudDatabase
 {   
+    private static $versions = array('1.1', '12');
+    
     public static function install()
     {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -11,7 +11,7 @@ class ScormCloudDatabase
         global $wpdb;
         global $scormcloud_db_version;
 
-        $scormcloud_db_version = "1.1";
+        $scormcloud_db_version = "12";
 
         $table_name = $wpdb->prefix . "scormcloudinvitations";
         $sql = "CREATE TABLE " . $table_name . " (
@@ -40,24 +40,51 @@ class ScormCloudDatabase
 		  		);";
         dbDelta($sql);
 
-        if (is_network_environment()){
-            $installed_ver = get_site_option( "scormcloud_db_version" );
+        if (self::is_network_environment()){
+            $installed_ver = get_site_option('scormcloud_db_version');
         } else {
-            $installed_ver = get_option( "scormcloud_db_version" );
+            $installed_ver = get_option('scormcloud_db_version');
         }
 
-        if ($installed_ver != $scormcloud_db_version ) {
-             
-            if (is_network_environment()){
-                update_site_option( "scormcloud_db_version", $scormcloud_db_version );
-                update_site_option( "scormcloud_dbprefix", $wpdb->prefix);
-                update_site_option( "scormcloud_networkManaged", 'true');
-            } else {
-                update_option( "scormcloud_db_version", $scormcloud_db_version );
+        if ($installed_ver == null) {
+            if (self::is_network_environment()) {
+                update_site_option('scormcloud_db_version', $scormcloud_db_version);
+                update_site_option('scormcloud_db_prefix', $wpdb->prefix);
+                update_site_option('scormcloud_networkManaged', 'true');
             }
-
-
+        } else if ($installed_ver != $scormcloud_db_version ) {
+             upgrade($installed_ver, $scormcloud_db_version);
         }
+    }
+    
+    public static function upgrade($from, $to)
+    {
+        if (!in_array($from, self::$versions) || !in_array($to, self::$versions)) {
+            // TODO: Log error
+            return;
+        }
+        
+        $versions = self::$versions;
+        
+        while (current($versions) != $from) {
+            next($versions);
+        }
+        
+        $current = str_replace('.', '', $from);
+        while ($current != $to) {
+            $next = str_replace('.', '', next($versions));
+            if ($next === false) {
+                // no good
+                break;
+            }
+            
+            call_user_func(array(__CLASS__, 'upgrade_from_'.$current.'_to_'.$next));
+        }
+    }
+    
+    public static function update_check()
+    {
+        self::install();
     }
     
     /**
@@ -188,9 +215,31 @@ class ScormCloudDatabase
     private static function get_db_prefix(){
         global $wpdb;
         if (ScormCloudPlugin::is_network_managed()){
-            return get_site_option('scormcloud_dbprefix');
+            return get_site_option('scormcloud_db_prefix');
         } else {
             return $wpdb->prefix;
+        }
+    }
+    
+    private static function is_network_environment()
+    {
+        return function_exists('is_multisite') && is_multisite() && is_plugin_active_for_network('scormcloud/scormcloud.php');
+    }
+    
+    private static function upgrade_from_11_to_12()
+    {
+        if (self::is_network_environment()) {
+            $prefix = get_site_option('scormcloud_dbprefix');
+            if ($prefix == null) {
+                $prefix = $wpdb->prefix;
+            }
+            
+            delete_site_option('scormcloud_dbprefix');
+            update_site_option('scormcloud_db_prefix', $prefix);
+            
+            update_site_option('scormcloud_db_version', '12');
+        } else {
+            update_option('scormcloud_db_version', '12');
         }
     }
 }
