@@ -105,6 +105,7 @@ foreach($allResults as $course){
 	</tr>
 </table>
 
+<p><input name="sendemail" type="checkbox" />Send invitation email to selected user(s)</p>
 
 <p><input id="btnAddRegistration" type="button"
 	value="<?php _e("Create Training","scormcloud"); ?>" /><span
@@ -189,6 +190,10 @@ jQuery("#btnAddRegistration").click(function(){
         dataString += "&userids=" + jQuery('ul.userHolder li').map(function(){return jQuery(this).attr('userid')}).get().join(',');
     } else if (userPopulation == 'selectRoles'){
         dataString += "&roles=" + jQuery('ul.roleHolder li').map(function(){return jQuery(this).attr('rolename')}).get().join(',');
+    }
+
+    if (jQuery('input[name="sendemail"]').is(':checked')) {
+    	dataString += '&sendemail=on';
     }
     
     //alert(dataString);

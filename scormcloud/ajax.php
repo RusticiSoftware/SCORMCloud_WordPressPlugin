@@ -7,6 +7,7 @@ require_once(ABSPATH . 'wp-admin/includes/admin.php');
 
 require_once('scormcloud.deprecatedFunctions.php');
 require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
+require_once(SCORMCLOUD_BASE.'scormcloudemailer.php');
 require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 
 $ScormService = ScormCloudPlugin::get_cloud_service();
@@ -24,6 +25,7 @@ switch($action)
         $postId = "__direct_invite__";
         $courseId = $_POST['courseid'];
         $courseTitle = $_POST['coursetitle'];
+        $sendEmail = isset($_POST['sendemail']) ? $_POST['sendemail'] : null;
 
         $strUserIds = isset($_POST['userids']) ? $_POST['userids'] : null;
         $allUsers = isset($_POST['allusers']) ? $_POST['allusers'] : null;
@@ -94,6 +96,15 @@ switch($action)
                                     'user_id' => $userData->ID,
                                     'user_email' => $userData->user_email),
                 array('%s', '%s', '%d', '%s'));
+                
+                if ($sendEmail) {
+                    $display_name = $userData->display_name;
+                    $message  = "<p>Hello $display_name,</p>";
+                    $message .= '<p>'.$current_user->display_name." has invited you to take the training '$courseTitle'.".' You can view all available trainings by visiting the site <a href="'.get_bloginfo('url').'">'.get_bloginfo('name').'</a>.</p>';
+                    $message .= "<p>This email was automatically sent by the SCORM Cloud plugin for WordPress.</p>";
+                    
+                    ScormCloudEmailer::send_email($userData, 'Training Invitation', $message);
+                }
 
             } else if ($xml->err['code'] == '4') {
                 $responseString = 'There was a problem creating a new training. The maximum number of registrations for this account has been reached.';
