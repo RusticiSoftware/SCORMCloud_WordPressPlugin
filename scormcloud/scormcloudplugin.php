@@ -61,11 +61,22 @@ class ScormCloudPlugin
         $origin = ScormEngineUtilities::getCanonicalOriginString('Rustici Software', 'WordPress', '1.0.7.3');
     
         //arbitrary number 17 is the length of 'EngineWebServices'
-        if (strlen($engine_url) < 17){
+        if (strlen($engine_url) < 17) {
             $engine_url = "http://cloud.scorm.com/EngineWebServices";
         }
     
         return new ScormEngineService($engine_url,$appid,$secretkey,$origin);
+    }
+    
+    /**
+     * Wraps the WordPress get_option and get_site_option functions, using whichever is appropriate for the
+     * current settings.
+     * 
+     * @param string $option The option name
+     */
+    public static function get_wp_option($option)
+    {
+        return (self::is_network_managed()) ? get_site_option($option) : get_option($option);
     }
     
     public static function remaining_registrations() {

@@ -106,7 +106,7 @@ switch($action)
     case 'addPostInvite':
 
         $inviteId = uniqid();
-        $appId = get_option('scormcloud_appid');
+        $appId = ScormCloudPlugin::get_wp_option('scormcloud_appid');
         $courseId = $_POST['courseid'];
         $courseTitle = $_POST['coursetitle'];
         $header = $_POST['header'];
@@ -235,7 +235,7 @@ switch($action)
             $bpActivityId = bp_activity_add($activityArgs);
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
-        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 
@@ -333,7 +333,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 
@@ -394,7 +394,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,null,$learnerTags,$regTags);
         //echo 'regtags:'.$regTags;
@@ -414,7 +414,7 @@ switch($action)
         $courseId = $_POST['courseid'];
         $returnUrl = $_POST['returnurl'];
 
-        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
         $courseService = $ScormService->getCourseService();
         echo $courseService->GetPreviewUrl($courseId,$returnUrl, $cssUrl);
@@ -644,7 +644,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 
@@ -735,7 +735,7 @@ switch($action)
             error_log('Logging action: '.$actionStr.' Activity ID: '.$bpActivityId);
         }
 
-        $cssUrl = (ScormCloudPlugin::is_network_managed()) ? get_site_option('scormcloud_player_cssurl') :  get_option('scormcloud_player_cssurl');
+        $cssUrl = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
         echo $regService->GetLaunchUrl($regid,$returnUrl,$cssUrl,null,$courseTags,$learnerTags,$regTags);
 
