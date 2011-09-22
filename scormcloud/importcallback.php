@@ -56,7 +56,6 @@ if($success=='true')
 
         //import the uploaded course
         $result = $courseService->ImportUploadedCourse($scormcloudid, $location, null);
-        $irxml = simplexml_load_string($result);
 
 
     }

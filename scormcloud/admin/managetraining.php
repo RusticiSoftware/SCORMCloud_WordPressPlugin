@@ -231,7 +231,7 @@ jQuery("#btnAddRegistration").click(function(){
     $regTable = ScormCloudDatabase::get_registrations_table();
     $query = $wpdb->prepare('SELECT inv.*, count(reg.reg_id) as reg_count FROM '.$invTable.' inv
 						 LEFT OUTER JOIN '.$regTable.' reg ON inv.invite_id = reg.invite_id
-						 WHERE inv.blog_id = %s GROUP BY inv.invite_id ORDER BY inv.create_date DESC', array($GLOBALS['blog_id']));
+						 WHERE inv.blog_id = %s AND inv.app_id = %s GROUP BY inv.invite_id ORDER BY inv.create_date DESC', array($GLOBALS['blog_id'], ScormCloudPlugin::get_wp_option('scormcloud_appid')));
     $invites = $wpdb->get_results($query, OBJECT);
 
     echo '<table class="widefat" cellspacing="0" id="InvitationListTable" >';

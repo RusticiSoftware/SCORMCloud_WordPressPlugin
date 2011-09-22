@@ -20,7 +20,7 @@ switch($action)
     case 'addregistration':
 
         $inviteId = uniqid();
-        $appId = get_option('scormcloud_appid');
+        $appId = ScormCloudPlugin::get_wp_option('scormcloud_appid');
         $postId = "__direct_invite__";
         $courseId = $_POST['courseid'];
         $courseTitle = $_POST['coursetitle'];
@@ -35,7 +35,7 @@ switch($action)
         $require_login = 1;
         $show_course_info = 0;
          
-        $wpdb->insert(ScormCloudDatabase::get_invitations_table(),
+        if (!$wpdb->insert(ScormCloudDatabase::get_invitations_table(),
         array('invite_id' => $inviteId,
                             'blog_id' => $GLOBALS['blog_id'],
                             'app_id' => $appId,
@@ -46,7 +46,10 @@ switch($action)
                             'description' => $description,
                             'require_login' => $require_login,
                             'show_course_info' => $show_course_info),
-        array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d'));
+        array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d'))) {
+            echo "Could not insert invitation record.";
+            break;
+        }
 
         //create the cloud registration(s)
         $users = array();
@@ -452,7 +455,7 @@ switch($action)
 
     $query = $wpdb->prepare('SELECT inv.course_id, reg.user_email FROM '.ScormCloudDatabase::get_invitations_table().' inv
         	JOIN '.ScormCloudDatabase::get_registrations_table().' reg ON inv.invite_id = reg.invite_id
-        	WHERE reg.invite_id = %s AND reg.reg_id = %s', array($inviteId, $regId));
+        	WHERE reg.invite_id = %s AND reg.reg_id = %s AND inv.app_id = %s', array($inviteId, $regId, ScormCloudPlugin::get_wp_option('scormcloud_appid')));
     $invite = $wpdb->get_row($query, OBJECT);
 
     $courseId = $invite->course_id;
@@ -493,7 +496,7 @@ switch($action)
         $regTable = ScormCloudDatabase::get_registrations_table();
         $query = $wpdb->prepare('SELECT reg.*, inv.course_id FROM '.$regTable.' reg JOIN '.$invTable.' inv
         						 ON reg.invite_id = inv.invite_id
-        						 WHERE reg.invite_id = %s ORDER BY reg.update_date DESC', array($inviteId));
+        						 WHERE reg.invite_id = %s AND inv.app_id = %s ORDER BY reg.update_date DESC', array($inviteId, ScormCloudPlugin::get_wp_option('scormcloud_appid')));
         $inviteRegs = $wpdb->get_results($query, OBJECT);
 
         $regService = $ScormService->getRegistrationService();
@@ -569,7 +572,7 @@ switch($action)
         $inviteId = uniqid();
         $regid = $inviteId."-".uniqid();
 
-        $appId = get_option('scormcloud_appid');
+        $appId = ScormCloudPlugin::get_wp_option('scormcloud_appid');
         global $current_user;
         global $wpdb;
         get_currentuserinfo();
@@ -671,7 +674,7 @@ switch($action)
 
         $query = $wpdb->prepare('SELECT r.reg_id, r.invite_id FROM '.ScormCloudDatabase::get_invitations_table().' i
                                  JOIN '.ScormCloudDatabase::get_registrations_table().' r ON i.invite_id = r.invite_id
-                                 WHERE r.user_email = %s AND i.course_id = %s', array($user_email, $courseId));
+                                 WHERE r.user_email = %s AND i.course_id = %s AND i.app_id', array($user_email, $courseId, ScormCloudPlugin::get_wp_option('scormcloud_appid')));
         $inviteReg = $wpdb->get_row($query, OBJECT);
         if ($inviteReg != null) {
             $regid = (string)$inviteReg->reg_id;

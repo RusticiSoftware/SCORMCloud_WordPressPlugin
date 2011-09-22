@@ -1,5 +1,6 @@
 <?php
 
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
 require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 
 $inviteId = $_GET['inviteid'];
