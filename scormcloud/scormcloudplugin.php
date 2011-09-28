@@ -63,7 +63,7 @@ class ScormCloudPlugin
             $engine_url = get_option('scormcloud_engine_url');
         }
     
-        $origin = ScormEngineUtilities::getCanonicalOriginString('Rustici Software', 'WordPress', '1.1.1');
+        $origin = ScormEngineUtilities::getCanonicalOriginString('Rustici Software', 'WordPress', '1.1.2');
     
         //arbitrary number 17 is the length of 'EngineWebServices'
         if (strlen($engine_url) < 17) {
