@@ -1,6 +1,7 @@
 <?php
 
 require_once(SCORMCLOUD_BASE.'scormcloudui.php');
+require_once(SCORMCLOUD_BASE.'scormcloudcontenthandler.php');
 require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 
 class ScormCloudPlugin
@@ -29,8 +30,6 @@ class ScormCloudPlugin
     
     public static function initialize()
     {
-        ScormCloudUi::initialize();
-        
         add_filter('the_content', array('ScormCloudContentHandler', 'make_blog_entry'));
 
         add_action('save_post', array('ScormCloudContentHandler', 'update_post_invite'));

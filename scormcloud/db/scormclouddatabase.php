@@ -157,11 +157,11 @@ class ScormCloudDatabase
             $whereValues[] = $val;
         }
     
-        $query = $wpdb->prepare('SELECT * FROM '.scormcloud_getTableName($table).$whereClause, $whereValues);
+        $query = $wpdb->prepare('SELECT * FROM '.$table.$whereClause, $whereValues);
         return $wpdb->get_row($query, OBJECT);
     }
     
-    private static function ensure_arry($default, $val) {
+    private static function ensure_array($default, $val) {
         if (!is_array($val)) {
             return array($default => $val);
         }
@@ -196,7 +196,7 @@ class ScormCloudDatabase
         $args = func_get_args();
         $args = self::ensure_array('reg_id', $args[0]);
         array_push($callArgs, $args);
-        return call_user_func_array('ScormCloudDatabase::get_row', $args);
+        return call_user_func_array('ScormCloudDatabase::get_row', $callArgs);
     }
     
     public static function get_invitations_table()

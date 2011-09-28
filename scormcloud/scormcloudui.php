@@ -14,8 +14,6 @@ class ScormCloudUi
         self::embed_plugin();
         
         ScormCloudAdminUi::initialize();
-        
-        add_action('widgets_init', array(__CLASS__, 'initialize_widgets'));
     }
     
     public static function initialize_widgets()

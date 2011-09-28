@@ -1,6 +1,6 @@
 <?php
 
-require_once(SCORMCLOUD_BASE.'scormcloudplugin');
+require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
 require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 
 class ScormCloudContentHandler
