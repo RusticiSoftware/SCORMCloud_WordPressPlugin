@@ -9,7 +9,7 @@ class ScormCloudPlugin
     
     public static function activate()
     {
-        
+        ScormCloudDatabase::install();
     }
     
     public static function deactivate()
@@ -101,3 +101,4 @@ class ScormCloudPlugin
         }
     }
 }
+

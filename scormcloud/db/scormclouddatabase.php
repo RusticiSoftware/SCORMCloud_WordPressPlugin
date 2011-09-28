@@ -53,7 +53,7 @@ class ScormCloudDatabase
                 update_site_option('scormcloud_networkManaged', 'true');
             }
         } else if ($installed_ver != $scormcloud_db_version ) {
-             upgrade($installed_ver, $scormcloud_db_version);
+             self::upgrade($installed_ver, $scormcloud_db_version);
         }
     }
     
@@ -243,3 +243,4 @@ class ScormCloudDatabase
         }
     }
 }
+
