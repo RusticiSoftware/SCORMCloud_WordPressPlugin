@@ -79,6 +79,7 @@ class ScormCloudDatabase
             }
             
             call_user_func(array(__CLASS__, 'upgrade_from_'.$current.'_to_'.$next));
+	    $current = $next;
         }
     }
     
