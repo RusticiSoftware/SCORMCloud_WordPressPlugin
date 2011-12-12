@@ -29,7 +29,7 @@ span.importMessage.hidden {display:none;}
 .scormcloud-admin-page .previewLink {margin-left:10px;font-size:.9em;font-weight:normal;}
 
 .scormcloud-admin-page tr td.title {font-weight:bold;}
-.scormcloud-admin-page tr.active td {border-width:3px 2px 0px;border-top:3px solid #666666;}
+.scormcloud-admin-page tr.active td {border-top:3px solid #666666;border-bottom:0px;}
 .scormcloud-admin-page tr.regList td.regList {padding:10px 10px 10px 20px;border-bottom-color:#666666;border-bottom-width:3px;}
 .scormcloud-admin-page tr.regList td.regList table.widefat {border:none;}
 .scormcloud-admin-page tr.regList td.regList table.widefat th {padding:0 7px 1px;}
@@ -38,8 +38,8 @@ span.importMessage.hidden {display:none;}
 
 .scormcloud-admin-page tr.propseditor {display:none;}
 .scormcloud-admin-page tr.propseditor td {border-bottom-color:#666666;border-bottom-width:3px;}
-.scormcloud-admin-page tr.courseRow.active td {border-width:3px 2px 1px;border-top:3px solid #666666;border-bottom-style:dotted;}
-.scormcloud-admin-page tr.propseditor iframe{border:medium none;height:400px;overflow:auto;width:100%;}
+.scormcloud-admin-page tr.courseRow.active td {border-top:3px solid #666666;}
+.scormcloud-admin-page tr.propseditor iframe{border:medium none;height:375px;overflow:auto;width:100%;}
 
 .scormcloud-admin-page .passed, .scormcloud-admin-page  .complete{color:#41A317;}
 .scormcloud-admin-page .failed, .scormcloud-admin-page .incorrect {color:#F62817;}

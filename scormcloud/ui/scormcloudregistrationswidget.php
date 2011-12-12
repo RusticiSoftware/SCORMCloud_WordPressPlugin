@@ -68,12 +68,12 @@ require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
                 $coursesDisplayed = array();
                 foreach ($regs as $reg) {
                     try {
-					if ($limitregs && in_array($reg->course_id,$coursesDisplayed)){
+					$regId = $reg->reg_id;
+					if (($limitregs && in_array($reg->course_id,$coursesDisplayed)) || !$regService->Exists($regId)){
 						continue;
 					} else {
 						$coursesDisplayed[] = $reg->course_id; 
-					
-	                    $regId = $reg->reg_id;
+					    
 	                    $regResultsXmlStr = $regService->GetRegistrationResult($regId,0,0);
 	                    $resXml = simplexml_load_string($regResultsXmlStr);
                     

@@ -100,14 +100,14 @@ if ($isValidAccount){
     $sumWidgetSettings->setVertical(false);
     $sumWidgetSettings->setDivname('TotalSummary');
 
-    $coursesWidgetSettings = new WidgetSettings($dateOptions);
+    $coursesWidgetSettings = new WidgetSettings($dateOptions,$tagSettings);
     $coursesWidgetSettings->setShowTitle(true);
     $coursesWidgetSettings->setScriptBased(true);
     $coursesWidgetSettings->setEmbedded(true);
     $coursesWidgetSettings->setExpand(true);
     $coursesWidgetSettings->setDivname('CourseListDiv');
 
-    $learnersWidgetSettings = new WidgetSettings($dateOptions);
+    $learnersWidgetSettings = new WidgetSettings($dateOptions,$tagSettings);
     $learnersWidgetSettings->setShowTitle(true);
     $learnersWidgetSettings->setScriptBased(true);
     $learnersWidgetSettings->setEmbedded(true);

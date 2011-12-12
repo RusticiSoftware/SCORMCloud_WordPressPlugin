@@ -37,7 +37,9 @@ if ($isValidAccount){
     $courseObjArray = $courseService->GetCourseList($coursesFilter);
 
     $courseCount = count($courseObjArray);
-
+	
+	$courseObjArray = array_reverse($courseObjArray);
+	
     if ($courseCount > 0){
         ?>
 <div>

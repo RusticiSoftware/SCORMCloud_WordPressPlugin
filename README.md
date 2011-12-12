@@ -18,6 +18,8 @@ Visit the <a href='http://www.scorm.com/scorm-solved/scorm-cloud/'>SCORM Cloud w
 
 This github repository holds the development trunk, but it is also should be considered stable and ready for use.  Versions are maintained at the wordpress site <http://wordpress.org/extend/plugins/scormcloud/>, but this repo should represent the latest in both places.
 
+Note that when pulling the source from the github repository, the plugin is dependent on the <a href='https://github.com/RusticiSoftware/SCORMCloud_PHPLibrary'>SCORMCloud_PHPLibrary</a> repository, which has been added to this plugin as a submodule.
+
 ## Installation
 
 You can download and install SCORM Cloud For WordPress using the built in WordPress plugin installer. If you download SCORM Cloud For WordPress manually, make sure the 'scormcloud' folder is uploaded to "/wp-content/plugins/".

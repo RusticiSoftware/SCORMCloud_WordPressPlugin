@@ -7,8 +7,9 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     $engine_url = $_POST['scormcloud_engine_url'];
     $secretkey = $_POST['scormcloud_secretkey'];
     $player_cssurl = $_POST['scormcloud_player_cssurl'];
+	$network_managed = ScormCloudPlugin::is_network_managed();
 
-    if (!ScormCloudPlugin::is_network_managed()) {
+    if (!$network_managed) {
         update_option('scormcloud_appid', $appid);
         update_option('scormcloud_engine_url', $engine_url);
         update_option('scormcloud_secretkey', $secretkey);
