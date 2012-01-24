@@ -139,6 +139,33 @@ class ScormCloudContentHandler
             $inviteHtml .= "</div>";
             $content = str_replace($tagString,$inviteHtml,$content);
         }
+
+		preg_match_all('/\[scormcloud.reportage:.*]/',$content,$cloudRepArray);
+    
+        $cloudReportageLinks = $cloudRepArray[0];
+    
+        foreach($cloudReportageLinks as $tagString) {
+			$ScormService = ScormCloudPlugin::get_cloud_service();
+			try {
+                $isValidAccount = $ScormService->isValidAccount();
+            } catch (Exception $e) {
+                $isValidAccount = false;
+            }
+			
+			if ($isValidAccount){
+				$linkText = substr($tagString,22,strlen($tagString) - 23);
+				$rptService = $ScormService->getReportingService();
+				$rServiceUrl = $rptService->GetReportageServiceUrl();
+				$rptAuth = $rptService->GetReportageAuth('FREENAV',true);
+				$reportageUrl = $rServiceUrl.'Reportage/reportage.php?appId='.$ScormService->getAppId()."&registrationTags=".$GLOBALS['blog_id']."|_all";
+			    $repHtml = '<a id="ReportageLink" href="'.$rptService->GetReportUrl($rptAuth, $reportageUrl).'" 
+							title="'. __("Open the SCORM Reportage Console in a new window.","scormcloud").'">'. $linkText.'</a>';
+			
+	
+				$content = str_replace($tagString,$repHtml,$content);
+			}
+	
+		}
     
         return $content;
     

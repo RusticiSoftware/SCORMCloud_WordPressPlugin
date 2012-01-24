@@ -24,10 +24,6 @@ class ScormCloudUi
     
     public static function enqueue_includes()
     {
-        wp_deregister_script('jquery');
-        wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"), false, '');
-        wp_enqueue_script('jquery');
-        
         wp_enqueue_script('thickbox');
         wp_enqueue_style('thickbox');
         

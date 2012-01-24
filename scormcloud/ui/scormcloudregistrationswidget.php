@@ -90,7 +90,7 @@ require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 	                        echo "<span class='courseTitle' title='".__("This course is currently inactive.","scormcloud")."'>$courseTitle</span>";
 	                    }
                     
-	                    echo "<a href='javascript:void(0);' class='toggleButton showDetails' toggleobject='.courselistDiv .regs.courseDetails.$regId' onText='hide details' offText='show details'>".__("show details","scormcloud")."</a>";
+	                    echo "<br/><a href='javascript:void(0);' class='toggleButton showDetails' toggleobject='.courselistDiv .regs.courseDetails.$regId' onText='hide details' offText='show details'>".__("show details","scormcloud")."</a>";
                     
 	                    echo "<div class='regs courseDetails $regId' >";
 	                    if($seconds > 0)

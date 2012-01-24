@@ -103,7 +103,7 @@ class ScormCloudCatalogWidget extends WP_Widget
                             echo "<span class='courseTitle' title='".__("This course is currently inactive.","scormcloud")."'>$courseTitle</span>";
                         }
 
-                        echo "<a href='javascript:void(0);' class='toggleButton showDetails' toggleobject='.courselistDiv .catalog.courseDetails.$regId' onText='".__("hide details","scormcloud")."' offText='".__("show details","scormcloud")."'>".__("show details","scormcloud")."</a>";
+                        echo "<br/><a href='javascript:void(0);' class='toggleButton showDetails' toggleobject='.courselistDiv .catalog.courseDetails.$regId' onText='".__("hide details","scormcloud")."' offText='".__("show details","scormcloud")."'>".__("show details","scormcloud")."</a>";
 
                         echo "<div class='catalog courseDetails $regId' >";
                         if($seconds > 0)
