@@ -30,12 +30,13 @@ if ($isValidAccount){
 
 
 <span class="labelheader"><?php _e("First select a course","scormcloud"); ?>:
-</span> <select class="courseSelector">
+</span> 
+<select class="courseSelector">
 
 <?php
 
 echo "<option value=''></option>";
-$coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
+$coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== '1') ? $GLOBALS['blog_id']."-.*" : null ;
 $courseService = $ScormService->getCourseService();
 $allResults = $courseService->GetCourseList($coursesFilter);
 foreach($allResults as $course){

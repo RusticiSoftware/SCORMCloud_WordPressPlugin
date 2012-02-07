@@ -42,7 +42,7 @@ class ScormCloudCatalogWidget extends WP_Widget
         global $wpdb;
         get_currentuserinfo();
 
-        $coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
+        $coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== '1') ? $GLOBALS['blog_id']."-.*" : null ;
         $ScormService = ScormCloudPlugin::get_cloud_service();
         $courseService = $ScormService->getCourseService();
         $courseObjArray = $courseService->GetCourseList($coursesFilter);

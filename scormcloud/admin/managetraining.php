@@ -54,7 +54,7 @@ if (isset($_GET['inviteid'])){
 <select class="courseSelector">
 
 <?php
-$coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== 'on') ? $GLOBALS['blog_id']."-.*" : null ;
+$coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== '1') ? $GLOBALS['blog_id']."-.*" : null ;
 $ScormService = ScormCloudPlugin::get_cloud_service();
 echo "<option value='-1'></option>";
 $courseService = $ScormService->getCourseService();

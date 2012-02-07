@@ -30,9 +30,10 @@ if ($isValidAccount){
 
     <?php
     $coursesFilter = null;
-    if (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== 'on'){
+	if (ScormCloudPlugin::is_network_managed() && get_site_option('scormcloud_sharecourses') !== '1'){
         $coursesFilter = $GLOBALS['blog_id']."-.*" ;
     }
+	
     $courseService = $ScormService->getCourseService();
     $courseObjArray = $courseService->GetCourseList($coursesFilter);
 
