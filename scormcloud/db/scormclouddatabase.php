@@ -2,7 +2,7 @@
 
 class ScormCloudDatabase
 {   
-    private static $versions = array('1.1', '12');
+    private static $versions = array('1.1', '13');
     
     public static function install()
     {
@@ -11,13 +11,13 @@ class ScormCloudDatabase
         global $wpdb;
         global $scormcloud_db_version;
 
-        $scormcloud_db_version = "12";
+        $scormcloud_db_version = "13";
 
         $table_name = $wpdb->prefix . "scormcloudinvitations";
         $sql = "CREATE TABLE " . $table_name . " (
 		  		invite_id VARCHAR(50) NOT NULL,
                 blog_id VARCHAR(50) NOT NULL,
-                post_id VARCHAR(50) NOT NULL,
+                post_id VARCHAR(50) NULL,
                 app_id VARCHAR(50) NOT NULL,
                 course_id VARCHAR(100) NOT NULL,
                 course_title text NOT NULL,
