@@ -699,7 +699,7 @@ switch($action)
             $wpdb->insert(ScormCloudDatabase::get_invitations_table(),
             array('invite_id' => $inviteId,
                             'blog_id' => $GLOBALS['blog_id'],
-                            'app_id' => $appId,
+                            'app_id' => ScormCloudPlugin::get_wp_option('scormcloud_appid'),
                             'post_id' => $postId,
                             'course_id' => $courseId,
                             'course_title' => $courseTitle,

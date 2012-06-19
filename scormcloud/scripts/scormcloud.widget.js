@@ -6,28 +6,28 @@
 
 
 ScormCloud.Widget.getLaunchURL = function(regId,widgetType){
-    var postUrl = jQuery('a[key="' + regId + '"]').attr('url');
+	if (jQuery('a[key="' + regId + '"]').attr('clicked') != 'true'){
+    	var postUrl = jQuery('a[key="' + regId + '"]').attr('clicked','true').attr('url');
     
-    jQuery.ajax({
-    type: "POST",
-    url: postUrl,
-    data: 	"action=getLaunchUrl" +
-            "&widgetname=" + widgetType + 
-            "&regid=" + regId +
-            "&returnurl=" + window.location,
-    success: function(data){
-        //alert(data);
-        window.location = data;
-    }
-    });
+	    jQuery.ajax({
+	    type: "POST",
+	    url: postUrl,
+	    data: 	"action=getLaunchUrl" +
+	            "&widgetname=" + widgetType + 
+	            "&regid=" + regId +
+	            "&returnurl=" + window.location,
+	    success: function(data){
+	        //alert(data);
+	        window.location = data;
+	    }
+	    });
     
+	}
     
 }
 
 ScormCloud.Widget.getAnonCatalogLaunchURL = function(courseId){
-    
     var $j = jQuery.noConflict();
-    
     var fname = $j.trim($j('.courselistDiv .anonlaunchdiv input[key="' + courseId + '"][name="scormcloudfname"]').val());
     var lname = $j.trim($j('.courselistDiv .anonlaunchdiv input[key="' + courseId + '"][name="scormcloudlname"]').val());
     var email = $j.trim($j('.courselistDiv .anonlaunchdiv input[key="' + courseId + '"][name="scormcloudemail"]').val());
@@ -36,7 +36,7 @@ ScormCloud.Widget.getAnonCatalogLaunchURL = function(courseId){
         ScormCloud.Widget.displayCatalogMessage(courseId,"Please make sure you have entered a first and last name and an email.");
         return;
     }
-    var postUrl = jQuery('.courselistDiv .anonlaunchdiv input.catalogLaunchBtn[key="' + courseId + '"]').attr('url');
+    var postUrl = jQuery('.courselistDiv .anonlaunchdiv input.catalogLaunchBtn[key="' + courseId + '"]').attr('disabled', 'disabled').attr('url');
     var title = jQuery('.courselistDiv .anonlaunchdiv input.catalogLaunchBtn[key="' + courseId + '"]').attr('coursetitle');
     
     jQuery.ajax({
@@ -59,21 +59,24 @@ ScormCloud.Widget.getAnonCatalogLaunchURL = function(courseId){
 }
 
 ScormCloud.Widget.getCatalogLaunchURL = function(courseId){
-    var postUrl = jQuery('a[key="' + courseId + '"]').attr('url');
-    var title = jQuery('a[key="' + courseId + '"]').attr('coursetitle');
+	if (jQuery('a[key="' + courseId + '"]').attr('clicked') != 'true'){
+
+    	var postUrl = jQuery('a[key="' + courseId + '"]').attr('clicked','true').attr('url');
+	    var title = jQuery('a[key="' + courseId + '"]').attr('coursetitle');
     
-    jQuery.ajax({
-    type: "POST",
-    url: postUrl,
-    data: 	"action=addCatalogRegGetLaunchUrl" + 
-            "&courseid=" + courseId +
-            "&coursetitle=" + title +
-            "&returnurl=" + window.location,
-    success: function(data){
-        //alert(data);
-        window.location = data;
-    }
-    });
+	    jQuery.ajax({
+	    type: "POST",
+	    url: postUrl,
+	    data: 	"action=addCatalogRegGetLaunchUrl" + 
+	            "&courseid=" + courseId +
+	            "&coursetitle=" + title +
+	            "&returnurl=" + window.location,
+	    success: function(data){
+	        //alert(data);
+	        window.location = data;
+	    }
+	    });
+	}
     
     
 }
