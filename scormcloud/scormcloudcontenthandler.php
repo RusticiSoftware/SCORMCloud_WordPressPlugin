@@ -115,7 +115,7 @@ class ScormCloudContentHandler
 	                        "<td class='$completion'>".$completion."</td>" .
 	                        "<td class='$success'>".$success."</td>" .
 	                        "<td class='".($score == "unknown" ? __("unknown") : "")."'>".($score == "unknown" ? "-" : $score."%")."</td>".
-	                        "<td class='time'>$seconds ".__("secs","scormcloud")."</td>" .
+                            "<td class='time'>".floor($seconds / 60)."min ".($seconds % 60).__('sec spent in course',"scormcloud")."</td>".
 	                        "</tr></table>";
     
     
