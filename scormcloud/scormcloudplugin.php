@@ -56,11 +56,13 @@ class ScormCloudPlugin
             $appid = get_site_option('scormcloud_appid');
             $secretkey = get_site_option('scormcloud_secretkey');
             $engine_url = get_site_option('scormcloud_engine_url');
+            $proxy = get_site_option('proxy');
     
         } else {
             $appid = get_option('scormcloud_appid');
             $secretkey = get_option('scormcloud_secretkey');
             $engine_url = get_option('scormcloud_engine_url');
+            $proxy = get_option('proxy');
         }
     
         $origin = ScormEngineUtilities::getCanonicalOriginString('Rustici Software', 'WordPress', '1.1.2');
@@ -70,7 +72,7 @@ class ScormCloudPlugin
             $engine_url = "http://cloud.scorm.com/EngineWebServices";
         }
     
-        return new ScormEngineService($engine_url,$appid,$secretkey,$origin);
+        return new ScormEngineService($engine_url,$appid,$secretkey,$origin, $proxy);
     }
     
     /**

@@ -7,6 +7,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     $engine_url = $_POST['scormcloud_engine_url'];
     $secretkey = $_POST['scormcloud_secretkey'];
     $player_cssurl = $_POST['scormcloud_player_cssurl'];
+    $proxy = $_POST['proxy'];
 	$network_managed = ScormCloudPlugin::is_network_managed();
 
     if (!$network_managed) {
@@ -16,6 +17,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     }
     
     update_option('scormcloud_player_cssurl', $player_cssurl);
+    update_option('proxy', $proxy);
 
     $ScormService = ScormCloudPlugin::get_cloud_service();
     if (!$ScormService->isValidUrl()){
@@ -53,7 +55,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     $secretkey = get_option('scormcloud_secretkey');
     $engine_url = (strlen(get_option('scormcloud_engine_url')) > 0) ? get_option('scormcloud_engine_url') : "http://cloud.scorm.com/EngineWebServices";
     $player_cssurl = (strlen(get_option('scormcloud_player_cssurl')) > 0) ? get_option('scormcloud_player_cssurl') : 'http://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css';
-    
+    $proxy = get_option('proxy');
     $network_managed = ScormCloudPlugin::is_network_managed();
 }
 ?>
@@ -103,6 +105,10 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 	type="text" name="scormcloud_player_cssurl"
 	value="<?php echo $player_cssurl; ?>" size="50"></p>
 
+<p><?php _e("Proxy: ","proxy"); ?><input
+    type="text" name="proxy"
+    value="<?php echo $proxy; ?>" size="50">
+</p>
 <p class="submit"><input type="submit" name="Submit" value="<?php _e("Update Settings","scormcloud" ) ?>" /></p>
 </form>
 </div>
