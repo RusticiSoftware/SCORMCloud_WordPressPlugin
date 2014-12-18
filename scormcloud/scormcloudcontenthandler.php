@@ -203,7 +203,13 @@ class ScormCloudContentHandler
         $ScormService = ScormCloudPlugin::get_cloud_service();
         $regService = $ScormService->getRegistrationService();
         $userData = get_userdata($userId);
-        $response = $regService->UpdateLearnerInfo($userData->user_email,$userData->user_firstname,$userData->user_lastname);
-        write_log($response);
+		/* pushing blank data into SCORMCloud generates a stack trace */
+		if (!empty($userData->user_firstname) &&
+			!empty($userData->user_lastname)) {
+		  $response = $regService->UpdateLearnerInfo($userData->user_email,$userData->user_firstname,$userData->user_lastname);
+		  write_log($response);
+		} else {
+		  write_log("profile update skipped for {$userData->user_email} due to missing first or last name");
+		}
     }
 }
