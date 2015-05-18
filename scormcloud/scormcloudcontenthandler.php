@@ -8,7 +8,7 @@ class ScormCloudContentHandler
     public static function make_blog_entry($content){
         global $wpdb;
         
-        preg_match_all('/\[scormcloud.training:.*\]/',$content,$cloudTagArray);
+        preg_match_all('/\\[scormcloud.training:.*?\\]/',$content,$cloudTagArray);
     
         $cloudTags = $cloudTagArray[0];
     
@@ -140,7 +140,7 @@ class ScormCloudContentHandler
             $content = str_replace($tagString,$inviteHtml,$content);
         }
 
-		preg_match_all('/\[scormcloud.reportage:.*]/',$content,$cloudRepArray);
+		preg_match_all('/\\[scormcloud.reportage:.*?\\]/',$content,$cloudRepArray);
     
         $cloudReportageLinks = $cloudRepArray[0];
     
