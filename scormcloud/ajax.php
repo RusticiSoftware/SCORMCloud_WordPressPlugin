@@ -507,11 +507,11 @@ switch($action)
         $regTable = ScormCloudDatabase::get_registrations_table();
         $query = $wpdb->prepare('SELECT reg.*, inv.course_id FROM '.$regTable.' reg JOIN '.$invTable.' inv
         						 ON reg.invite_id = inv.invite_id
-        						 WHERE reg.invite_id = %s AND inv.app_id = %s ORDER BY reg.update_date DESC', array($inviteId, ScormCloudPlugin::get_wp_option('scormcloud_appid')));
+        						 WHERE reg.invite_id = %s AND inv.app_id = %s ORDER BY reg.update_date DESC LIMIT 10', array($inviteId, ScormCloudPlugin::get_wp_option('scormcloud_appid')));
         $inviteRegs = $wpdb->get_results($query, OBJECT);
 
         $regService = $ScormService->getRegistrationService();
-        $regsXMLStr = $regService->GetRegistrationListResults($inviteId."-.*",$inviteRegs[0]->course_id,0);
+        $regsXMLStr = $regService->GetRegistrationListResults($inviteRegs[0]->course_id,null,0);
 
         $regsXML = simplexml_load_string($regsXMLStr);
         $regList = $regsXML->registrationlist;
@@ -526,32 +526,28 @@ switch($action)
             <th class="manage-column">Score</th>
             <th class="manage-column">Time</th>
             <th class="manage-column"></th></tr></thead>';
-        $regcount = (count($inviteRegs) < 10) ? count($inviteRegs) : 10;
-        for ($iter = 0; $iter < $regcount; $iter++ ){
-            $inviteReg = $inviteRegs[$iter];
-
-
+        foreach ($inviteRegs as $inviteReg) {
             $regResult = $regList->xpath("//registration[@id='".$inviteReg->reg_id."']");
-            $regReport = $regResult[0]->registrationreport;
+            if (count($regResult) > 0){
+                $regReport = $regResult[0]->registrationreport;
+               
+                $returnHTML .= "<tr key='".$inviteReg->reg_id."'>";
+                if ($userId = $inviteReg->user_id){
+                    $wpUser = get_userdata($userId);
+                    $returnHTML .= "<td>".$wpUser->display_name."</td>";
+                } else {
+                    $returnHTML .= "<td>".$inviteReg->user_email."</td>";
+                }
+                
+                $returnHTML .= "<td class='".$regReport->complete."'>".$regReport->complete."</td>";
+                $returnHTML .= "<td class='".$regReport->success."'>".$regReport->success."</td>";
+                $score = $regReport->score;
+                $returnHTML .= "<td>".($score == "unknown" ? "-" : $score."%")."</td>";
+                $seconds = $regReport->totaltime;
+                $returnHTML .= "<td>".floor($seconds / 60)."min ".($seconds % 60)."sec</td>";
+                $returnHTML .= "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"".$inviteReg->invite_id."\",\"".$inviteReg->reg_id."\"); return false;' key='".$inviteReg->invite_id."'>View Details</tr>";
 
-            $returnHTML .= "<tr key='".$inviteReg->reg_id."'>";
-            if ($userId = $inviteReg->user_id){
-                $wpUser = get_userdata($userId);
-                $returnHTML .= "<td>".$wpUser->display_name."</td>";
-            } else {
-                $returnHTML .= "<td>".$inviteReg->user_email."</td>";
             }
-
-
-            $returnHTML .= "<td class='".$regReport->complete."'>".$regReport->complete."</td>";
-            $returnHTML .= "<td class='".$regReport->success."'>".$regReport->success."</td>";
-            $score = $regReport->score;
-            $returnHTML .= "<td>".($score == "unknown" ? "-" : $score."%")."</td>";
-            $seconds = $regReport->totaltime;
-            $returnHTML .= "<td>".floor($seconds / 60)."min ".($seconds % 60)."sec</td>";
-            $returnHTML .= "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"".$inviteReg->invite_id."\",\"".$inviteReg->reg_id."\"); return false;' key='".$inviteReg->invite_id."'>View Details</tr>";
-
-
 
         }
 
