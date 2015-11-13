@@ -224,7 +224,7 @@ $query = $wpdb->prepare('SELECT * FROM '.$regTable.' WHERE invite_id = %s ORDER 
 $inviteRegs = $wpdb->get_results($query, OBJECT);
 
 $regService = $ScormService->getRegistrationService();
-$regsXMLStr = $regService->GetRegistrationListResults($inviteId."-.*",$invite->course_id,0);
+$regsXMLStr = $regService->GetRegistrationListResults($invite->course_id,null,0);
 
 $regsXML = simplexml_load_string($regsXMLStr);
 $regList = $regsXML->registrationlist;
@@ -241,28 +241,27 @@ $returnHTML .= '<tr class="thead"><th class="manage-column">'.__("User","scormcl
     <th class="manage-column"></th></tr></thead>';
 
 foreach ($inviteRegs as $inviteReg){
-    $regResult = $regList->xpath("//registration[@id='".$inviteReg->reg_id."']");
-    $regReport = $regResult[0]->registrationreport;
-
-    $returnHTML .= "<tr key='".$inviteReg->reg_id."'>";
-    if ($userId = $inviteReg->user_id){
+    $regResult = $regList->xpath('//registration[@id="'.$inviteReg->reg_id.'"]');
+    if (count($regResult)>0){
+      $regReport = $regResult[0]->registrationreport;
+    
+      $returnHTML .= "<tr key='".$inviteReg->reg_id."'>";
+      if ($userId = $inviteReg->user_id){
         $wpUser = get_userdata($userId);
-        $returnHTML .= "<td>".$wpUser->display_name."</td>";
-    } else {
+          $returnHTML .= "<td>".$wpUser->display_name."</td>";
+      } else {
         $returnHTML .= "<td>".$inviteReg->user_email."</td>";
+      }
+
+
+      $returnHTML .= "<td class='".$regReport->complete."'>".__($regReport->complete)."</td>";
+      $returnHTML .= "<td class='".$regReport->success."'>".__($regReport->success)."</td>";
+      $score = $regReport->score;
+      $returnHTML .= "<td>".($score == "unknown" ? "-" : $score."%")."</td>";
+      $seconds = $regReport->totaltime;
+      $returnHTML .= "<td>".floor($seconds / 60)."min ".($seconds % 60)."sec</td>";
+      $returnHTML .= "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"$inviteId\",\"".$inviteReg->reg_id."\"); return false;' key='".$inviteReg->invite_id."'>".__("View Details","scormcloud")."</tr>";
     }
-
-
-    $returnHTML .= "<td class='".$regReport->complete."'>".__($regReport->complete)."</td>";
-    $returnHTML .= "<td class='".$regReport->success."'>".__($regReport->success)."</td>";
-    $score = $regReport->score;
-    $returnHTML .= "<td>".($score == "unknown" ? "-" : $score."%")."</td>";
-    $seconds = $regReport->totaltime;
-    $returnHTML .= "<td>".floor($seconds / 60)."min ".($seconds % 60)."sec</td>";
-    $returnHTML .= "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"$inviteId\",\"".$inviteReg->reg_id."\"); return false;' key='".$inviteReg->invite_id."'>".__("View Details","scormcloud")."</tr>";
-
-
-
 }
 
 $returnHTML .= '</table>';
