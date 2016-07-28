@@ -38,7 +38,7 @@ require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 			//echo '<h2>SCORM Course Registrations</h2>';
 			global $current_user;
 			global $wpdb;
-			get_currentuserinfo();
+			wp_get_current_user();
 
 			if(!is_user_logged_in())
 			{

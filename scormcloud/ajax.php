@@ -14,7 +14,7 @@ $ScormService = ScormCloudPlugin::get_cloud_service();
 $action = $_POST['action'];
 
 global $current_user;
-get_currentuserinfo();
+wp_get_current_user();
 
 switch($action)
 {
@@ -264,7 +264,7 @@ switch($action)
 
         global $current_user;
         global $wpdb;
-        get_currentuserinfo();
+        wp_get_current_user();
 
         $user_email = $current_user->user_email;
         if (!($user_first_name = $current_user->user_firstname) || strlen($user_first_name) < 1){
@@ -358,7 +358,7 @@ switch($action)
 
         global $current_user;
         global $wpdb;
-        get_currentuserinfo();
+        wp_get_current_user();
 
         $regid = $_POST['regid'];
         $returnUrl = $_POST['returnurl'];
@@ -582,7 +582,7 @@ switch($action)
         $appId = ScormCloudPlugin::get_wp_option('scormcloud_appid');
         global $current_user;
         global $wpdb;
-        get_currentuserinfo();
+        wp_get_current_user();
 
         $user_email = $current_user->user_email;
         if (!($user_first_name = $current_user->user_firstname) || strlen($user_first_name) < 1){
