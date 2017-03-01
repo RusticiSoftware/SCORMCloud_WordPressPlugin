@@ -42,7 +42,7 @@ class ScormCloudRegistrationsWidget extends WP_Widget {
 		//echo '<h2>SCORM Course Registrations</h2>';
 		global $current_user;
 		global $wpdb;
-		get_currentuserinfo();
+		wp_get_current_user();
 
 		if ( ! is_user_logged_in() ) {
 			echo '<a href="wp-login.php">' . __( "Log in", "scormcloud" ) . '</a> ' . __( "to see your training history", "scormcloud" ) . '.';

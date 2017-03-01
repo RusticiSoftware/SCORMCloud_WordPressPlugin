@@ -70,7 +70,7 @@ class ScormCloudContentHandler {
 
 					global $current_user;
 					global $wpdb;
-					get_currentuserinfo();
+					wp_get_current_user();
 
 					//if not logged in
 					if ( ! isset( $current_user->user_login ) || $current_user->user_login == '' ) {
