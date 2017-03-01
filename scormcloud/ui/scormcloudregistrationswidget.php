@@ -9,10 +9,12 @@ require_once(SCORMCLOUD_BASE.'db/scormclouddatabase.php');
 		* Declares the UserRegistrationsWidget class.
 		*
 		*/
-		function ScormCloudRegistrationsWidget(){
-			$widget_ops = array('classname' => 'widget_userreg_widget', 'description' => __( "Widget for displaying SCORM registrations to users.","scormcloud") );
+		function __construct(){
+			$widget_ops = array('classname' => 'widget_userreg_widget',
+			                    'description' => __( "Widget for displaying SCORM registrations to users.","scormcloud"));
 			$control_ops = array('width' => 200, 'height' => 300);
-			$this->WP_Widget('scormcloudregistrations', __('Scorm Cloud User Training Widget',"scormcloud"), $widget_ops, $control_ops);
+			parent::__construct('scormcloudregistrations', __('Scorm Cloud User Training Widget',"scormcloud"),
+								$widget_ops, $control_ops);
 		}
 
 		/**

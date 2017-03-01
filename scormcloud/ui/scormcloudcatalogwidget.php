@@ -9,10 +9,11 @@ class ScormCloudCatalogWidget extends WP_Widget
      * Declares the UserRegistrationsWidget class.
      *
      */
-    function ScormCloudCatalogWidget(){
-        $widget_ops = array('classname' => 'widget_catalog_widget', 'description' => __( "Widget for displaying SCORM Cloud Catalog to users.","scormcloud") );
+    function __construct(){
+        $widget_ops = array('classname' => 'widget_catalog_widget',
+                            'description' => __( "Widget for displaying SCORM Cloud Catalog to users.","scormcloud"));
         $control_ops = array('width' => 200, 'height' => 300);
-        $this->WP_Widget('scormcloudcatalog', __("Scorm Cloud Catalog Widget","scormcloud"), $widget_ops, $control_ops);
+        parent::__construct('scormcloudcatalog', __("Scorm Cloud Catalog Widget","scormcloud"), $widget_ops, $control_ops);
     }
 
     /**
