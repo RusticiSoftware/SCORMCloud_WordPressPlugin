@@ -6,160 +6,157 @@ require_once( SCORMCLOUD_BASE . 'db/scormclouddatabase.php' );
 class ScormCloudCatalogWidget extends WP_Widget {
 	/**
 	 * Declares the UserRegistrationsWidget class.
-	 *
 	 */
 	function __construct() {
 		$widget_ops  = array(
 			'classname'   => 'widget_catalog_widget',
-			'description' => __( "Widget for displaying SCORM Cloud Catalog to users.", "scormcloud" )
+			'description' => __( 'Widget for displaying SCORM Cloud Catalog to users.', 'scormcloud' ),
 		);
-		$control_ops = array( 'width' => 200, 'height' => 300 );
-		parent::__construct( 'scormcloudcatalog', __( "Scorm Cloud Catalog Widget", "scormcloud" ), $widget_ops, $control_ops );
+		$control_ops = [
+			'width' => 200,
+			'height' => 300,
+		];
+
+		parent::__construct( 'scormcloudcatalog', __( 'Scorm Cloud Catalog Widget', 'scormcloud' ), $widget_ops, $control_ops );
 	}
 
 	/**
 	 * Displays the Widget
 	 *
+	 * @param array $args widget args.
+	 * @param array $instance widget instance.
 	 */
 	function widget( $args, $instance ) {
-		extract( $args );
 		$title        = apply_filters( 'widget_title', empty( $instance['title'] ) ? '&nbsp;' : $instance['title'] );
-		$requireLogin = isset( $instance['requirelogin'] ) ? (bool) $instance['requirelogin'] : true;
+		$require_login = isset( $instance['requirelogin'] ) ? (bool) $instance['requirelogin'] : true;
 
-		$regsRemaining = ScormCloudPlugin::remaining_registrations();
+		$remaining_registrations = ScormCloudPlugin::remaining_registrations();
 
-		# Before the widget
-		echo $before_widget;
+		// Before the widget.
+		echo wp_kses_post( $args['before_widget'] );
 
-		# The title
+		// The title.
 		if ( $title ) {
-			echo $before_title . $title . $after_title;
+			echo wp_kses_post( $args['before_title'] . $title . $args['after_title'] );
 		}
 
-		# Make the widget
+		// Make the widget.
+		wp_enqueue_style( 'scormcloud',  get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/css/scormcloud.widget.css' );
 
-		echo '<link rel="stylesheet" type="text/css" href="' . get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/css/scormcloud.widget.css" />';
-
-		//echo '<h2>SCORM Cloud Courses</h2>';
 		global $current_user;
 		global $wpdb;
 		wp_get_current_user();
 
-		$coursesFilter  = ( ScormCloudPlugin::is_network_managed() && get_site_option( 'scormcloud_sharecourses' ) !== '1' ) ? $GLOBALS['blog_id'] . "-.*" : null;
-		$ScormService   = ScormCloudPlugin::get_cloud_service();
-		$courseService  = $ScormService->getCourseService();
-		$courseObjArray = $courseService->GetCourseList( $coursesFilter );
+		$courses_filter  = ( ScormCloudPlugin::is_network_managed() && get_site_option( 'scormcloud_sharecourses' ) !== '1' ) ? $GLOBALS['blog_id'] . '-.*' : null;
+		$cloud_service   = ScormCloudPlugin::get_cloud_service();
+		$course_service  = $cloud_service->getCourseService();
+		$course_list = $course_service->GetCourseList( $courses_filter );
 
-		if ( $requireLogin && ! is_user_logged_in() ) {
+		if ( $require_login && ! is_user_logged_in() ) {
 
 			echo '<a href="wp-login.php">Log in</a> to see the course catalog.';
 
 		} else {
 
-			$regService = $ScormService->getRegistrationService();
+			$registration_service = $cloud_service->getRegistrationService();
 
-			//echo count($regs);
 			echo '<div class="courselistDiv">';
-
-
-			echo "<div class='helpMsg'>" . __( "Click course title to launch.", "scormcloud" ) . " <br/><a class='catalogMoreInfo toggleButton' href='javascript:void(0);' toggleobject='.courselistDiv .catalog.moreInfo' onText='" . __( "hide info", "scormcloud" ) . "' offText='" . __( "more info", "scormcloud" ) . "'>" . __( "more info", "scormcloud" ) . "</a></div>";
+			echo "<div class='helpMsg'>" . esc_textarea( __( 'Click course title to launch.', 'scormcloud' ) ) . " <br/><a class='catalogMoreInfo toggleButton' href='javascript:void(0);' toggleobject='.courselistDiv .catalog.moreInfo' onText='" . esc_attr( __( 'hide info', 'scormcloud' ) ) . "' offText='" . esc_attr( __( 'more info', 'scormcloud' ) ) . "'>" . esc_textarea( __( 'more info', 'scormcloud' ) ) . '</a></div>';
 			echo "<div class='catalog moreInfo'>";
-			if ( $current_user->user_login != '' ) {
-				echo "<p>" . __( "If you have taken a course before, your most recent results will display by clicking 'show details' and your most recent training will launch by clicking the course title.", "scormcloud" ) . "</p>";
+			if ( '' !== $current_user->user_login ) {
+				echo '<p>' . esc_textarea( __( 'If you have taken a course before, your most recent results will display by clicking \'show details\' and your most recent training will launch by clicking the course title.', 'scormcloud' ) ) . '</p>';
 			} else {
-				echo "<p>" . __( "To launch a course, you must provide a name and email address.  This will allow your training results to be tracked.", "scormcloud" ) . "</p>";
-				echo "<p>" . __( "By registering or logging in, your results will be associated with your user identity and you will be able to see your training results in this widget.", "scormcloud" ) . "</p>";
-			}
-			echo "</div>";
-			foreach ( $courseObjArray as $course ) {
-
-				$courseId    = $course->getCourseId();
-				$courseTitle = $course->getTitle();
-
-				if ( isset( $current_user->user_login ) && $current_user->user_login != '' ) {
-					$invTable = ScormCloudDatabase::get_invitations_table();
-					$regTable = ScormCloudDatabase::get_registrations_table();
-					$query    = $wpdb->prepare( 'SELECT reg.reg_id, inv.course_title, inv.course_id, inv.active, reg.update_date FROM ' . $regTable . ' reg
-                                                 JOIN ' . $invTable . ' inv ON reg.invite_id = inv.invite_id
-                                                 WHERE reg.user_id = %s AND inv.course_id = %s ORDER BY reg.update_date DESC',
-						array( $current_user->ID, $courseId ) );
-					$reg      = $wpdb->get_row( $query, OBJECT );
-
-					if ( $reg != null ) {
-						$regId            = $reg->reg_id;
-						$regResultsXmlStr = $regService->GetRegistrationResult( $regId, 0, 0 );
-						$resXml           = simplexml_load_string( $regResultsXmlStr );
-
-						$completion = $resXml->registrationreport->complete;
-						$success    = $resXml->registrationreport->success;
-						$seconds    = $resXml->registrationreport->totaltime;
-						$score      = $resXml->registrationreport->score;
-
-						echo "<div class='usercourseblock'>";
-
-						if ( $reg->active == 1 ) {
-							echo "<a class='courseTitle' href='javascript:void(0);' key='$regId' onclick='ScormCloud.Widget.getLaunchURL(\"$regId\",\"Catalog\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . __( "Click to launch course ", "scormcloud" ) . "$courseTitle'>$courseTitle</a>";
-						} else {
-							echo "<span class='courseTitle' title='" . __( "This course is currently inactive.", "scormcloud" ) . "'>$courseTitle</span>";
-						}
-
-						echo "<br/><a href='javascript:void(0);' class='toggleButton showDetails' toggleobject='.courselistDiv .catalog.courseDetails.$regId' onText='" . __( "hide details", "scormcloud" ) . "' offText='" . __( "show details", "scormcloud" ) . "'>" . __( "show details", "scormcloud" ) . "</a>";
-
-						echo "<div class='catalog courseDetails $regId' >";
-						if ( $seconds > 0 ) {
-							echo "<div class=''>" . __( "Completion", "scormcloud" ) . ": <span class='$completion'>" . __( $completion ) . "</span></div>";
-							echo "<div class=''>" . __( "Success", "scormcloud" ) . ": <span class='$success'>" . __( $success ) . "</span></div>";
-							echo "<div class=''>" . __( "Score", "scormcloud" ) . ": " . ( $score == "unknown" ? "-" : $score . "%" ) . "</div>";
-
-							echo '<div class="time">' . floor( $seconds / 60 ) . "min " . ( $seconds % 60 ) . __( "sec spent in course", "scormcloud" ) . '</div>';
-
-
-						} else {
-							echo '<div class="">' . __( "Not Started", "scormcloud" ) . '</div>';
-						}
-						echo "</div>";
-					} else {
-
-						echo "<div class='usercourseblock'>";
-						if ( $regsRemaining > 0 ) {
-							echo "<a class='courseTitle' href='javascript:void(0);' coursetitle='$courseTitle' key='$courseId' onclick='ScormCloud.Widget.getCatalogLaunchURL(\"$courseId\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . __( "Click to launch course ", "scormcloud" ) . "$courseTitle'>$courseTitle</a>";
-						} else {
-							echo "<span class='courseTitle' title='" . __( "This course is currently inactive.", "scormcloud" ) . "'>$courseTitle</span>";
-						}
-
-					}
-
-
-				} else {
-					echo "<div class='usercourseblock'>";
-					if ( $regsRemaining > 0 ) {
-						echo "<a class='courseTitle anonLaunch' href='javascript:void(0);' key='$courseId' title='" . __( "Click to launch course", "scormcloud" ) . " $courseTitle'>$courseTitle</a>";
-
-						echo "<div class='anonlaunchdiv' key='$courseId'>" . __( "First Name", "scormcloud" ) . ":<br/><input name='scormcloudfname' type='text' key='$courseId'/><br/>";
-						echo __( "Last Name", "scormcloud" ) . ":<br/><input name='scormcloudlname' type='text' key='$courseId'/><br/>";
-						echo __( "Email", "scormcloud" ) . ":<br/><input name='scormcloudemail' type='text' key='$courseId'/>";
-						echo "<input name='launch' type='button' class='catalogLaunchBtn' key='$courseId' coursetitle='$courseTitle' onclick='ScormCloud.Widget.getAnonCatalogLaunchURL(\"$courseId\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='" . __( "Start Training", "scormcloud" ) . "'/>";
-						echo "<div class='launchMessage'>message</div></div>";
-					} else {
-						echo "<span class='courseTitle' title='" . __( "This course is currently inactive.", "scormcloud" ) . "'>$courseTitle</span>";
-					}
-
-				}
-				echo "</div>";
-
-
+				echo '<p>' . esc_textarea( __( 'To launch a course, you must provide a name and email address.  This will allow your training results to be tracked.', 'scormcloud' ) ) . '</p>';
+				echo '<p>' . esc_textarea( __( 'By registering or logging in, your results will be associated with your user identity and you will be able to see your training results in this widget.', 'scormcloud' ) ) . '</p>';
 			}
 			echo '</div>';
-			//echo '<script language="javascript">'.$widgetscript.'</script>';
-			echo '<script language="javascript" src="' . get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/scripts/scormcloud.widget.js" >' . '</script>';
-		}
-		# After the widget
-		echo $after_widget;
+			foreach ( $course_list as $course ) {
+
+				$course_id    = $course->getCourseId();
+				$course_title = $course->getTitle();
+
+				if ( isset( $current_user->user_login ) && '' !== $current_user->user_login ) {
+					$invitations_table = ScormCloudDatabase::get_invitations_table();
+					$registrations_table = ScormCloudDatabase::get_registrations_table();
+					$reg      = $wpdb->get_row( $wpdb->prepare( 'SELECT reg.reg_id, inv.course_title, inv.course_id, inv.active, reg.update_date 
+																FROM ' . esc_sql( $registrations_table ) . ' reg
+                                                                JOIN ' . esc_sql( $invitations_table ) . ' inv 
+                                                                    ON reg.invite_id = inv.invite_id
+                                                                WHERE reg.user_id = %s AND inv.course_id = %s
+                                                                ORDER BY reg.update_date DESC',
+					array( $current_user->ID, $course_id ), OBJECT ));// db call ok; no-cache ok.
+
+					if ( null !== $reg ) {
+						$reg_id            = $reg->reg_id;
+						$registration_result = $registration_service->GetRegistrationResult( $reg_id, 0, 0 );
+						$res_xml           = simplexml_load_string( $registration_result );
+
+						$completion = $res_xml->registrationreport->complete;
+						$success    = $res_xml->registrationreport->success;
+						$seconds    = $res_xml->registrationreport->totaltime;
+						$score      = $res_xml->registrationreport->score;
+
+						echo "<div class='usercourseblock'>";
+
+						if ( 1 === $reg->active ) {
+							echo "<a class='courseTitle' href='javascript:void(0);' key='" . esc_attr( $reg_id ) . " onclick='ScormCloud.Widget.getLaunchURL(\"" . esc_js( $reg_id ) . "\",\"Catalog\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_textarea( __( 'Click to launch course ', 'scormcloud' ) ) . esc_textarea( $course_title ) . "'>" . esc_textarea( $course_title ) . '</a>';
+						} else {
+							echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
+						}
+
+						echo "<br/><a href='javascript:void(0);' class='toggleButton showDetails' toggleobject='.courselistDiv .catalog.courseDetails." . esc_attr( $reg_id ) . "' onText='" . esc_attr__( 'hide details', 'scormcloud' ) . "' offText='" . esc_attr__( 'show details', 'scormcloud' ) . "'>" . esc_attr__( 'show details', 'scormcloud' ) . '</a>';
+
+						echo "<div class='catalog courseDetails " . esc_attr( $reg_id ) . "' >";
+						if ( $seconds > 0 ) {
+							echo "<div class=''>" . esc_attr__( 'Completion', 'scormcloud' ) . ": <span class='" . esc_attr( $completion ) . '>' . esc_attr( $completion ) . '</span></div>';
+							echo "<div class=''>" . esc_attr__( 'Success', 'scormcloud' ) . ": <span class='" . esc_attr( $success ) . "'>" . esc_attr( $success ) . '</span></div>';
+							echo "<div class=''>" . esc_textarea( __( 'Score', 'scormcloud' ) . ': ' . ( 'unknown' === $score ? '-' : $score . '%' ) ) . '</div>';
+
+							echo '<div class="time">' . esc_textarea( floor( $seconds / 60 ) . 'min ' . ( $seconds % 60 ) . __( 'sec spent in course', 'scormcloud' ) ) . '</div>';
+
+
+						} else {
+							echo '<div class="">' . esc_attr__( 'Not Started', 'scormcloud' ) . '</div>';
+						}
+						echo '</div>';
+					} else {
+						echo "<div class='usercourseblock'>";
+						if ( $remaining_registrations > 0 ) {
+							echo "<a class='courseTitle' href='javascript:void(0);' coursetitle='" . esc_attr( $course_title ) . " key='" . esc_attr( $course_id ) . "' onclick='ScormCloud.Widget.getCatalogLaunchURL(\"" . esc_attr( $course_id ) . "\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_attr__( 'Click to launch course ', 'scormcloud' ) . esc_attr( $course_title ) . "'>" . esc_attr( $course_title ) . '</a>';
+						} else {
+							echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
+						}
+					}// End if().
+				} else {
+					echo "<div class='usercourseblock'>";
+					if ( $remaining_registrations > 0 ) {
+						echo "<a class='courseTitle anonLaunch' href='javascript:void(0);' key='" . esc_attr( $course_id ) . "' title='" . esc_attr__( 'Click to launch course', 'scormcloud' ) . esc_attr( $course_title ) . "'>" . esc_attr( $course_title ) . '</a>';
+
+						echo "<div class='anonlaunchdiv' key='" . esc_attr( $course_id ) . "'>" . esc_attr__( 'First Name', 'scormcloud' ) . ":<br/><input name='scormcloudfname' type='text' key='" . esc_attr( $course_id ) . "'/><br/>";
+						echo esc_attr__( 'Last Name', 'scormcloud' ) . ":<br/><input name='scormcloudlname' type='text' key='" . esc_attr( $course_id ) . "'/><br/>";
+						echo esc_attr__( 'Email', 'scormcloud' ) . ":<br/><input name='scormcloudemail' type='text' key='" . esc_attr( $course_id ) . "'/>";
+						echo "<input name='launch' type='button' class='catalogLaunchBtn' key='" . esc_attr( $course_id ) . "' coursetitle='" . esc_attr( $course_title ) . "' onclick='ScormCloud.Widget.getAnonCatalogLaunchURL(\"" . esc_attr( $course_id ) . "\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' value='" . esc_attr__( 'Start Training', 'scormcloud' ) . "'/>";
+						echo "<div class='launchMessage'>message</div></div>";
+					} else {
+						echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
+					}
+				}// End if().
+				echo '</div>';
+			}// End foreach().
+			echo '</div>';
+			wp_enqueue_script( get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/scripts/scormcloud.widget.js' );
+		}// End if().
+		// After the widget.
+		echo wp_kses_post( $args['after_widget'] );
 	}
 
 	/**
 	 * Saves the widgets settings.
 	 *
+	 * @param array $new_instance new widget instance.
+	 * @param array $old_instance old widget instance.
+	 *
+	 * @return array
 	 */
 	function update( $new_instance, $old_instance ) {
 		$instance                 = $old_instance;
@@ -172,18 +169,24 @@ class ScormCloudCatalogWidget extends WP_Widget {
 	/**
 	 * Creates the edit form for the widget.
 	 *
+	 * @param array $instance widget instance.
+	 *
+	 * @return string
 	 */
 	function form( $instance ) {
-		//Defaults
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '' ) );
+		// Defaults.
+		$instance = wp_parse_args( (array) $instance, array(
+			'title' => '',
+		) );
 
 		$title        = htmlspecialchars( $instance['title'] );
-		$requireLogin = isset( $instance['requirelogin'] ) ? (bool) $instance['requirelogin'] : true;
+		$require_login = isset( $instance['requirelogin'] ) ? (bool) $instance['requirelogin'] : true;
 
-		# Output the options
-		echo '<p style="text-align:left;"><label for="' . $this->get_field_name( 'title' ) . '">' . __( 'Title:', 'scormcloud' ) . ' <input style="width: 150px;" id="' . $this->get_field_id( 'title' ) . '" name="' . $this->get_field_name( 'title' ) . '" type="text" value="' . $title . '" /></label></p>';
-		echo '<p><input type="checkbox" class="checkbox" id="' . $this->get_field_id( 'requirelogin' ) . '" name="' . $this->get_field_name( 'requirelogin' ) . '"' . ( $requireLogin ? 'checked="checked"' : '' ) . ' />';
-		echo '<label for="' . $this->get_field_id( 'requirelogin' ) . '"> ' . __( "Require user login", "scormcloud" ) . '</label></p>';
+		// Output the options.
+		echo '<p style="text-align:left;"><label for="' . esc_attr( $this->get_field_name( 'title' ) ) . '">' . esc_attr__( 'Title:', 'scormcloud' ) . ' <input style="width: 150px;" id="' . esc_attr( $this->get_field_id( 'title' ) ) . '" name="' . esc_attr( $this->get_field_name( 'title' ) ) . '" type="text" value="' . esc_attr( $title ) . '" /></label></p>';
+		echo '<p><input type="checkbox" class="checkbox" id="' . esc_attr( $this->get_field_id( 'requirelogin' ) ) . '" name="' . esc_attr( $this->get_field_name( 'requirelogin' ) ) . '"' . ( $require_login ? 'checked="checked"' : '' ) . ' />';
+		echo '<label for="' . esc_attr( $this->get_field_id( 'requirelogin' ) ) . '"> ' . esc_attr__( 'Require user login', 'scormcloud' ) . '</label></p>';
+		return 'form';
 
 	}
 

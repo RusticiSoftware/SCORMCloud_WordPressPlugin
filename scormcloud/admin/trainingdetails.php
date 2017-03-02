@@ -173,7 +173,7 @@ echo "<link rel='stylesheet' href='http://cloud.scorm.com/Reportage/css/reportag
 
 
 //Check for some defaults to set the form up
-$rptService = $ScormService->getReportingService();
+$rptService = $cloud_service->getReportingService();
 $rptAuth = $rptService->GetReportageAuth('FREENAV',true);
 
 //  AppId Summary Report
@@ -211,7 +211,7 @@ echo '<br></td></tr></table>'
 
 <?php
 $rServiceUrl = $rptService->GetReportageServiceUrl();
-$reportageUrl = $rServiceUrl.'Reportage/reportage.php?appId='.$ScormService->getAppId()."&viewall=learners&registrationTags=$inviteId|_all";
+$reportageUrl = $rServiceUrl.'Reportage/reportage.php?appId=' . $cloud_service->getAppId() . "&viewall=learners&registrationTags=$inviteId|_all";
 $reportageViewAllUrl = $rptService->GetReportUrl($rptAuth, $reportageUrl);
 ?>
 
@@ -223,7 +223,7 @@ $reportageViewAllUrl = $rptService->GetReportUrl($rptAuth, $reportageUrl);
 $query = $wpdb->prepare('SELECT * FROM '.$regTable.' WHERE invite_id = %s ORDER BY update_date DESC', array($inviteId));
 $inviteRegs = $wpdb->get_results($query, OBJECT);
 
-$regService = $ScormService->getRegistrationService();
+$regService = $cloud_service->getRegistrationService();
 $regsXMLStr = $regService->GetRegistrationListResults($invite->course_id,null,0);
 
 $regsXML = simplexml_load_string($regsXMLStr);

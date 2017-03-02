@@ -6,13 +6,12 @@ if ( defined( 'ABSPATH' ) ) {
 }
 require_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
-require_once( 'scormcloud.deprecatedFunctions.php' );
 require_once( SCORMCLOUD_BASE . 'scormcloudplugin.php' );
 require_once( SCORMCLOUD_BASE . 'scormcloudemailer.php' );
 require_once( SCORMCLOUD_BASE . 'db/scormclouddatabase.php' );
 
-$ScormService = ScormCloudPlugin::get_cloud_service();
-$action       = $_POST['action'];
+$cloud_service          = ScormCloudPlugin::get_cloud_service();
+$action = get_post_arg_as_string( 'action' );
 
 global $current_user;
 wp_get_current_user();
@@ -20,822 +19,813 @@ wp_get_current_user();
 switch ( $action ) {
 	case 'addregistration':
 
-		$inviteId    = uniqid();
-		$appId       = ScormCloudPlugin::get_wp_option( 'scormcloud_appid' );
-		$postId      = "__direct_invite__";
-		$courseId    = $_POST['courseid'];
-		$courseTitle = $_POST['coursetitle'];
-		$sendEmail   = isset( $_POST['sendemail'] ) ? $_POST['sendemail'] : null;
+		$invite_id   = uniqid();
+		$app_id       = ScormCloudPlugin::get_wp_option( 'scormcloud_appid' );
+		$post_id      = '__direct_invite__';
+		$course_id    = get_post_arg_as_string( 'courseid' );
+		$course_title = get_post_arg_as_string( 'coursetitle' );
+		$send_email   = get_post_arg_as_string( 'sendemail' );
+		$user_id_strings = get_post_arg_as_string( 'userids' );
+		$all_users   = get_post_arg_as_string( 'allusers' );
+		$roles      = get_post_arg_as_string( 'roles' );
 
-		$strUserIds = isset( $_POST['userids'] ) ? $_POST['userids'] : null;
-		$allUsers   = isset( $_POST['allusers'] ) ? $_POST['allusers'] : null;
-		$roles      = isset( $_POST['roles'] ) ? $_POST['roles'] : null;
-
-		$header      = "";
-		$description = "";
+		$header      = '';
+		$description = '';
 
 		$require_login    = 1;
 		$show_course_info = 0;
 
-		if ( ! $wpdb->insert( ScormCloudDatabase::get_invitations_table(),
+		$inserted = $wpdb->insert( ScormCloudDatabase::get_invitations_table(),
 			array(
-				'invite_id'        => $inviteId,
+				'invite_id'        => $invite_id,
 				'blog_id'          => $GLOBALS['blog_id'],
-				'app_id'           => $appId,
-				'post_id'          => $postId,
-				'course_id'        => $courseId,
-				'course_title'     => $courseTitle,
+				'app_id'           => $app_id,
+				'post_id'          => $post_id,
+				'course_id'        => $course_id,
+				'course_title'     => $course_title,
 				'header'           => $header,
 				'description'      => $description,
 				'require_login'    => $require_login,
-				'show_course_info' => $show_course_info
+				'show_course_info' => $show_course_info,
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) )
-		) {
-			echo "Could not insert invitation record.";
+		array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) );// db call ok; no-cache ok.
+
+		if ( ! $inserted ) {
+			echo 'Could not insert invitation record.';
 			break;
 		}
 
-		//create the cloud registration(s)
+		// create the cloud registration(s).
 		$users = array();
 
-		if ( isset( $allUsers ) ) {
+		if ( isset( $all_users ) ) {
 			$users = get_users();
 
-		} elseif ( isset( $strUserIds ) ) {
-			$userIds        = explode( ",", $strUserIds );
-			$wp_user_search = new WP_User_Query( array( 'include' => $userIds ) );
+		} elseif ( isset( $user_id_strings ) ) {
+			$user_ids       = explode( ',', $user_id_strings );
+			$wp_user_search = new WP_User_Query( array(
+				'include' => $user_ids,
+			) );
 			$users          = $wp_user_search->get_results();
 
 		} elseif ( isset( $roles ) ) {
-			$roleArray = explode( ",", $roles );
-			foreach ( $roleArray as $thisRole ) {
-				$wp_user_search = new WP_User_Query( array( 'role' => $thisRole ) );
-				$users          = array_merge( $users, $wp_user_search->get_results() );
+			$role_array = explode( ',', $roles );
+			foreach ( $role_array as $this_role ) {
+				$wp_user_search = new WP_User_Query( array(
+					'role' => $this_role,
+				) );
+				$users = array_merge( $users, $wp_user_search->get_results() );
 			}
 			$users = array_unique( $users, SORT_REGULAR );
 		}
 
-		$responseString = 'success';
+		$response_string = 'success';
 		foreach ( $users as $user ) {
-			$userData = get_userdata( $user->ID );
-			if ( ! ( $user_first_name = $userData->user_firstname ) || strlen( $user_first_name ) < 1 ) {
-				$user_first_name = $userData->display_name;
+			$user_data = get_userdata( $user->ID );
+			$user_first_name = $user_data->user_firstname;
+			if ( ! ( $user_first_name ) || strlen( $user_first_name ) < 1 ) {
+				$user_first_name = $user_data->display_name;
 			}
-			if ( ! ( $user_last_name = $userData->user_lastname ) || strlen( $user_last_name ) < 1 ) {
-				$user_last_name = $userData->display_name;
+			$user_last_name = $user_data->user_lastname;
+			if ( ! ( $user_last_name ) || strlen( $user_last_name ) < 1 ) {
+				$user_last_name = $user_data->display_name;
 			}
 
 
-			$regid      = $inviteId . "-" . uniqid();
-			$regService = $ScormService->getRegistrationService();
-			$response   = $regService->CreateRegistration( $regid, $courseId, $userData->user_email, $user_first_name, $user_last_name, $userData->user_email );
+			$reg_id   = $invite_id . '-' . uniqid();
+			$registration_service = $cloud_service->getRegistrationService();
+			$response = $registration_service->CreateRegistration( $reg_id, $course_id, $user_data->user_email, $user_first_name, $user_last_name, $user_data->user_email );
 
 			$xml = simplexml_load_string( $response );
 			if ( isset( $xml->success ) ) {
 				$wpdb->insert( ScormCloudDatabase::get_registrations_table(),
 					array(
-						'invite_id'  => $inviteId,
-						'reg_id'     => $regid,
-						'user_id'    => $userData->ID,
-						'user_email' => $userData->user_email
+						'invite_id'  => $invite_id,
+						'reg_id'     => $reg_id,
+						'user_id'    => $user_data->ID,
+						'user_email' => $user_data->user_email,
 					),
-					array( '%s', '%s', '%d', '%s' ) );
+				array( '%s', '%s', '%d', '%s' ) );// db call ok; no-cache ok.
 
-				if ( $sendEmail ) {
-					$display_name = $userData->display_name;
+				if ( $send_email ) {
+					$display_name = $user_data->display_name;
 					$message      = "<p>Hello $display_name,</p>";
-					$message .= '<p>' . $current_user->display_name . " has invited you to take the training '$courseTitle'." . ' You can view all available trainings by visiting the site <a href="' . get_bloginfo( 'url' ) . '">' . get_bloginfo( 'name' ) . '</a>.</p>';
-					$message .= "<p>This email was automatically sent by the SCORM Cloud plugin for WordPress.</p>";
+					$message .= '<p>' . $current_user->display_name . " has invited you to take the training '$course_title'." . ' You can view all available trainings by visiting the site <a href="' . get_bloginfo( 'url' ) . '">' . get_bloginfo( 'name' ) . '</a>.</p>';
+					$message .= '<p>This email was automatically sent by the SCORM Cloud plugin for WordPress.</p>';
 
-					ScormCloudEmailer::send_email( $userData, 'Training Invitation', $message );
+					ScormCloudEmailer::send_email( $user_data, 'Training Invitation', $message );
 				}
-
-			} else if ( $xml->err['code'] == '4' ) {
-				$responseString = 'There was a problem creating a new training. The maximum number of registrations for this account has been reached.';
+			} elseif ( '4' === $xml->err['code'] ) {
+				$response_string = 'There was a problem creating a new training. The maximum number of registrations for this account has been reached.';
 			} else {
-				$responseString = 'There was a problem creating a new training. ' . $xml->err['msg'];
+				$response_string = 'There was a problem creating a new training. ' . $xml->err['msg'];
 			}
-
-		}
-
-		echo $responseString;
+		}// End foreach().
+		echo esc_textarea( $response_string );
 
 		break;
 	case 'addPostInvite':
 
-		$inviteId         = uniqid();
-		$appId            = ScormCloudPlugin::get_wp_option( 'scormcloud_appid' );
-		$courseId         = $_POST['courseid'];
-		$courseTitle      = $_POST['coursetitle'];
-		$header           = $_POST['header'];
-		$description      = $_POST['description'];
-		$require_login    = $_POST['requirelogin'];
-		$show_course_info = $_POST['showcourseinfo'];
+		$invite_id        = uniqid();
+		$app_id           = ScormCloudPlugin::get_wp_option( 'scormcloud_appid' );
+		$course_id        = get_post_arg_as_string( 'courseid' );
+		$course_title     = get_post_arg_as_string( 'coursetitle' );
+		$header           = get_post_arg_as_string( 'header' );
+		$description      = get_post_arg_as_string( 'description' );
+		$require_login    = get_post_arg_as_string( 'requirelogin' );
+		$show_course_info = get_post_arg_as_string( 'showcourseinfo' );
 
 		$wpdb->insert( ScormCloudDatabase::get_invitations_table(),
 			array(
-				'invite_id'        => $inviteId,
+				'invite_id'        => $invite_id,
 				'blog_id'          => $GLOBALS['blog_id'],
-				'app_id'           => $appId,
-				'course_id'        => $courseId,
-				'course_title'     => $courseTitle,
+				'app_id'           => $app_id,
+				'course_id'        => $course_id,
+				'course_title'     => $course_title,
 				'header'           => $header,
 				'description'      => $description,
 				'require_login'    => $require_login,
-				'show_course_info' => $show_course_info
+				'show_course_info' => $show_course_info,
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) );
+		array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) );// db call ok; no-cache ok.
 
-		echo $inviteId;
-
+		echo esc_textarea( $invite_id );
 
 		break;
 
 	case 'updatePostInvite':
 
-		$inviteId         = $_POST['inviteid'];
-		$header           = $_POST['header'];
-		$description      = $_POST['description'];
-		$require_login    = $_POST['requirelogin'];
-		$show_course_info = $_POST['showcourseinfo'];
+		$invite_id        = get_post_arg_as_string( 'inviteid' );
+		$header           = get_post_arg_as_string( 'header' );
+		$description      = get_post_arg_as_string( 'description' );
+		$require_login    = get_post_arg_as_string( 'requirelogin' );
+		$show_course_info = get_post_arg_as_string( 'showcourseinfo' );
 
 		$wpdb->update( ScormCloudDatabase::get_invitations_table(),
 			array(
 				'header'           => $header,
 				'description'      => $description,
 				'require_login'    => (int) $require_login,
-				'show_course_info' => (int) $show_course_info
+				'show_course_info' => (int) $show_course_info,
 			),
-			array( 'invite_id' => $inviteId ),
-			array( '%s', '%s', '%d', '%d' ) );
+			array(
+			'invite_id' => $invite_id,
+			),
+		array( '%s', '%s', '%d', '%d' ) );// db call ok; no-cache ok.
 
 		break;
 
-	case "addAnonRegGetLaunchUrl":
-		$user_first_name = $_POST['fname'];
-		$user_last_name  = $_POST['lname'];
-		$user_email      = $_POST['email'];
-		$inviteId        = $_POST['inviteid'];
-		$returnUrl       = $_POST['returnurl'];
+	case 'addAnonRegGetLaunchUrl':
 
-		$invite = ScormCloudDatabase::get_invitation( $inviteId );
+		$user_first_name = get_post_arg_as_string( 'fname' );
+		$user_last_name  = get_post_arg_as_string( 'lname' );
+		$user_email      = get_post_arg_as_string( 'email' );
+		$invite_id       = get_post_arg_as_string( 'inviteid' );
+		$return_url       = get_post_arg_as_string( 'returnurl' );
 
-		$appId    = $invite->app_id;
-		$courseId = $invite->course_id;
+		$invite = ScormCloudDatabase::get_invitation( $invite_id );
 
-		$courseTags = '';
-		if ( $invite->post_id != "__direct_invite__" && $invite->post_id != '__catalog_widget__' ) {
-			$postCategories = get_the_category( $invite->post_id );
-			if ( is_array( $postCategories ) ) {
-				foreach ( $postCategories as $category ) {
-					$courseTags .= "," . $category->cat_name;
+		$app_id = $invite->app_id;
+		$course_id = $invite->course_id;
+
+		$course_tags = '';
+		if ( '__direct_invite__' !== $invite->post_id && '__catalog_widget__' !== $invite->post_id ) {
+			$post_categories = get_the_category( $invite->post_id );
+			if ( is_array( $post_categories ) ) {
+				foreach ( $post_categories as $category ) {
+					$course_tags .= ',' . $category->cat_name;
 				}
 			}
-			$postTags = get_the_tags( $invite->post_id );
-			if ( is_array( $postTags ) ) {
-				foreach ( $postTags as $tag ) {
-					$courseTags .= "," . $tag->name;
+			$post_tags = get_the_tags( $invite->post_id );
+			if ( is_array( $post_tags ) ) {
+				foreach ( $post_tags as $tag ) {
+					$course_tags .= ',' . $tag->name;
 				}
 			}
 		}
 
 
-		$regTags = $GLOBALS['blog_id'] . ',' . $inviteId . $courseTags;
+		$reg_tags = $GLOBALS['blog_id'] . ',' . $invite_id . $course_tags;
 
-		if ( strlen( $courseTags ) > 0 ) {
-			$courseTags = substr( $courseTags, 1 );
+		if ( strlen( $course_tags ) > 0 ) {
+			$course_tags = substr( $course_tags, 1 );
 		}
 
-		$learnerTags = "anonymous";
+		$learner_tags = 'anonymous';
 
-		$regService = $ScormService->getRegistrationService();
+		$registration_service = $cloud_service->getRegistrationService();
 
-		$inviteReg = ScormCloudDatabase::get_invitation_reg( array( 'invite_id'  => $inviteId,
-		                                                            'user_email' => $user_email
+		$invite_reg = ScormCloudDatabase::get_invitation_reg( array(
+																'invite_id'  => $invite_id,
+																'user_email' => $user_email,
 		) );
-		if ( $inviteReg != null ) {
-			$regid = (string) $inviteReg->reg_id;
-		} else {
-			$regid = $inviteId . "-" . uniqid();
 
-			//create the cloud registration
-			$regService->CreateRegistration( $regid, $courseId, $user_email, $user_first_name, $user_last_name, $user_email );
+		if ( null !== $invite_reg ) {
+			$reg_id = (string) $invite_reg->reg_id;
+		} else {
+			$reg_id = $invite_id . '-' . uniqid();
+
+			// create the cloud registration.
+			$registration_service->CreateRegistration( $reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email );
 
 			$wpdb->insert( ScormCloudDatabase::get_registrations_table(),
 				array(
-					'invite_id'  => $inviteId,
-					'reg_id'     => $regid,
-					'user_email' => $user_email
-				) );
+					'invite_id'  => $invite_id,
+					'reg_id'     => $reg_id,
+					'user_email' => $user_email,
+			) );// db call ok; no-cache ok.
 		}
 
 
-		if ( function_exists( "bp_activity_add" ) ) {
+		if ( function_exists( 'bp_activity_add' ) ) {
 			global $bp;
 
-			if ( $invite->post_id != "__direct_invite__" && $invite->post_id != '__catalog_widget__' ) {
-				$thisPost       = get_post( $invite->post_id );
-				$post_permalink = get_permalink( $thisPost->ID );
-				$actionStr      = sprintf( '%s launched course "%s" from post %s', $user_first_name . ' ' . $user_last_name, $invite->course_title, '<a href="' . $post_permalink . '">' . $thisPost->post_title . '</a>' );
+			if ( '__direct_invite__' !== $invite->post_id && '__catalog_widget__' !== $invite->post_id ) {
+				$this_post      = get_post( $invite->post_id );
+				$post_permalink = get_permalink( $this_post->ID );
+				$action_str      = sprintf( '%s launched course "%s" from post %s', $user_first_name . ' ' . $user_last_name, $invite->course_title, '<a href="' . $post_permalink . '">' . $this_post->post_title . '</a>' );
 			} else {
-				$actionStr = sprintf( $user_first_name . ' ' . $user_last_name, $from_user_link, $invite->course_title );
+				$action_str = sprintf( $user_first_name . ' ' . $user_last_name, $from_user_link, $invite->course_title );
 			}
-			//error_log('logged in user: '.$bp->loggedin_user->id);
 
-			$activityArgs = array(
-				'action'  => $actionStr,
-				// The activity action - e.g. "Jon Doe posted an update"
+			$activity_args = array(
+				'action'  => $action_str,
+				// The activity action - e.g. "Jon Doe posted an update".
 				'content' => '',
-				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!"
-
+				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!".
 				'component' => 'scormcloud',
-				// The name/ID of the component e.g. groups, profile, mycomponent
+				// The name/ID of the component e.g. groups, profile, mycomponent.
 				'type' => 'training_launch',
-				// The activity type e.g. activity_update, profile_updated
+				// The activity type e.g. activity_update, profile_updated.
 				'primary_link' => '',
-				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink)
-
+				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink).
 				'user_id'           => false,
 				// Optional: The user to record the activity for, can be false if this activity is not for a user.
 				'item_id'           => false,
-				// Optional: The ID of the specific item being recorded, e.g. a blog_id
+				// Optional: The ID of the specific item being recorded, e.g. a blog_id.
 				'secondary_item_id' => false,
-				// Optional: A second ID used to further filter e.g. a comment_id
-				'recorded_time'     => gmdate( "Y-m-d H:i:s" ),
-				// The GMT time that this activity was recorded
-				'hide_sitewide'     => false
+				// Optional: A second ID used to further filter e.g. a comment_id.
+				'recorded_time'     => gmdate( 'Y-m-d H:i:s' ),
+				// The GMT time that this activity was recorded.
+				'hide_sitewide'     => false,
 				// Should this be hidden on the sitewide activity stream?
 			);
-			$bpActivityId = bp_activity_add( $activityArgs );
-			error_log( 'Logging action: ' . $actionStr . ' Activity ID: ' . $bpActivityId );
+			$bp_activity_id  = bp_activity_add( $activity_args );
 		}
-		$cssUrl = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
+		$css_url = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
 
-		echo $regService->GetLaunchUrl( $regid, $returnUrl, $cssUrl, null, $courseTags, $learnerTags, $regTags );
-
+		echo esc_url_raw( $registration_service->GetLaunchUrl( $reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags ) );
 
 		break;
 
-	case "addUserRegGetLaunchUrl":
-		$inviteId  = $_POST['inviteid'];
-		$returnUrl = $_POST['returnurl'];
+	case 'addUserRegGetLaunchUrl':
+		$invite_id = get_post_arg_as_string( 'inviteid' );
+		$return_url = get_post_arg_as_string( 'returnurl' );
 
-		$regid = $inviteId . "-" . uniqid();
+		$reg_id = $invite_id . '-' . uniqid();
 
 		global $current_user;
 		global $wpdb;
 		wp_get_current_user();
 
 		$user_email = $current_user->user_email;
-		if ( ! ( $user_first_name = $current_user->user_firstname ) || strlen( $user_first_name ) < 1 ) {
+		$user_first_name = $current_user->user_firstname;
+		$user_last_name = $current_user->user_lastname;
+		if ( ! ( $user_first_name ) || strlen( $user_first_name ) < 1 ) {
 			$user_first_name = $current_user->display_name;
 		}
-		if ( ! ( $user_last_name = $current_user->user_lastname ) || strlen( $user_last_name ) < 1 ) {
+		if ( ! ( $user_last_name ) || strlen( $user_last_name ) < 1 ) {
 			$user_last_name = $current_user->display_name;
 		}
 
-		$invite = ScormCloudDatabase::get_invitation( $inviteId );
+		$invite = ScormCloudDatabase::get_invitation( $invite_id );
 
-		$courseId = $invite->course_id;
+		$course_id = $invite->course_id;
 
-		$courseTags = '';
-		if ( $invite->post_id != "__direct_invite__" && $invite->post_id != '__catalog_widget__' ) {
-			$postCategories = get_the_category( $invite->post_id );
-			if ( is_array( $postCategories ) ) {
-				foreach ( $postCategories as $category ) {
-					$courseTags .= "," . $category->cat_name;
+		$course_tags = '';
+		if ( '__direct_invite__' !== $invite->post_id && '__catalog_widget__' !== $invite->post_id ) {
+			$post_categories = get_the_category( $invite->post_id );
+			if ( is_array( $post_categories ) ) {
+				foreach ( $post_categories as $category ) {
+					$course_tags .= ',' . $category->cat_name;
 				}
 			}
-			$postTags = get_the_tags( $invite->post_id );
-			if ( is_array( $postTags ) ) {
-				foreach ( $postTags as $tag ) {
-					$courseTags .= "," . $tag->name;
+			$post_tags = get_the_tags( $invite->post_id );
+			if ( is_array( $post_tags ) ) {
+				foreach ( $post_tags as $tag ) {
+					$course_tags .= ',' . $tag->name;
 				}
 			}
-
-
 		}
 
-		$regTags = $GLOBALS['blog_id'] . ',' . $inviteId . $courseTags;
+		$reg_tags = $GLOBALS['blog_id'] . ',' . $invite_id . $course_tags;
 
-		if ( strlen( $courseTags ) > 0 ) {
-			$courseTags = substr( $courseTags, 1 );
+		if ( strlen( $course_tags ) > 0 ) {
+			$course_tags = substr( $course_tags, 1 );
 		}
 
-		$learnerTags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : "anonymous";
+		$learner_tags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : 'anonymous';
 
-		//echo $regid.','. $courseId.','.  $user_email.','.  $user_first_name.','.  $user_last_name;
-		//create the cloud registration
-		$regService = $ScormService->getRegistrationService();
-		$regService->CreateRegistration( $regid, $courseId, $user_email, $user_first_name, $user_last_name, $user_email );
+		// create the cloud registration.
+		$registration_service = $cloud_service->getRegistrationService();
+		$registration_service->CreateRegistration( $reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email );
 
 		$wpdb->insert( ScormCloudDatabase::get_registrations_table(),
 			array(
-				'invite_id'  => $inviteId,
-				'reg_id'     => $regid,
+				'invite_id'  => $invite_id,
+				'reg_id'     => $reg_id,
 				'user_id'    => $current_user->ID,
-				'user_email' => $user_email
+				'user_email' => $user_email,
 			),
-			array( '%s', '%s', '%d', '%s' ) );
+		array( '%s', '%s', '%d', '%s' ) );// db call ok; no-cache ok.
 
-		if ( function_exists( "bp_activity_add" ) ) {
+		if ( function_exists( 'bp_activity_add' ) ) {
 			global $bp;
 
 			$from_user_link = bp_core_get_userlink( $bp->loggedin_user->id );
-			if ( $invite->post_id != "__direct_invite__" && $invite->post_id != '__catalog_widget__' ) {
-				$thisPost       = get_post( $invite->post_id );
-				$post_permalink = get_permalink( $thisPost->ID );
-				$actionStr      = sprintf( '%s launched course "%s" from post %s', $from_user_link, $invite->course_title, '<a href="' . $post_permalink . '">' . $thisPost->post_title . '</a>' );
+			if ( '__direct_invite__' !== $invite->post_id && '__catalog_widget__' !== $invite->post_id ) {
+				$this_post      = get_post( $invite->post_id );
+				$post_permalink = get_permalink( $this_post->ID );
+				$action_str      = sprintf( '%s launched course "%s" from post %s', $from_user_link, $invite->course_title, '<a href="' . $post_permalink . '">' . $this_post->post_title . '</a>' );
 			} else {
-				$actionStr = sprintf( '%s launched course "%s"', $from_user_link, $invite->course_title );
+				$action_str = sprintf( '%s launched course "%s"', $from_user_link, $invite->course_title );
 			}
-			//error_log('logged in user: '.$bp->loggedin_user->id);
 
-			$activityArgs = array(
-				'action'  => $actionStr,
-				// The activity action - e.g. "Jon Doe posted an update"
+			$activity_args = array(
+				'action'  => $action_str,
+				// The activity action - e.g. "Jon Doe posted an update".
 				'content' => '',
-				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!"
-
+				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!".
 				'component' => 'scormcloud',
-				// The name/ID of the component e.g. groups, profile, mycomponent
+				// The name/ID of the component e.g. groups, profile, mycomponent.
 				'type' => 'training_launch',
-				// The activity type e.g. activity_update, profile_updated
+				// The activity type e.g. activity_update, profile_updated.
 				'primary_link' => '',
-				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink)
-
+				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink).
 				'user_id'           => $bp->loggedin_user->id,
 				// Optional: The user to record the activity for, can be false if this activity is not for a user.
 				'item_id'           => false,
-				// Optional: The ID of the specific item being recorded, e.g. a blog_id
+				// Optional: The ID of the specific item being recorded, e.g. a blog_id.
 				'secondary_item_id' => false,
-				// Optional: A second ID used to further filter e.g. a comment_id
-				'recorded_time'     => gmdate( "Y-m-d H:i:s" ),
-				// The GMT time that this activity was recorded
-				'hide_sitewide'     => false
+				// Optional: A second ID used to further filter e.g. a comment_id.
+				'recorded_time'     => gmdate( 'Y-m-d H:i:s' ),
+				// The GMT time that this activity was recorded.
+				'hide_sitewide'     => false,
 				// Should this be hidden on the sitewide activity stream?
 			);
-			$bpActivityId = bp_activity_add( $activityArgs );
-			error_log( 'Logging action: ' . $actionStr . ' Activity ID: ' . $bpActivityId );
-		}
+			$bp_activity_id  = bp_activity_add( $activity_args );
+		}// End if().
+		$css_url = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
 
-		$cssUrl = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
-
-		echo $regService->GetLaunchUrl( $regid, $returnUrl, $cssUrl, null, $courseTags, $learnerTags, $regTags );
-
+		echo esc_url_raw( $registration_service->GetLaunchUrl( $reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags ) );
 
 		break;
 
-	case "getLaunchUrl":
+	case 'getLaunchUrl':
 
 		global $current_user;
 		global $wpdb;
 		wp_get_current_user();
 
-		$regid      = $_POST['regid'];
-		$returnUrl  = $_POST['returnurl'];
-		$widgetName = isset( $_POST['widgetname'] ) ? $_POST['widgetname'] : null;
+		$reg_id = get_post_arg_as_string( 'regid' );
+		$return_url  = get_post_arg_as_string( 'returnurl' );
+		$widget_name = get_post_arg_as_string( 'widgetname' );
 
-		$inviteReg = ScormCloudDatabase::get_invitation_reg( $regid );
+		$invite_reg = ScormCloudDatabase::get_invitation_reg( $reg_id );
 
-		$regTags = $GLOBALS['blog_id'] . ',' . (string) $inviteReg->invite_id;
+		$reg_tags = $GLOBALS['blog_id'] . ',' . (string) $invite_reg->invite_id;
 
-		$learnerTags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : "anonymous";
+		$learner_tags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : 'anonymous';
 
-		$regService = $ScormService->getRegistrationService();
+		$registration_service = $cloud_service->getRegistrationService();
 
-		if ( function_exists( "bp_activity_add" ) ) {
+		if ( function_exists( 'bp_activity_add' ) ) {
 			global $bp;
-			$invite = ScormCloudDatabase::get_invitation( $inviteReg->invite_id );
+			$invite = ScormCloudDatabase::get_invitation( $invite_reg->invite_id );
 
 
 			$from_user_link = bp_core_get_userlink( $bp->loggedin_user->id );
 
-			if ( isset( $widgetName ) ) {
-				$actionStr = sprintf( '%s launched course "%s" from the %s widget', $from_user_link, $invite->course_title, $widgetName );
-			} elseif ( $invite->post_id != "__direct_invite__" && $invite->post_id != '__catalog_widget__' ) {
-				$thisPost       = get_post( $invite->post_id );
-				$post_permalink = get_permalink( $thisPost->ID );
-				$actionStr      = sprintf( '%s launched course "%s" from post %s', $from_user_link, $invite->course_title, '<a href="' . $post_permalink . '">' . $thisPost->post_title . '</a>' );
+			if ( isset( $widget_name ) ) {
+				$action_str = sprintf( '%s launched course "%s" from the %s widget', $from_user_link, $invite->course_title, $widget_name );
+			} elseif ( '__direct_invite__' !== $invite->post_id && '__catalog_widget__' !== $invite->post_id ) {
+				$this_post      = get_post( $invite->post_id );
+				$post_permalink = get_permalink( $this_post->ID );
+				$action_str      = sprintf( '%s launched course "%s" from post %s', $from_user_link, $invite->course_title, '<a href="' . $post_permalink . '">' . $this_post->post_title . '</a>' );
 			} else {
-				$actionStr = sprintf( '%s launched course "%s"', $from_user_link, $invite->course_title );
+				$action_str = sprintf( '%s launched course "%s"', $from_user_link, $invite->course_title );
 			}
-			//error_log('logged in user: '.$bp->loggedin_user->id);
-
-			$activityArgs = array(
-				'action'  => $actionStr,
-				// The activity action - e.g. "Jon Doe posted an update"
+			$activity_args = array(
+				'action'  => $action_str,
+				// The activity action - e.g. "Jon Doe posted an update".
 				'content' => '',
-				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!"
-
+				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!".
 				'component' => 'scormcloud',
-				// The name/ID of the component e.g. groups, profile, mycomponent
+				// The name/ID of the component e.g. groups, profile, mycomponent.
 				'type' => 'training_launch',
-				// The activity type e.g. activity_update, profile_updated
+				// The activity type e.g. activity_update, profile_updated.
 				'primary_link' => '',
-				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink)
-
+				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink).
 				'user_id'           => $bp->loggedin_user->id,
 				// Optional: The user to record the activity for, can be false if this activity is not for a user.
 				'item_id'           => false,
-				// Optional: The ID of the specific item being recorded, e.g. a blog_id
+				// Optional: The ID of the specific item being recorded, e.g. a blog_id.
 				'secondary_item_id' => false,
-				// Optional: A second ID used to further filter e.g. a comment_id
-				'recorded_time'     => gmdate( "Y-m-d H:i:s" ),
-				// The GMT time that this activity was recorded
-				'hide_sitewide'     => false
-				// Should this be hidden on the sitewide activity stream?
+				// Optional: A second ID used to further filter e.g. a comment_id.
+				'recorded_time'     => gmdate( 'Y-m-d H:i:s' ),
+				// The GMT time that this activity was recorded.
+				'hide_sitewide'     => false,
+				// Should this be hidden on the sitewide activity stream?.
 			);
-			$bpActivityId = bp_activity_add( $activityArgs );
-			error_log( 'Logging action: ' . $actionStr . ' Activity ID: ' . $bpActivityId );
-		}
+			$bp_activity_id  = bp_activity_add( $activity_args );
+		}// End if().
+		$css_url = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
 
-		$cssUrl = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
-
-		echo $regService->GetLaunchUrl( $regid, $returnUrl, $cssUrl, null, null, $learnerTags, $regTags );
-		//echo 'regtags:'.$regTags;
+		echo esc_url_raw( $registration_service->GetLaunchUrl( $reg_id, $return_url, $css_url, null, null, $learner_tags, $reg_tags ) );
 
 		break;
 
-	case "getPropertiesEditorUrl":
-		$courseId      = $_POST['courseid'];
-		$courseService = $ScormService->getCourseService();
-		$cssurl        = get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/css/scormcloud.ppeditor.css";
+	case 'getPropertiesEditorUrl':
+		$course_id     = get_post_arg_as_string( 'courseid' );
+		$course_service = $cloud_service->getCourseService();
+		$cssurl        = get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/css/scormcloud.ppeditor.css';
 
-		echo $courseService->GetPropertyEditorUrl( $courseId, $cssurl, null );
-
-		break;
-
-	case "getPreviewUrl":
-		$courseId  = $_POST['courseid'];
-		$returnUrl = $_POST['returnurl'];
-
-		$cssUrl = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
-
-		$courseService = $ScormService->getCourseService();
-		echo $courseService->GetPreviewUrl( $courseId, $returnUrl, $cssUrl );
+		echo esc_url_raw( $course_service->GetPropertyEditorUrl( $course_id, $cssurl, null ) );
 
 		break;
 
-	case "deletecourse":
-		$courseId = $_POST['courseid'];
+	case 'getPreviewUrl':
+		$course_id = get_post_arg_as_string( 'courseid' );
+		$return_url = get_post_arg_as_string( 'returnurl' );
 
-		$invTable = ScormCloudDatabase::get_invitations_table();
-		$regTable = ScormCloudDatabase::get_registrations_table();
-		$query    = $wpdb->prepare( 'DELETE r FROM ' . $invTable . ' AS i LEFT JOIN ' . $regTable . ' AS r ON i.invite_id = r.invite_id WHERE course_id = %s',
-			array( $courseId ) );
-		$wpdb->query( $query );
+		$css_url = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
 
-		$query = $wpdb->prepare( 'DELETE FROM ' . $invTable . ' WHERE course_id = %s', array( $courseId ) );
-		$wpdb->query( $query );
-
-		$courseService = $ScormService->getCourseService();
-		echo $courseService->DeleteCourse( $courseId );
+		$course_service = $cloud_service->getCourseService();
+		echo esc_url_raw( $course_service->GetPreviewUrl( $course_id, $return_url, $css_url ) );
 
 		break;
 
-	case "getCourseReportUrl":
-		$courseId   = $_POST['courseid'];
-		$rptService = $ScormService->getReportingService();
-		$rptAuth    = $rptService->GetReportageAuth( 'FREENAV', true );
-		echo $rptService->LaunchCourseReport( $rptAuth, $courseId );
+	case 'deletecourse':
+		$course_id = get_post_arg_as_string( 'courseid' );
+
+		$inv_table = ScormCloudDatabase::get_invitations_table();
+		$reg_table = ScormCloudDatabase::get_registrations_table();
+		$wpdb->query( $wpdb->prepare( "DELETE r FROM $inv_table AS i LEFT JOIN $reg_table AS r ON i.invite_id = r.invite_id WHERE course_id = %s", [ $course_id ] ) );// db call ok; no-cache ok.
+		$wpdb->query( $wpdb->prepare( "DELETE FROM $inv_table WHERE course_id = %s", [ $course_id ] ) );// db call ok; no-cache ok.
+
+		$course_service = $cloud_service->getCourseService();
+		echo esc_textarea( $course_service->DeleteCourse( $course_id ) );
 
 		break;
 
-	case "getRegReportUrl";
-		$inviteId = $_POST['inviteid'];
-		$regId    = $_POST['regid'];
-
-		$query  = $wpdb->prepare( 'SELECT inv.course_id, reg.user_email FROM ' . ScormCloudDatabase::get_invitations_table() . ' inv
-        	JOIN ' . ScormCloudDatabase::get_registrations_table() . ' reg ON inv.invite_id = reg.invite_id
-        	WHERE reg.invite_id = %s AND reg.reg_id = %s AND inv.app_id = %s', array(
-			$inviteId,
-			$regId,
-			ScormCloudPlugin::get_wp_option( 'scormcloud_appid' )
-		) );
-		$invite = $wpdb->get_row( $query, OBJECT );
-
-		$courseId = $invite->course_id;
-		$userId   = urlencode( $invite->user_email );
-
-		$rptService = $ScormService->getReportingService();
-		$rptAuth    = $rptService->GetReportageAuth( 'FREENAV', true );
-
-		$rServiceUrl  = $rptService->GetReportageServiceUrl();
-		$reportageUrl = $rServiceUrl . 'Reportage/reportage.php?appId=' . $ScormService->getAppId() . "&registrationId=$regId";
-		$reportageUrl .= "&courseId=$courseId";
-		$reportageUrl .= "&learnerId=$userId";
-		//echo $reportageUrl;
-		echo $rptService->GetReportUrl( $rptAuth, $reportageUrl );
-
+	case 'getCourseReportUrl':
+		$course_id  = get_post_arg_as_string( 'courseid' );
+		$reportage_service = $cloud_service->getReportingService();
+		$reportage_auth    = $reportage_service->GetReportageAuth( 'FREENAV', true );
+		echo esc_url_raw( $reportage_service->LaunchCourseReport( $reportage_auth, $course_id ) );
 
 		break;
 
-	case "getInviteReportUrl":
-		$inviteId = $_POST['inviteid'];
+	case 'getRegReportUrl';
+		$invite_id = get_post_arg_as_string( 'inviteid' );
+		$registration_id    = get_post_arg_as_string( 'regid' );
 
+		$inv_table = ScormCloudDatabase::get_invitations_table();
+		$reg_table = ScormCloudDatabase::get_registrations_table();
 
-		$rptService = $ScormService->getReportingService();
-		$rptAuth    = $rptService->GetReportageAuth( 'FREENAV', true );
+		$invite = $wpdb->get_row( $wpdb->prepare( "SELECT inv.course_id, reg.user_email FROM $inv_table inv
+        	JOIN $reg_table reg ON inv.invite_id = reg.invite_id
+        	WHERE reg.invite_id = %s AND reg.reg_id = %s AND inv.app_id = %s", array(
+			$invite_id,
+			$registration_id,
+			ScormCloudPlugin::get_wp_option( 'scormcloud_appid' ),
+		) ), OBJECT );// db call ok; no-cache ok.
 
-		$rServiceUrl  = $rptService->GetReportageServiceUrl();
-		$reportageUrl = $rServiceUrl . 'Reportage/reportage.php?appId=' . $ScormService->getAppId() . "&registrationTags=$inviteId|_all";
-		//echo $reportageUrl;
-		echo $rptService->GetReportUrl( $rptAuth, $reportageUrl );
+		$course_id = $invite->course_id;
+		$user_id   = rawurlencode( $invite->user_email );
+
+		$reportage_service = $cloud_service->getReportingService();
+		$reportage_auth           = $reportage_service->GetReportageAuth( 'FREENAV', true );
+
+		$reportage_service_url = $reportage_service->GetReportageServiceUrl();
+		$reportage_url          = $reportage_service_url . 'Reportage/reportage.php?appId=' . $cloud_service->getAppId() . '&registrationId=$regId';
+		$reportage_url .= "&courseId=$course_id";
+		$reportage_url .= "&learnerId=$user_id";
+		echo esc_url_raw( $reportage_service->GetReportUrl( $reportage_auth, $reportage_url ) );
 
 		break;
 
-	case "getRegistrations":
+	case 'getInviteReportUrl':
+		$invite_id    = get_post_arg_as_string( 'inviteid' );
 
-		$inviteId = $_POST['inviteid'];
 
-		$invTable   = ScormCloudDatabase::get_invitations_table();
-		$regTable   = ScormCloudDatabase::get_registrations_table();
-		$query      = $wpdb->prepare( 'SELECT reg.*, inv.course_id FROM ' . $regTable . ' reg JOIN ' . $invTable . ' inv
-        						 ON reg.invite_id = inv.invite_id
-        						 WHERE reg.invite_id = %s AND inv.app_id = %s ORDER BY reg.update_date DESC LIMIT 10', array(
-			$inviteId,
-			ScormCloudPlugin::get_wp_option( 'scormcloud_appid' )
-		) );
-		$inviteRegs = $wpdb->get_results( $query, OBJECT );
+		$reportage_service = $cloud_service->getReportingService();
+		$reportage_auth           = $reportage_service->GetReportageAuth( 'FREENAV', true );
 
-		$regService = $ScormService->getRegistrationService();
-		$regsXMLStr = $regService->GetRegistrationListResults( $inviteRegs[0]->course_id, null, 0 );
+		$reportage_service_url = $reportage_service->GetReportageServiceUrl();
+		$reportage_url          = $reportage_service_url . 'Reportage/reportage.php?appId=' . $cloud_service->getAppId() . '&registrationTags=$invite_id|_all';
+		echo esc_url_raw( $reportage_service->GetReportUrl( $reportage_auth, $reportage_url ) );
 
-		$regsXML = simplexml_load_string( $regsXMLStr );
-		$regList = $regsXML->registrationlist;
+		break;
 
-		$returnHTML = "";
+	case 'getRegistrations':
 
-		$returnHTML .= '<table class="widefat" cellspacing="0" id="InvitationListTable" >';
-		$returnHTML .= '<thead>';
-		$returnHTML .= '<tr class="thead"><th class="manage-column">User</th>
+		$invite_id = get_post_arg_as_string( 'inviteid' );
+
+		$inv_table = ScormCloudDatabase::get_invitations_table();
+		$reg_table   = ScormCloudDatabase::get_registrations_table();
+
+		$invite_regs = $wpdb->get_results( $wpdb->prepare( "SELECT reg.*, inv.course_id 
+									FROM $reg_table reg 
+									JOIN $inv_table inv
+        						 		ON reg.invite_id = inv.invite_id
+        						 	WHERE reg.invite_id = %s AND inv.app_id = %s ORDER BY reg.update_date DESC LIMIT 10", [
+			$invite_id,
+			ScormCloudPlugin::get_wp_option( 'scormcloud_appid' ),
+		] ), OBJECT );// db call ok; no-cache ok.
+
+		$registration_service = $cloud_service->getRegistrationService();
+		$registration_xml_string  = $registration_service->GetRegistrationListResults( $invite_regs[0]->course_id, null, 0 );
+
+		$regs_xml = simplexml_load_string( $registration_xml_string );
+		$reg_list  = $regs_xml->registrationlist;
+
+
+		echo '<table class="widefat" cellspacing="0" id="InvitationListTable" >';
+		echo '<thead>';
+		echo '<tr class="thead"><th class="manage-column">User</th>
             <th class="manage-column">Completion</th>
             <th class="manage-column">Success</th>
             <th class="manage-column">Score</th>
             <th class="manage-column">Time</th>
             <th class="manage-column"></th></tr></thead>';
-		foreach ( $inviteRegs as $inviteReg ) {
-			$regResult = $regList->xpath( "//registration[@id='" . $inviteReg->reg_id . "']" );
-			if ( count( $regResult ) > 0 ) {
-				$regReport = $regResult[0]->registrationreport;
+		foreach ( $invite_regs as $invite_reg ) {
+			$reg_result = $reg_list->xpath( "//registration[@id='" . $invite_reg->reg_id . "']" );
+			if ( count( $reg_result ) > 0 ) {
+				$reg_report = $reg_result[0]->registrationreport;
 
-				$returnHTML .= "<tr key='" . $inviteReg->reg_id . "'>";
-				if ( $userId = $inviteReg->user_id ) {
-					$wpUser = get_userdata( $userId );
-					$returnHTML .= "<td>" . $wpUser->display_name . "</td>";
+				echo "<tr key='" . esc_attr( $invite_reg->reg_id ) . "'>";
+				$user_id = $invite_reg->user_id;
+				if ( $user_id ) {
+					$wp_user = get_userdata( $user_id );
+					echo '<td>' . esc_textarea( $wp_user->display_name ) . '</td>';
 				} else {
-					$returnHTML .= "<td>" . $inviteReg->user_email . "</td>";
+					echo '<td>' . esc_textarea( $invite_reg->user_email ) . '</td>';
 				}
 
-				$returnHTML .= "<td class='" . $regReport->complete . "'>" . $regReport->complete . "</td>";
-				$returnHTML .= "<td class='" . $regReport->success . "'>" . $regReport->success . "</td>";
-				$score = $regReport->score;
-				$returnHTML .= "<td>" . ( $score == "unknown" ? "-" : $score . "%" ) . "</td>";
-				$seconds = $regReport->totaltime;
-				$returnHTML .= "<td>" . floor( $seconds / 60 ) . "min " . ( $seconds % 60 ) . "sec</td>";
-				$returnHTML .= "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"" . $inviteReg->invite_id . "\",\"" . $inviteReg->reg_id . "\"); return false;' key='" . $inviteReg->invite_id . "'>View Details</tr>";
-
+				echo '<td class="' . esc_attr( $reg_report->complete ) . '"">' . esc_textarea( $reg_report->complete ) . '</td>';
+				echo '<td class="' . esc_attr( $reg_report->success ) . '"">' . esc_textarea( $reg_report->success ) . '</td>';
+				$score = $reg_report->score;
+				echo '<td>' . esc_textarea( 'unknown' === $score ? '-' : $score . '%' ) . '</td>';
+				$seconds = $reg_report->totaltime;
+				echo '<td>' . esc_textarea( floor( $seconds / 60 ) . 'min ' . ( $seconds % 60 ) ) . 'sec</td>';
+				echo "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"" . esc_js( $invite_reg->invite_id ) . '","' . esc_js( $invite_reg->reg_id ) . "\"); return false;' key='" . esc_attr( $invite_reg->invite_id ) . "'>View Details</a></tr>";
 			}
-
 		}
+		echo '</table>';
 
-		$returnHTML .= '</table>';
-
-		if ( count( $inviteRegs ) >= 10 ) {
-			$returnHTML .= "<div class='viewInviteLink'><a href='" . get_option( 'siteurl' ) . "/wp-admin/admin.php?page=scormcloudtraining&inviteid=" . $inviteId . "'>Click here to see complete training history.</a></div>";
+		if ( count( $invite_regs ) >= 10 ) {
+			echo '<div class="viewInviteLink"><a href="' . esc_url_raw( get_option( 'siteurl' ) . '/wp-admin/admin.php?page=scormcloudtraining&inviteid=' . $invite_id ) . '">Click here to see complete training history.</a></div>';
 		}
+		break;
 
+	case 'setactive':
+		$invite_id = get_post_arg_as_string( 'inviteid' );
+		$active    = get_post_arg_as_string( 'active' );
 
-		echo $returnHTML;
+		$wpdb->update( ScormCloudDatabase::get_invitations_table(), array(
+			'active' => $active,
+			), array(
+				'invite_id' => $invite_id,
+		) );// db call ok; no-cache ok.
 
 		break;
 
-	case "setactive":
-		$inviteId = $_POST['inviteid'];
-		$active   = $_POST['active'];
+	case 'addCatalogRegGetLaunchUrl':
+		$course_id   = get_post_arg_as_string( 'courseid' );
+		$course_title = get_post_arg_as_string( 'coursetitle' );
+		$return_url   = get_post_arg_as_string( 'returnurl' );
 
-		$wpdb->update( ScormCloudDatabase::get_invitations_table(),
-			array( 'active' => $active ), array( 'invite_id' => $inviteId ) );
+		$invite_id = uniqid();
+		$reg_id   = $invite_id . '-' . uniqid();
 
-		break;
-
-	case "addCatalogRegGetLaunchUrl":
-		$courseId    = $_POST['courseid'];
-		$courseTitle = $_POST['coursetitle'];
-		$returnUrl   = $_POST['returnurl'];
-
-		$inviteId = uniqid();
-		$regid    = $inviteId . "-" . uniqid();
-
-		$appId = ScormCloudPlugin::get_wp_option( 'scormcloud_appid' );
+		$app_id = ScormCloudPlugin::get_wp_option( 'scormcloud_appid' );
 		global $current_user;
 		global $wpdb;
 		wp_get_current_user();
 
 		$user_email = $current_user->user_email;
-		if ( ! ( $user_first_name = $current_user->user_firstname ) || strlen( $user_first_name ) < 1 ) {
+		$user_first_name = $current_user->user_firstname;
+		$user_last_name = $current_user->user_lastname;
+		if ( ! ( $user_first_name ) || strlen( $user_first_name ) < 1 ) {
 			$user_first_name = $current_user->display_name;
 		}
-		if ( ! ( $user_last_name = $current_user->user_lastname ) || strlen( $user_last_name ) < 1 ) {
+		if ( ! ( $user_last_name ) || strlen( $user_last_name ) < 1 ) {
 			$user_last_name = $current_user->display_name;
 		}
-		$postId = "__catalog_widget__";
+		$post_id = '__catalog_widget__';
 
-		$header      = "";
-		$description = "";
+		$header      = '';
+		$description = '';
 
 		$require_login    = 0;
 		$show_course_info = 0;
 
 		$wpdb->insert( ScormCloudDatabase::get_invitations_table(),
 			array(
-				'invite_id'        => $inviteId,
+				'invite_id'        => $invite_id,
 				'blog_id'          => $GLOBALS['blog_id'],
-				'app_id'           => $appId,
-				'post_id'          => $postId,
-				'course_id'        => $courseId,
-				'course_title'     => $courseTitle,
+				'app_id'           => $app_id,
+				'post_id'          => $post_id,
+				'course_id'        => $course_id,
+				'course_title'     => $course_title,
 				'header'           => $header,
 				'description'      => $description,
 				'require_login'    => $require_login,
-				'show_course_info' => $show_course_info
+				'show_course_info' => $show_course_info,
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) );
+		array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) );// db call ok; no-cache ok.
 
-		$courseTags = 'catalog_widget';
-		$regTags    = $GLOBALS['blog_id'] . ',' . $inviteId . ',' . $courseTags;
+		$course_tags = 'catalog_widget';
+		$reg_tags     = $GLOBALS['blog_id'] . ',' . $invite_id . ',' . $course_tags;
 
-		$learnerTags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : "anonymous";
+		$learner_tags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : 'anonymous';
 
-		//create the cloud registration
-		$regService = $ScormService->getRegistrationService();
-		$regService->CreateRegistration( $regid, $courseId, $user_email, $user_first_name, $user_last_name, $user_email );
+		// create the cloud registration.
+		$registration_service = $cloud_service->getRegistrationService();
+		$registration_service->CreateRegistration( $reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email );
 
 		$wpdb->insert( ScormCloudDatabase::get_registrations_table(),
 			array(
-				'invite_id'  => $inviteId,
-				'reg_id'     => $regid,
+				'invite_id'  => $invite_id,
+				'reg_id'     => $reg_id,
 				'user_id'    => $current_user->ID,
-				'user_email' => $user_email
+				'user_email' => $user_email,
 			),
-			array( '%s', '%s', '%d', '%s' ) );
+		array( '%s', '%s', '%d', '%s' ) );// db call ok; no-cache ok.
 
-		if ( function_exists( "bp_activity_add" ) ) {
+		if ( function_exists( 'bp_activity_add' ) ) {
 			global $bp;
 
 			$from_user_link = bp_core_get_userlink( $bp->loggedin_user->id );
-			$actionStr      = sprintf( '%s launched course "%s" from the Catalog Widget', $from_user_link, $courseTitle );
+			$action_str      = sprintf( '%s launched course "%s" from the Catalog Widget', $from_user_link, $course_title );
 
-			//error_log('logged in user: '.$bp->loggedin_user->id);
-
-			$activityArgs = array(
-				'action'  => $actionStr,
-				// The activity action - e.g. "Jon Doe posted an update"
+			$activity_args = array(
+				'action'  => $action_str,
+				// The activity action - e.g. "Jon Doe posted an update".
 				'content' => '',
-				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!"
-
+				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!".
 				'component' => 'scormcloud',
-				// The name/ID of the component e.g. groups, profile, mycomponent
+				// The name/ID of the component e.g. groups, profile, mycomponent.
 				'type' => 'training_launch',
-				// The activity type e.g. activity_update, profile_updated
+				// The activity type e.g. activity_update, profile_updated.
 				'primary_link' => '',
-				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink)
-
+				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink).
 				'user_id'           => $bp->loggedin_user->id,
 				// Optional: The user to record the activity for, can be false if this activity is not for a user.
 				'item_id'           => false,
-				// Optional: The ID of the specific item being recorded, e.g. a blog_id
+				// Optional: The ID of the specific item being recorded, e.g. a blog_id.
 				'secondary_item_id' => false,
-				// Optional: A second ID used to further filter e.g. a comment_id
-				'recorded_time'     => gmdate( "Y-m-d H:i:s" ),
-				// The GMT time that this activity was recorded
-				'hide_sitewide'     => false
-				// Should this be hidden on the sitewide activity stream?
+				// Optional: A second ID used to further filter e.g. a comment_id.
+				'recorded_time'     => gmdate( 'Y-m-d H:i:s' ),
+				// The GMT time that this activity was recorded.
+				'hide_sitewide'     => false,
+				// Should this be hidden on the sitewide activity stream?.
 			);
-			$bpActivityId = bp_activity_add( $activityArgs );
-			error_log( 'Logging action: ' . $actionStr . ' Activity ID: ' . $bpActivityId );
+			$bp_activity_id  = bp_activity_add( $activity_args );
 		}
 
-		$cssUrl = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
+		$css_url = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
 
-		echo $regService->GetLaunchUrl( $regid, $returnUrl, $cssUrl, null, $courseTags, $learnerTags, $regTags );
+		echo esc_url_raw( $registration_service->GetLaunchUrl( $reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags ) );
 
 
 		break;
 
-	case "addAnonCatalogRegGetLaunchUrl":
+	case 'addAnonCatalogRegGetLaunchUrl':
 
-		$user_first_name = $_POST['fname'];
-		$user_last_name  = $_POST['lname'];
-		$user_email      = $_POST['email'];
+		$user_first_name = get_post_arg_as_string( 'fname' );
+		$user_last_name  = get_post_arg_as_string( 'lname' );
+		$user_email      = get_post_arg_as_string( 'email' );
 
-		$courseId    = $_POST['courseid'];
-		$courseTitle = $_POST['coursetitle'];
-		$returnUrl   = $_POST['returnurl'];
+		$course_id = get_post_arg_as_string( 'courseid' );
+		$course_title = get_post_arg_as_string( 'coursetitle' );
+		$return_url   = get_post_arg_as_string( 'returnurl' );
 
 
-		$postId = "__catalog_widget__";
+		$post_id = '__catalog_widget__';
 
-		$header      = "";
-		$description = "";
+		$header      = '';
+		$description = '';
 
-		$regService = $ScormService->getRegistrationService();
+		$registration_service = $cloud_service->getRegistrationService();
 
-		$query     = $wpdb->prepare( 'SELECT r.reg_id, r.invite_id FROM ' . ScormCloudDatabase::get_invitations_table() . ' i
-                                 JOIN ' . ScormCloudDatabase::get_registrations_table() . ' r ON i.invite_id = r.invite_id
-                                 WHERE r.user_email = %s AND i.course_id = %s AND i.app_id', array(
+		$inv_table = ScormCloudDatabase::get_invitations_table();
+		$reg_table   = ScormCloudDatabase::get_registrations_table();
+		$invite_reg = $wpdb->get_row( $wpdb->prepare( "SELECT r.reg_id, r.invite_id 
+									FROM $inv_table i
+                                 	JOIN $reg_table r 
+                                 		ON i.invite_id = r.invite_id
+                                 	WHERE r.user_email = %s AND i.course_id = %s AND i.app_id", array(
 			$user_email,
-			$courseId,
-			ScormCloudPlugin::get_wp_option( 'scormcloud_appid' )
-		) );
-		$inviteReg = $wpdb->get_row( $query, OBJECT );
-		if ( $inviteReg != null ) {
-			$regid    = (string) $inviteReg->reg_id;
-			$inviteId = (string) $inviteReg->invite_id;
+			$course_id,
+			ScormCloudPlugin::get_wp_option( 'scormcloud_appid' ),
+		) ), OBJECT );// db call ok; no-cache ok.
+
+		if ( null !== $invite_reg ) {
+			$reg_id    = (string) $invite_reg->reg_id;
+			$invite_id = (string) $invite_reg->invite_id;
 		} else {
-			$inviteId = uniqid();
-			$regid    = $inviteId . "-" . uniqid();
+			$invite_id = uniqid();
+			$reg_id     = $invite_id . '-' . uniqid();
 
 			$require_login    = 0;
 			$show_course_info = 0;
 			$wpdb->insert( ScormCloudDatabase::get_invitations_table(),
 				array(
-					'invite_id'        => $inviteId,
+					'invite_id'        => $invite_id,
 					'blog_id'          => $GLOBALS['blog_id'],
 					'app_id'           => ScormCloudPlugin::get_wp_option( 'scormcloud_appid' ),
-					'post_id'          => $postId,
-					'course_id'        => $courseId,
-					'course_title'     => $courseTitle,
+					'post_id'          => $post_id,
+					'course_id'        => $course_id,
+					'course_title'     => $course_title,
 					'header'           => $header,
 					'description'      => $description,
 					'require_login'    => $require_login,
-					'show_course_info' => $show_course_info
+					'show_course_info' => $show_course_info,
 				),
-				array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) );
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' ) );// db call ok; no-cache ok.
 
-			//create the cloud registration
-			$regService->CreateRegistration( $regid, $courseId, $user_email, $user_first_name, $user_last_name, $user_email );
+			// create the cloud registration.
+			$registration_service->CreateRegistration( $reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email );
 
 			$wpdb->insert( ScormCloudDatabase::get_registrations_table(),
 				array(
-					'invite_id'  => $inviteId,
-					'reg_id'     => $regid,
-					'user_email' => $user_email
+					'invite_id'  => $invite_id,
+					'reg_id'     => $reg_id,
+					'user_email' => $user_email,
 				),
-				array( '%s', '%s', '%s' ) );
+			array( '%s', '%s', '%s' ) );// db call ok; no-cache ok.
 		}
 
-		$courseTags = 'catalog_widget';
-		$regTags    = $GLOBALS['blog_id'] . ',' . $inviteId . ',' . $courseTags;
+		$course_tags = 'catalog_widget';
+		$reg_tags     = $GLOBALS['blog_id'] . ',' . $invite_id . ',' . $course_tags;
 
-		$learnerTags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : "anonymous";
+		$learner_tags = isset( $current_user->roles[0] ) ? $current_user->roles[0] : 'anonymous';
 
-		if ( function_exists( "bp_activity_add" ) ) {
+		if ( function_exists( 'bp_activity_add' ) ) {
 			global $bp;
 
-			$actionStr = sprintf( '%s launched course "%s" from the Catalog Widget', $user_first_name . ' ' . $user_last_name, $courseTitle );
+			$action_str = sprintf( '%s launched course "%s" from the Catalog Widget', $user_first_name . ' ' . $user_last_name, $course_title );
 
-			//error_log('logged in user: '.$bp->loggedin_user->id);
-
-			$activityArgs = array(
-				'action'  => $actionStr,
-				// The activity action - e.g. "Jon Doe posted an update"
+			$activity_args = array(
+				'action'  => $action_str,
+				// The activity action - e.g. "Jon Doe posted an update".
 				'content' => '',
-				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!"
-
+				// Optional: The content of the activity item e.g. "BuddyPress is awesome guys!".
 				'component' => 'scormcloud',
-				// The name/ID of the component e.g. groups, profile, mycomponent
+				// The name/ID of the component e.g. groups, profile, mycomponent.
 				'type' => 'training_launch',
-				// The activity type e.g. activity_update, profile_updated
+				// The activity type e.g. activity_update, profile_updated.
 				'primary_link' => '',
-				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink)
-
+				// Optional: The primary URL for this item in RSS feeds (defaults to activity permalink).
 				'user_id'           => false,
 				// Optional: The user to record the activity for, can be false if this activity is not for a user.
 				'item_id'           => false,
-				// Optional: The ID of the specific item being recorded, e.g. a blog_id
+				// Optional: The ID of the specific item being recorded, e.g. a blog_id.
 				'secondary_item_id' => false,
-				// Optional: A second ID used to further filter e.g. a comment_id
-				'recorded_time'     => gmdate( "Y-m-d H:i:s" ),
-				// The GMT time that this activity was recorded
-				'hide_sitewide'     => false
-				// Should this be hidden on the sitewide activity stream?
+				// Optional: A second ID used to further filter e.g. a comment_id.
+				'recorded_time'     => gmdate( 'Y-m-d H:i:s' ),
+				// The GMT time that this activity was recorded.
+				'hide_sitewide'     => false,
+				// Should this be hidden on the sitewide activity stream?.
 			);
-			$bpActivityId = bp_activity_add( $activityArgs );
-			error_log( 'Logging action: ' . $actionStr . ' Activity ID: ' . $bpActivityId );
+			$bp_activity_id  = bp_activity_add( $activity_args );
 		}
 
-		$cssUrl = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
+		$css_url = ScormCloudPlugin::get_wp_option( 'scormcloud_player_cssurl' );
 
-		echo $regService->GetLaunchUrl( $regid, $returnUrl, $cssUrl, null, $courseTags, $learnerTags, $regTags );
-
+		echo esc_url_raw( $registration_service->GetLaunchUrl( $reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags ) );
 
 		break;
 
 	default:
 		break;
+}
+
+/**
+ * Checks to see if an argument exists in $_POST and returns it.
+ *
+ * @param string $arg_name the arugment to look for.
+ *
+ * @return string/null
+ */
+function get_post_arg_as_string( $arg_name ) {
+	$return_val = isset( $_POST[ $arg_name ] ) ? wp_unslash( $_POST[ $arg_name ] ) : null ;// Input var okay.
+	if ( is_string( $return_val ) ) {
+		return $return_val;
+	}
+	return null;
 }
 
 ?>
