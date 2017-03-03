@@ -43,10 +43,10 @@ class ScormCloudContentHandler {
 			$course_service = $cloud_service->getCourseService();
 
 			if ( ! $course_service->Exists( $invite->course_id ) ) {
-				$invite_html .= '<h3>' . __( 'This training is not currently available.', 'scormcloud' ) . '</h3>';
+				$invite_html .= '<h3>' . __( 'This training is not currently available.', 'scormcloud' ) . ' </h3>';
 			} else {
 
-				if ( 1 === $invite->show_course_info ) {
+				if ( '1' === $invite->show_course_info ) {
 					// get course info.
 					$invite_html .= "<div class='courseInfo'>";
 
@@ -71,8 +71,8 @@ class ScormCloudContentHandler {
 					$invite_html .= '</div>';
 				}
 
-				if ( ! $is_valid_account || 1 !== $invite->active ) {
-					$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
+				if ( ! $is_valid_account || '1' !== $invite->active ) {
+					$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . ' '. $invite->active  . '</h3>';
 				} else {
 
 					$remaining_registrations = ScormCloudPlugin::remaining_registrations();
@@ -84,7 +84,7 @@ class ScormCloudContentHandler {
 					// if not logged in.
 					if ( ! isset( $current_user->user_login ) || '' === $current_user->user_login ) {
 						if ( $remaining_registrations > 0 ) {
-							if ( 0 === $invite->require_login ) {
+							if ( '0' === $invite->require_login ) {
 								$invite_html .= "<p class='inputs'>My name is <input name='scormcloudfname' placeholder='First Name' type='text' key='$invite_id'/>&nbsp;<input name='scormcloudlname' placeholder='Last Name' type='text' key='$invite_id'/>";
 								$invite_html .= " and my email is <input name='scormcloudemail' placeholder='Email' type='text' key='$invite_id'/> .</p>";
 								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeAnonRegLaunch(\"$invite_id\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
@@ -92,11 +92,11 @@ class ScormCloudContentHandler {
 								$invite_html .= '<h3>' . __( 'Please log in to take this training.', 'scormcloud' ) . '</h3>';
 							}
 						} else {
-							$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
+							$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . $remaining_registrations . '</h3>';
 						}
 					} else {
 						$user_id = $current_user->ID;
-						$reg    = $wpdb->get_row( $wpdb->prepare( 'SELECT reg_id FROM' . esc_sql( ScormCloudDatabase::get_registrations_table() ) . ' WHERE invite_id = %s AND
+						$reg    = $wpdb->get_row( $wpdb->prepare( 'SELECT reg_id FROM ' . esc_sql( ScormCloudDatabase::get_registrations_table() ) . ' WHERE invite_id = %s AND
 	                                             user_id = %s ORDER BY update_date DESC', [ $invite_id, $user_id ] ), OBJECT );// db call ok; no-cache ok.
 						if ( null !== $reg ) {
 							$reg_id = $reg->reg_id;
@@ -131,7 +131,7 @@ class ScormCloudContentHandler {
 							if ( $remaining_registrations > 0 ) {
 								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeUserRegLaunch(\"$invite_id\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
 							} else {
-								$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
+								$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . $remaining_registrations . '</h3>';
 							}
 						}// End if().
 					}// End if().
