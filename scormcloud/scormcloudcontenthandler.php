@@ -72,7 +72,7 @@ class ScormCloudContentHandler {
 				}
 
 				if ( ! $is_valid_account || '1' !== $invite->active ) {
-					$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . ' '. $invite->active  . '</h3>';
+					$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
 				} else {
 
 					$remaining_registrations = ScormCloudPlugin::remaining_registrations();
@@ -92,7 +92,7 @@ class ScormCloudContentHandler {
 								$invite_html .= '<h3>' . __( 'Please log in to take this training.', 'scormcloud' ) . '</h3>';
 							}
 						} else {
-							$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . $remaining_registrations . '</h3>';
+							$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
 						}
 					} else {
 						$user_id = $current_user->ID;
@@ -131,7 +131,7 @@ class ScormCloudContentHandler {
 							if ( $remaining_registrations > 0 ) {
 								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeUserRegLaunch(\"$invite_id\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
 							} else {
-								$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . $remaining_registrations . '</h3>';
+								$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
 							}
 						}// End if().
 					}// End if().
