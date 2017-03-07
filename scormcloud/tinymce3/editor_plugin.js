@@ -60,6 +60,6 @@
 		}
 	});
 
-	// Register plugin
+	// Register plugin.
 	tinymce.PluginManager.add('scormCloudEmbed', tinymce.plugins.scormCloudEmbed);
 })();

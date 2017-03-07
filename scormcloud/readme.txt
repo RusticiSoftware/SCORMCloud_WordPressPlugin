@@ -1,9 +1,9 @@
 === Plugin Name ===
 Contributors: troyef, stuartchilds
 Tags: elearning, learning, scorm, aicc, education, training, cloud
-Requires at least: 3.3
-Tested up to: 3.3.1
-Stable tag: 1.1.7
+Requires at least: 4.3
+Tested up to: 5.6
+Stable tag: 1.2.0
 
 Tap the power of SCORM to deliver and track training right from your WordPress-powered site.
 
@@ -48,6 +48,13 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 1.1.9 =
+* Updates Training View
+* Updates to synching learner information
+* Updates to shortcode management
+
+= 1.1.8 =
+* Adding proxy support
 
 = 1.1.7 =
 * Adding fixes for the non-user catalog launches and to prevent widget launch double-clicking (which could produce duplicate SCORM Cloud registrations).
@@ -133,6 +140,13 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 * Original Release.
 
 == Upgrade Notice ==
+= 1.1.9 =
+* Updates Training View
+* Updates to synching learner information
+* Updates to shortcode management
+
+= 1.1.8 =
+* Adding proxy support
 
 = 1.1.7 =
 * Adding fixes for the non-user catalog launches and to prevent widget launch double-clicking (which could produce duplicate SCORM Cloud registrations).

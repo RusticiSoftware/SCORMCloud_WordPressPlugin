@@ -60,7 +60,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 ?>
 <div class="scormcloud-admin-page settings">
 
-<div class="wrap"><?php echo '<h2>'.__('Rustici Software SCORM Cloud Settings', 'scormcloud').'</h2>'; ?>
+    <h2> <?php echo esc_attr__( 'Rustici Software SCORM Cloud Settings', 'scormcloud' ) ; ?> </h2>
 <p><em><?php _e('To configure the SCORM Cloud for WordPress plugin, you need the AppID and Secret Key credentials for your account. They can be found by going to your Apps page on the SCORM Cloud site.', 'scormcloud'); ?> 
 <?php _e('If you need an account on SCORM Cloud,', 'scormcloud'); ?>
 	<a
