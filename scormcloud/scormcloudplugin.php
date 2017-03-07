@@ -128,7 +128,7 @@ class ScormCloudPlugin {
 		$response     = $account_service->GetAccountInfo();
 		$response_xml      = simplexml_load_string( $response );
 
-		if ( 'trial' !== $response_xml->account->accounttype && 'false' === $response_xml->account->strictlimit ) {
+		if ( 'trial' !== (string) $response_xml->account->accounttype && 'false' === (string) $response_xml->account->strictlimit ) {
 			return 1;
 		} else {
 			$reg_limit = (int) $response_xml->account->reglimit;

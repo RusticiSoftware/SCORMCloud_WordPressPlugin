@@ -77,14 +77,14 @@ class ScormCloudRegistrationsWidget extends WP_Widget {
 						$registration_result = $registration_service->GetRegistrationResult( $reg_id, 0, 0 );
 						$result_xml           = simplexml_load_string( $registration_result );
 
-						$completion = $result_xml->registrationreport->complete;
-						$success    = $result_xml->registrationreport->success;
-						$seconds    = $result_xml->registrationreport->totaltime;
-						$score      = $result_xml->registrationreport->score;
+						$completion = (string) $result_xml->registrationreport->complete;
+						$success    = (string) $result_xml->registrationreport->success;
+						$seconds    = (string) $result_xml->registrationreport->totaltime;
+						$score      = (string) $result_xml->registrationreport->score;
 
 						$course_title = $reg->course_title;
 						echo "<div class='usercourseblock'>";
-						if ( '1' === $reg->active ) {
+						if ( 1 === (int) $reg->active ) {
 							echo  "<a class='courseTitle' href='javascript:void(0);' key='" . esc_attr( $reg_id ) . "' onclick='ScormCloud.Widget.getLaunchURL(\"" . esc_textarea( $reg_id ) . "\",\"Training\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' title='Click to launch course " . esc_textarea( $course_title ) . "'>" . esc_textarea( $course_title ) . '</a>' ;
 						} else {
 							echo  '<span class="courseTitle" title="' . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . '">' . esc_attr( $course_title ) . '</span>';

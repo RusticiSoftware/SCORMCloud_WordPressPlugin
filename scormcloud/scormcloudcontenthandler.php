@@ -46,7 +46,7 @@ class ScormCloudContentHandler {
 				$invite_html .= '<h3>' . __( 'This training is not currently available.', 'scormcloud' ) . ' </h3>';
 			} else {
 
-				if ( '1' === $invite->show_course_info ) {
+				if ( 1 === (int) $invite->show_course_info ) {
 					// get course info.
 					$invite_html .= "<div class='courseInfo'>";
 
@@ -71,7 +71,7 @@ class ScormCloudContentHandler {
 					$invite_html .= '</div>';
 				}
 
-				if ( ! $is_valid_account || '1' !== $invite->active ) {
+				if ( ! $is_valid_account || 1 !== (int) $invite->active ) {
 					$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
 				} else {
 
@@ -84,7 +84,7 @@ class ScormCloudContentHandler {
 					// if not logged in.
 					if ( ! isset( $current_user->user_login ) || '' === $current_user->user_login ) {
 						if ( $remaining_registrations > 0 ) {
-							if ( '0' === $invite->require_login ) {
+							if ( 0 === (int) $invite->require_login ) {
 								$invite_html .= "<p class='inputs'>My name is <input name='scormcloudfname' placeholder='First Name' type='text' key='$invite_id'/>&nbsp;<input name='scormcloudlname' placeholder='Last Name' type='text' key='$invite_id'/>";
 								$invite_html .= " and my email is <input name='scormcloudemail' placeholder='Email' type='text' key='$invite_id'/> .</p>";
 								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeAnonRegLaunch(\"$invite_id\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
@@ -106,10 +106,10 @@ class ScormCloudContentHandler {
 							$result_xml           = simplexml_load_string( $registration_result );
 
 
-							$completion = $result_xml->registrationreport->complete;
-							$success    = $result_xml->registrationreport->success;
-							$seconds    = $result_xml->registrationreport->totaltime;
-							$score      = $result_xml->registrationreport->score;
+							$completion = (string) $result_xml->registrationreport->complete;
+							$success    = (string) $result_xml->registrationreport->success;
+							$seconds    = (string) $result_xml->registrationreport->totaltime;
+							$score      = (string) $result_xml->registrationreport->score;
 
 							$invite_html .= '<table class="result_table"><tr>' .
 							               '<td class="head">' . __( 'Completion', 'scormcloud' ) . '</td>' .

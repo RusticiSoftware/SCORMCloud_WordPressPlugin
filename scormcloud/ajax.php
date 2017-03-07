@@ -115,7 +115,7 @@ switch ( $action ) {
 
 					ScormCloudEmailer::send_email( $user_data, 'Training Invitation', $message );
 				}
-			} elseif ( '4' === $xml->err['code'] ) {
+			} elseif ( '4' === (string) $xml->err['code'] ) {
 				$response_string = 'There was a problem creating a new training. The maximum number of registrations for this account has been reached.';
 			} else {
 				$response_string = 'There was a problem creating a new training. ' . $xml->err['msg'];
@@ -575,7 +575,7 @@ switch ( $action ) {
 
 				echo '<td class="' . esc_attr( $reg_report->complete ) . '"">' . esc_textarea( $reg_report->complete ) . '</td>';
 				echo '<td class="' . esc_attr( $reg_report->success ) . '"">' . esc_textarea( $reg_report->success ) . '</td>';
-				$score = $reg_report->score;
+				$score = (string) $reg_report->score;
 				echo '<td>' . esc_textarea( 'unknown' === $score ? '-' : $score . '%' ) . '</td>';
 				$seconds = $reg_report->totaltime;
 				echo '<td>' . esc_textarea( floor( $seconds / 60 ) . 'min ' . ( $seconds % 60 ) ) . 'sec</td>';

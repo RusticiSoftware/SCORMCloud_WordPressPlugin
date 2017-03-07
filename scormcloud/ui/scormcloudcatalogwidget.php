@@ -47,7 +47,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 		global $wpdb;
 		wp_get_current_user();
 
-		$courses_filter  = ( ScormCloudPlugin::is_network_managed() && get_site_option( 'scormcloud_sharecourses' ) !== '1' ) ? $GLOBALS['blog_id'] . '-.*' : null;
+		$courses_filter  = ( ScormCloudPlugin::is_network_managed() && (int) get_site_option( 'scormcloud_sharecourses' ) !== 1 ) ? $GLOBALS['blog_id'] . '-.*' : null;
 		$cloud_service   = ScormCloudPlugin::get_cloud_service();
 		$course_service  = $cloud_service->getCourseService();
 		$course_list = $course_service->GetCourseList( $courses_filter );
@@ -91,14 +91,14 @@ class ScormCloudCatalogWidget extends WP_Widget {
 						$registration_result = $registration_service->GetRegistrationResult( $reg_id, 0, 0 );
 						$res_xml           = simplexml_load_string( $registration_result );
 
-						$completion = $res_xml->registrationreport->complete;
-						$success    = $res_xml->registrationreport->success;
-						$seconds    = $res_xml->registrationreport->totaltime;
-						$score      = $res_xml->registrationreport->score;
+						$completion = (string) $res_xml->registrationreport->complete;
+						$success    = (string) $res_xml->registrationreport->success;
+						$seconds    = (string) $res_xml->registrationreport->totaltime;
+						$score      = (string) $res_xml->registrationreport->score;
 
 						echo "<div class='usercourseblock'>";
 
-						if ( '1' === $reg->active ) {
+						if ( 1 === (int) $reg->active ) {
 							echo "<a class='courseTitle' href='javascript:void(0);' key='" . esc_attr( $reg_id ) . " onclick='ScormCloud.Widget.getLaunchURL(\"" . esc_js( $reg_id ) . "\",\"Catalog\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_textarea( __( 'Click to launch course ', 'scormcloud' ) ) . esc_textarea( $course_title ) . "'>" . esc_textarea( $course_title ) . '</a>';
 						} else {
 							echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
