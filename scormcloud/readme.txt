@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: troyef, stuartchilds
+Contributors: troyef, stuartchilds, timedwards
 Tags: elearning, learning, scorm, aicc, education, training, cloud
 Requires at least: 4.3
 Tested up to: 5.6
@@ -48,6 +48,9 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 1.2.0 =
+* Removed deprecated WP methods
+
 = 1.1.9 =
 * Updates Training View
 * Updates to synching learner information
