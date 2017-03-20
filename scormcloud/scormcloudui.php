@@ -35,9 +35,9 @@ class ScormCloudUi {
 		wp_enqueue_script( 'thickbox' );
 		wp_enqueue_style( 'thickbox' );
 
-		wp_enqueue_script( 'scormclouddialog', plugins_url( '/scormcloud/scripts/scormcloud.dialog.js' ), array() );
-		wp_enqueue_script( 'scormcloud-post', plugins_url( '/scormcloud/scripts/scormcloud.post.js' ), array() );
-		wp_register_style( 'scormcloud-post-style', plugins_url( '/scormcloud/css/scormcloud.post.css' ) );
+		wp_enqueue_script( 'scormclouddialog', plugins_url( '/scormcloud/scripts/scormcloud.dialog.js', __FILE__ ) );
+		wp_enqueue_script( 'scormcloud-post', plugins_url( '/scormcloud/scripts/scormcloud.post.js', __FILE__ ) );
+		wp_register_style( 'scormcloud-post-style', plugins_url( '/scormcloud/css/scormcloud.post.css', __FILE__ ) );
 		wp_enqueue_style( 'scormcloud-post-style' );
 	}
 

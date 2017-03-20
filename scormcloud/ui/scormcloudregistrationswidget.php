@@ -113,7 +113,7 @@ class ScormCloudRegistrationsWidget extends WP_Widget {
 				}// End try().
 			}// End foreach().
 			echo '</div>';
-			wp_enqueue_script( 'scormcloudwidget', get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/scripts/scormcloud.widget.js' );
+			wp_enqueue_script( 'scormcloud-widget' , plugins_url( '/scormcloud/scripts/scormcloud.widget.js',  __FILE__ ) );
 		}// End if().
 		// After the widget.
 		echo wp_kses_post( $args['after_widget'] );
