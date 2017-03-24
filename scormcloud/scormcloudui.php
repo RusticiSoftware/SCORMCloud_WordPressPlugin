@@ -35,9 +35,9 @@ class ScormCloudUi {
 		wp_enqueue_script( 'thickbox' );
 		wp_enqueue_style( 'thickbox' );
 
-		wp_enqueue_script( 'scormclouddialog', plugins_url( '/scormcloud/scripts/scormcloud.dialog.js' ), array() );
-		wp_enqueue_script( 'scormcloud-post', plugins_url( '/scormcloud/scripts/scormcloud.post.js' ), array() );
-		wp_register_style( 'scormcloud-post-style', plugins_url( '/scormcloud/css/scormcloud.post.css' ) );
+		wp_enqueue_script( 'scormclouddialog', plugins_url( '/scripts/scormcloud.dialog.js', __FILE__ ) );
+		wp_enqueue_script( 'scormcloud-post', plugins_url( '/scripts/scormcloud.post.js', __FILE__ ) );
+		wp_register_style( 'scormcloud-post-style', plugins_url( '/css/scormcloud.post.css', __FILE__ ) );
 		wp_enqueue_style( 'scormcloud-post-style' );
 	}
 
@@ -60,7 +60,7 @@ class ScormCloudUi {
 	 * @return mixed
 	 */
 	public static function embed_editor_plugin( $plugins ) {
-		$plugins['scormCloudEmbed'] = plugins_url( '/scormcloud/tinymce3/editor_plugin.js' );
+		$plugins['scormCloudEmbed'] = plugins_url( '/tinymce3/editor_plugin.js', __FILE__ );
 
 		return $plugins;
 	}

@@ -448,7 +448,7 @@ switch ( $action ) {
 	case 'getPropertiesEditorUrl':
 		$course_id     = get_post_arg_as_string( 'courseid' );
 		$course_service = $cloud_service->getCourseService();
-		$cssurl        = get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/css/scormcloud.ppeditor.css';
+		$cssurl        = site_url() . '/wp-content/plugins/scormcloud/css/scormcloud.ppeditor.css';
 
 		echo esc_url_raw( $course_service->GetPropertyEditorUrl( $course_id, $cssurl, null ) );
 
@@ -585,7 +585,7 @@ switch ( $action ) {
 		echo '</table>';
 
 		if ( count( $invite_regs ) >= 10 ) {
-			echo '<div class="viewInviteLink"><a href="' . esc_url_raw( get_option( 'siteurl' ) . '/wp-admin/admin.php?page=scormcloudtraining&inviteid=' . $invite_id ) . '">Click here to see complete training history.</a></div>';
+			echo '<div class="viewInviteLink"><a href="' . esc_url_raw( site_url() . '/wp-admin/admin.php?page=scormcloudtraining&inviteid=' . $invite_id ) . '">Click here to see complete training history.</a></div>';
 		}
 		break;
 

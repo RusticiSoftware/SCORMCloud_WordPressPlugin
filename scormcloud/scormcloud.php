@@ -4,7 +4,7 @@
  Plugin URI: http://scorm.com/wordpress
  Description: Tap the power of SCORM to deliver and track training right from your WordPress-powered site. Just add the SCORM Cloud widget to the sidebar or use the SCORM Cloud button to add a link directly in a post or page.
  Author: Rustici Software
- Version: 1.2.0
+ Version: 1.2.1
  Author URI: http://www.scorm.com
  */
 
@@ -25,3 +25,5 @@ add_action( 'init', array( 'ScormCloudPlugin', 'initialize' ) );
 add_action( 'init', array( 'ScormCloudUi', 'initialize' ) );
 add_action( 'widgets_init', array( 'ScormCloudUi', 'initialize_widgets' ) );
 
+add_filter( 'script_loader_src', array( 'ScormCloudPlugin', 'agnostic_loader' ), 20, 2 );
+add_filter( 'style_loader_src', array( 'ScormCloudPlugin', 'agnostic_loader' ), 20, 2 );

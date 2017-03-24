@@ -136,5 +136,17 @@ class ScormCloudPlugin {
 			return $reg_limit - $reg_usage;
 		}
 	}
+
+	/**
+	 * Removes http: and https: from a url.
+	 *
+	 * @param string $src The url to strip.
+	 * @param string $handle The handle of the script/css being enqueued.
+	 *
+	 * @return String
+	 */
+	public static function agnostic_loader( $src, $handle ) {
+		return preg_replace( '/^(http|https):/', '', $src );
+	}
 }
 

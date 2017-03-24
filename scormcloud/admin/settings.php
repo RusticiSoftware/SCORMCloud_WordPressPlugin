@@ -95,7 +95,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 <?php } ?>
 <?php if (is_super_admin()) {?>
 <p>
-<a href="<?php echo(get_option('siteurl').'/wp-admin/network/admin.php?page=scormcloud/network-admin/settings'); ?>"><?php _e('Network Admin Settings'); ?></a>
+<a href="<?php echo(site_url().'/wp-admin/network/admin.php?page=scormcloud/network-admin/settings'); ?>"><?php _e('Network Admin Settings'); ?></a>
 </p>
 <?php } ?>
 <h3><?php _e('Advanced Settings'); ?></h3>

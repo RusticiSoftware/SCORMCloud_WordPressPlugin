@@ -22,9 +22,9 @@ try {
 if ($isValidAccount){
     //Reportage Includes
     echo '<script type="text/javascript" ';
-    echo "src=\"http://cloud.scorm.com/Reportage/scripts/reportage.combined.js\"></script>\n";
+    echo "src=\"https://cloud.scorm.com/Reportage/scripts/reportage.combined.js\"></script>\n";
     echo '<link rel="stylesheet" ';
-    echo "href=\"http://cloud.scorm.com/Reportage/css/reportage.combined.css\" type=\"text/css\" media=\"screen\" />\n";
+    echo "href=\"https://cloud.scorm.com/Reportage/css/reportage.combined.css\" type=\"text/css\" media=\"screen\" />\n";
     echo '<div class="mod-scormcloud">';
 
     //Check for some defaults to set the form up
@@ -52,11 +52,11 @@ if (!$isValidAccount){
 
     if (is_super_admin())
     {
-        $settings_url = get_option('siteurl').'/wp-admin/network/admin.php?page=scormcloud/network-admin/settings';
+        $settings_url = site_url().'/wp-admin/network/admin.php?page=scormcloud/network-admin/settings';
     }
     else
     {
-        $settings_url = get_option('siteurl').'/wp-admin/admin.php?page=scormcloud/admin/settings';
+        $settings_url = site_url().'/wp-admin/admin.php?page=scormcloud/admin/settings';
     }
     echo '<div class="settingsPageLink"><a href="'.$settings_url.'"
 				title="'. __("Click here to configure your SCORM Cloud plugin.","scormcloud").'">'. __("Click Here to go to the settings page to configure the SCORM Cloud wordpress Plugin.","scormcloud").'</a></div>';
