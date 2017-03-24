@@ -16,9 +16,9 @@ class ScormCloudAdminUi {
 	 * Enqueue all of the admin includes.
 	 */
 	public static function enqueue_admin_includes() {
-		wp_enqueue_script( 'scormcloud-admin', plugins_url( '/scormcloud/scripts/scormcloud.admin.js', __FILE__ ) );
-		wp_enqueue_script( 'scormcloud-date_format', plugins_url( '/scormcloud/scripts/date.format.js', __FILE__ ) );
-		wp_register_style( 'scormcloud-admin-style', plugins_url( '/scormcloud/css/scormcloud.admin.css', __FILE__ ) );
+		wp_enqueue_script( 'scormcloud-admin', plugins_url( '../scripts/scormcloud.admin.js', __FILE__ ) );
+		wp_enqueue_script( 'scormcloud-date_format', plugins_url( '../scripts/date.format.js', __FILE__ ) );
+		wp_register_style( 'scormcloud-admin-style', plugins_url( '../css/scormcloud.admin.css', __FILE__ ) );
 		wp_enqueue_style( 'scormcloud-admin-style' );
 	}
 
@@ -111,11 +111,9 @@ class ScormCloudAdminUi {
 	public static function set_js_vars() {
 		?>
 		<script type="text/javascript" charset="utf-8">
-			// <![CDATA[
 			if (typeof ScormCloud !== 'undefined' && typeof ScormCloud.Dialog !== 'undefined') {
-                ScormCloud.Dialog.embedTrainingUrl = "<?php echo plugins_url( '/scormcloud/ui/embedtrainingdialog.php' ); ?>";
+				ScormCloud.Dialog.embedTrainingUrl = "<?php echo esc_url_raw( plugins_url( '/scormcloud/ui/embedtrainingdialog.php' ) ); ?>";
 			}
-			// ]]>
 		</script>
 		<?php
 	}
@@ -133,7 +131,7 @@ class ScormCloudAdminUi {
 		if ( in_array( $screen_id, $plugin_hooks ) ) {
 
 			$help_html = "<div class='sc_helpPanel'>";
-			$help_html .= "<h2>SCORM Cloud Hints and Tips</h2>";
+			$help_html .= '<h2>SCORM Cloud Hints and Tips</h2>';
 
 			if ( isset( $_GET[ 'page' ] ) ) {
 				$plugin_page = stripslashes( $_GET[ 'page' ] );
@@ -144,8 +142,8 @@ class ScormCloudAdminUi {
 
 				case 'scormcloud/network-admin':
 				case 'scormcloud/admin':
-					$help_html .= "<p><span class='emph'>Overall Reportage Summary</span> is a results report for all trainings in your wordpress plugin."
-    	            $help_html .= "Note that the results are not reported in real time but are current as of the given date.  You can view the full report in the Reportage site by clicking the 'Scorm Cloud Reportage' link under the page header.";
+					$help_html .= "<p><span class='emph'>Overall Reportage Summary</span> is a results report for all trainings in your wordpress plugin.";
+					$help_html .= "Note that the results are not reported in real time but are current as of the given date.  You can view the full report in the Reportage site by clicking the 'Scorm Cloud Reportage' link under the page header.";
 					$help_html .= '</p>';
 					break;
 
@@ -212,7 +210,7 @@ class ScormCloudAdminUi {
 					break;
 
 
-			}
+			} // End switch().
 
 			$help_html .= "<hr>";
 

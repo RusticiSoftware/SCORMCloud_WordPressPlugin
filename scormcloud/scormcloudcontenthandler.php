@@ -87,7 +87,7 @@ class ScormCloudContentHandler {
 							if ( 0 === (int) $invite->require_login ) {
 								$invite_html .= "<p class='inputs'>My name is <input name='scormcloudfname' placeholder='First Name' type='text' key='$invite_id'/>&nbsp;<input name='scormcloudlname' placeholder='Last Name' type='text' key='$invite_id'/>";
 								$invite_html .= " and my email is <input name='scormcloudemail' placeholder='Email' type='text' key='$invite_id'/> .</p>";
-								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeAnonRegLaunch(\"$invite_id\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
+								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeAnonRegLaunch(\"$invite_id\");' url='" . site_url() . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
 							} else {
 								$invite_html .= '<h3>' . __( 'Please log in to take this training.', 'scormcloud' ) . '</h3>';
 							}
@@ -124,12 +124,12 @@ class ScormCloudContentHandler {
 							               '</tr></table>';
 
 
-							$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.getLaunchURL(\"$invite_id\",\"$reg_id\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='" . __( 'Relaunch Training', 'scormcloud' ) . "' />";
+							$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.getLaunchURL(\"$invite_id\",\"$reg_id\");' url='" . site_url() . "/wp-content/plugins/scormcloud/ajax.php' value='" . __( 'Relaunch Training', 'scormcloud' ) . "' />";
 
 
 						} else {
 							if ( $remaining_registrations > 0 ) {
-								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeUserRegLaunch(\"$invite_id\");' url='" . get_option( 'siteurl' ) . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
+								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.makeUserRegLaunch(\"$invite_id\");' url='" . site_url() . "/wp-content/plugins/scormcloud/ajax.php' value='Start Training'/>";
 							} else {
 								$invite_html .= '<h3>' . __( 'This training is not currently active.', 'scormcloud' ) . '</h3>';
 							}

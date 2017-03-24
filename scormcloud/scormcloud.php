@@ -25,3 +25,5 @@ add_action( 'init', array( 'ScormCloudPlugin', 'initialize' ) );
 add_action( 'init', array( 'ScormCloudUi', 'initialize' ) );
 add_action( 'widgets_init', array( 'ScormCloudUi', 'initialize_widgets' ) );
 
+add_filter( 'script_loader_src', array( 'ScormCloudPlugin', 'agnostic_loader' ), 20, 2 );
+add_filter( 'style_loader_src', array( 'ScormCloudPlugin', 'agnostic_loader' ), 20, 2 );

@@ -15,7 +15,7 @@ $invite = $wpdb->get_row($query, OBJECT);
 
 ?>
 <div class="scormcloud-admin-page trainingDetail"><a class='backLink'
-	href='<?php echo get_option( 'siteurl' )."/wp-admin/admin.php?page=scormcloud/manage_training"; ?>'><?php _e("Go back to all trainings","scormcloud"); ?></a>
+	href='<?php echo site_url()."/wp-admin/admin.php?page=scormcloud/manage_training"; ?>'><?php _e("Go back to all trainings","scormcloud"); ?></a>
 
 <h2><?php echo __("Training Details for","scormcloud").' "'.$invite->course_title; ?>"</h2>
 <div class="invitationStatus"><?php
@@ -31,7 +31,7 @@ if ($invite->active != 2){
 <?php if ($invite->post_id != "__direct_invite__" && $invite->post_id != "__catalog_widget__"){ ?>
 <div class='meta-box-sortables'>
 <div
-	class='reportageWrapper postbox <?php echo ($isValidAccount ? "closed" : ""); ?>'>
+	class='reportageWrapper postbox <?php echo ($is_valid_account ? "closed" : ""); ?>'>
 <div title='<?php _e("Click to toggle","scormcloud"); ?>'
 	class='handlediv'><br>
 </div>
@@ -134,7 +134,7 @@ if ($invite->active != 2){
             
             $j.ajax({
 			type: "POST",
-			url: "<?php echo get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
+			url: "<?php echo site_url() . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
 			data: 	"action=updatePostInvite" +
                     "&inviteid=<?php echo $inviteId; ?>" +
 					"&header=" + header +
@@ -156,7 +156,7 @@ if ($invite->active != 2){
         
 		
 </script> <?php }
-if ($isValidAccount){
+if ($is_valid_account){
     ?>
 
 <div class='meta-box-sortables'>
@@ -276,7 +276,7 @@ jQuery(".viewReportageLink").click(function(){
      
     jQuery.ajax({
         type: "POST",
-        url: "<?php echo get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
+        url: "<?php echo site_url() . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
         data: 	"action=getInviteReportUrl" +
                 "&inviteid=" + invId,
         success: function(url){
@@ -298,7 +298,7 @@ jQuery('.activateLink').click(function(){
     
     jQuery.ajax({
         type: "POST",
-        url: "<?php echo get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
+        url: "<?php echo site_url() . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
         data: 	"action=setactive" +
                 "&inviteid=" + invId +
                 "&active=" + (wasActive ? '0' : '1'),
@@ -324,7 +324,7 @@ function Scormcloud_loadRegReport(invId,regId){
                     
     jQuery.ajax({
         type: "POST",
-        url: "<?php echo get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
+        url: "<?php echo site_url() . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
         data: 	"action=getRegReportUrl" +
                 "&inviteid=" + invId +
                 "&regid=" + regId,
@@ -344,7 +344,7 @@ function Scormcloud_loadRegReport(invId,regId){
     echo "<div>
             <h2>" . __("Please configure your SCORM Cloud settings to see training results.","scormcloud") . "</h2>
         </div>";
-    echo '<div class="settingsPageLink"><a href="'.get_option( 'siteurl' ).'/wp-admin/admin.php?page=scormcloudsettings"
+    echo '<div class="settingsPageLink"><a href="'.site_url().'/wp-admin/admin.php?page=scormcloudsettings"
 				title="'.__("Click here to configure your SCORM Cloud plugin.","scormcloud").'">' . __("Click Here to go to the settings page.","scormcloud") . '</a></div>';
 
 }

@@ -41,7 +41,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 		}
 
 		// Make the widget.
-		wp_enqueue_style( 'scormcloud',  get_option( 'siteurl' ) . '/wp-content/plugins/scormcloud/css/scormcloud.widget.css' );
+		wp_enqueue_style( 'scormcloud',  site_url() . '/wp-content/plugins/scormcloud/css/scormcloud.widget.css' );
 
 		global $current_user;
 		global $wpdb;
@@ -99,7 +99,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 						echo "<div class='usercourseblock'>";
 
 						if ( 1 === (int) $reg->active ) {
-							echo "<a class='courseTitle' href='javascript:void(0);' key='" . esc_attr( $reg_id ) . " onclick='ScormCloud.Widget.getLaunchURL(\"" . esc_js( $reg_id ) . "\",\"Catalog\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_textarea( __( 'Click to launch course ', 'scormcloud' ) ) . esc_textarea( $course_title ) . "'>" . esc_textarea( $course_title ) . '</a>';
+							echo "<a class='courseTitle' href='javascript:void(0);' key='" . esc_attr( $reg_id ) . " onclick='ScormCloud.Widget.getLaunchURL(\"" . esc_js( $reg_id ) . "\",\"Catalog\");' url='" . esc_url_raw( site_url() ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_textarea( __( 'Click to launch course ', 'scormcloud' ) ) . esc_textarea( $course_title ) . "'>" . esc_textarea( $course_title ) . '</a>';
 						} else {
 							echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
 						}
@@ -122,7 +122,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 					} else {
 						echo "<div class='usercourseblock'>";
 						if ( $remaining_registrations > 0 ) {
-							echo "<a class='courseTitle' href='javascript:void(0);' coursetitle='" . esc_attr( $course_title ) . "' key='" . esc_attr( $course_id ) . "' onclick='ScormCloud.Widget.getCatalogLaunchURL(\"" . esc_attr( $course_id ) . "\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_attr__( 'Click to launch course ', 'scormcloud' ) . esc_attr( $course_title ) . "'>" . esc_attr( $course_title ) . '</a>';
+							echo "<a class='courseTitle' href='javascript:void(0);' coursetitle='" . esc_attr( $course_title ) . "' key='" . esc_attr( $course_id ) . "' onclick='ScormCloud.Widget.getCatalogLaunchURL(\"" . esc_attr( $course_id ) . "\");' url='" . esc_url_raw( site_url() ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_attr__( 'Click to launch course ', 'scormcloud' ) . esc_attr( $course_title ) . "'>" . esc_attr( $course_title ) . '</a>';
 						} else {
 							echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
 						}
@@ -135,7 +135,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 						echo "<div class='anonlaunchdiv' key='" . esc_attr( $course_id ) . "'>" . esc_attr__( 'First Name', 'scormcloud' ) . ":<br/><input name='scormcloudfname' type='text' key='" . esc_attr( $course_id ) . "'/><br/>";
 						echo esc_attr__( 'Last Name', 'scormcloud' ) . ":<br/><input name='scormcloudlname' type='text' key='" . esc_attr( $course_id ) . "'/><br/>";
 						echo esc_attr__( 'Email', 'scormcloud' ) . ":<br/><input name='scormcloudemail' type='text' key='" . esc_attr( $course_id ) . "'/>";
-						echo "<input name='launch' type='button' class='catalogLaunchBtn' key='" . esc_attr( $course_id ) . "' coursetitle='" . esc_attr( $course_title ) . "' onclick='ScormCloud.Widget.getAnonCatalogLaunchURL(\"" . esc_attr( $course_id ) . "\");' url='" . esc_url_raw( get_option( 'siteurl' ) ) . "/wp-content/plugins/scormcloud/ajax.php' value='" . esc_attr__( 'Start Training', 'scormcloud' ) . "'/>";
+						echo "<input name='launch' type='button' class='catalogLaunchBtn' key='" . esc_attr( $course_id ) . "' coursetitle='" . esc_attr( $course_title ) . "' onclick='ScormCloud.Widget.getAnonCatalogLaunchURL(\"" . esc_attr( $course_id ) . "\");' url='" . esc_url_raw( site_url() ) . "/wp-content/plugins/scormcloud/ajax.php' value='" . esc_attr__( 'Start Training', 'scormcloud' ) . "'/>";
 						echo "<div class='launchMessage'>message</div></div>";
 					} else {
 						echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
@@ -144,7 +144,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 				echo '</div>';
 			}// End foreach().
 			echo '</div>';
-			wp_enqueue_script( 'scormcloud-widget' , plugins_url( '/scormcloud/scripts/scormcloud.widget.js',  __FILE__ ) );
+			wp_enqueue_script( 'scormcloud-widget' , plugins_url( '/../scripts/scormcloud.widget.js',  __FILE__ ) );
 		}// End if().
 		// After the widget.
 		echo wp_kses_post( $args['after_widget'] );
