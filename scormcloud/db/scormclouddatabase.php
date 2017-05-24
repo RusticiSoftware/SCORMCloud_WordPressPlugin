@@ -147,13 +147,13 @@ class ScormCloudDatabase
                 $i++;
             }
     
-            $comma = ', ';
+            $separator = 'AND ';
             if ($first) {
-                $comma = '';
+                $separator = '';
                 $first = false;
             }
     
-            $whereClause .= $comma.$col.' = '.$format;
+            $whereClause .= $separator.$col.' = '.$format;
             $whereValues[] = $val;
         }
     
