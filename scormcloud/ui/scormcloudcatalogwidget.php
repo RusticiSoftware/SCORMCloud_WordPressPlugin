@@ -99,7 +99,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 						echo "<div class='usercourseblock'>";
 
 						if ( 1 === (int) $reg->active ) {
-							echo "<a class='courseTitle' href='javascript:void(0);' key='" . esc_attr( $reg_id ) . " onclick='ScormCloud.Widget.getLaunchURL(\"" . esc_js( $reg_id ) . "\",\"Catalog\");' url='" . esc_url_raw( site_url() ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_textarea( __( 'Click to launch course ', 'scormcloud' ) ) . esc_textarea( $course_title ) . "'>" . esc_textarea( $course_title ) . '</a>';
+							echo "<a class='courseTitle' href='javascript:void(0);' key='" . esc_attr( $reg_id ) . "' onclick='ScormCloud.Widget.getLaunchURL(\"" . esc_js( $reg_id ) . "\",\"Catalog\");' url='" . esc_url_raw( site_url() ) . "/wp-content/plugins/scormcloud/ajax.php' title='" . esc_textarea( __( 'Click to launch course ', 'scormcloud' ) ) . esc_textarea( $course_title ) . "'>" . esc_textarea( $course_title ) . '</a>';
 						} else {
 							echo "<span class='courseTitle' title='" . esc_attr__( 'This course is currently inactive.', 'scormcloud' ) . "'>" . esc_attr( $course_title ) . '</span>';
 						}
