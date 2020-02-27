@@ -29,7 +29,7 @@ class ScormCloudContentHandler {
 				$is_valid_account = false;
 			}
 
-			$invite_id = substr( $tag_string, 21, strlen( $tag_string ) - 22 );
+			$invite_id = trim(substr( $tag_string, 21, strlen( $tag_string ) - 22 ));
 
 			$invite = ScormCloudDatabase::get_invitation( $invite_id );
 			if ( null === $invite ) {
