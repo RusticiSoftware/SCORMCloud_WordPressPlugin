@@ -23,7 +23,8 @@ if ($isValidAccount){
     //echo $GLOBALS['blog_id'];
     $packageid = $GLOBALS['blog_id'].'-'.uniqid();
     ?>
-<div id="UploadFrame"><iframe width="100%" height="50px"
+<div id="UploadFrame">
+<iframe width="100%" height="100px"
 	style="border: 0;"
 	src="<?php echo site_url(); ?>/wp-content/plugins/scormcloud/uploadpif.php?id=<?php echo $packageid; ?>"
 	id="ifmImport"></iframe></div>
@@ -35,11 +36,11 @@ if ($isValidAccount){
     }
 	
     $courseService = $ScormService->getCourseService();
-    $courseObjArray = $courseService->GetCourseList($coursesFilter);
-
+    //$courseObjArray = $courseService->getCourses($coursesFilter);
+    $courseObjArray = $courseService->getCourses()->getCourses();
     $courseCount = count($courseObjArray);
 	
-	$courseObjArray = array_reverse($courseObjArray);
+	//$courseObjArray = array_reverse($courseObjArray);
 	
     if ($courseCount > 0){
         ?>
@@ -57,49 +58,51 @@ if ($isValidAccount){
 	<?php
 	foreach($courseObjArray as $course)
 	{
-	    echo "<tr key='".$course->getCourseId()."' class='courseRow'><td class='title'>";
-	    echo $course->getTitle()."<a key='".$course->getCourseId()."' class='previewLink' onclick='scormcloud_LaunchCoursePreview(\"".$course->getCourseId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\",window.location);' href='javascript:void(0);'>".__("Preview","scormcloud")."</a>";
+	    echo "<tr key='".$course->getId()."' class='courseRow'><td class='title'>";
+	    echo $course->getTitle()."<a key='".$course->getId()."' class='previewLink' onclick='scormcloud_LaunchCoursePreview(\"".$course->getId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\",window.location);' href='javascript:void(0);'>".__("Preview","scormcloud")."</a>";
 	    echo '</td><td>';
-	    $regCount = $course->getNumberOfRegistrations();
+	    $regCount = $course->getRegistrationCount();
 	    echo "$regCount ".($regCount != 1 ? __("Learners","scormcloud") : __("Learner","scormcloud"));
 	    echo '</td><td>';
-	    echo "<a key='".$course->getCourseId()."' class='reportLink' onclick='scormcloud_LaunchCourseReport(\"".$course->getCourseId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\");' href='javascript:void(0);'>".__("View Course Report","scormcloud")."</a>";
+	    echo "<a key='".$course->getId()."' class='reportLink' onclick='scormcloud_LaunchCourseReport(\"".$course->getId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\");' href='javascript:void(0);'>".__("View Course Report","scormcloud")."</a>";
 	    echo '</td>';
-	    echo "<td><a href='#' key='".$course->getCourseId()."' class='viewPkgPropsLink' >".__("Edit Course Properties","scormcloud")."</a></td>";
+	    echo "<td><a href='#' key='".$course->getId()."' class='viewPkgPropsLink' >".__("Edit Course Properties","scormcloud")."</a></td>";
 	    echo '<td>';
-	    if (strpos($course->getCourseId(),$GLOBALS['blog_id']."-") === 0){
-	        echo "<a key='".$course->getCourseId()."' class='deleteLink' onclick='scormcloud_deleteCourse(\"".$course->getCourseId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\");'  >".__("Delete Course","scormcloud")."</a>";
+	    if (strpos($course->getId(),$GLOBALS['blog_id']."-") === 0){
+	        echo "<a key='".$course->getId()."' class='deleteLink' onclick='scormcloud_deleteCourse(\"".$course->getId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\");'  >".__("Delete Course","scormcloud")."</a>";
 	    }
 	    echo '</td></tr>';
-	    echo "<tr class='propseditor' key='".$course->getCourseId()."' ><td class='regList' colspan='5'><iframe src=''></iframe></td></tr>";
+	    echo "<tr class='propseditor' key='".$course->getId()."' ><td class='regList' colspan='5'><iframe src=''></iframe></td></tr>";
 	}
 	?>
 </table>
 <script language="javascript">
-jQuery('.viewPkgPropsLink').toggle(function(){
+jQuery('.viewPkgPropsLink').click(function(){
     var courseid = jQuery(this).attr('key');
     if (jQuery('tr.propseditor[key="'+ courseid + '"] iframe').attr('src') == ''){
-        jQuery.ajax({
-            type: "POST",
-            url: "<?php echo site_url() . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
-            data: 	"action=getPropertiesEditorUrl" +
-                    "&courseid=" + courseid,
-            success: function(data){
-                jQuery('tr.propseditor[key="'+ courseid + '"] iframe').attr('src',data);
-            }
-        });
+        jQuery('tr.propseditor[key="'+ courseid + '"] iframe').attr('src','<?php echo site_url() . "/wp-content/plugins/scormcloud/courseconfig.php?courseid=" ?>' + courseid);
+        // jQuery.ajax({
+        //     type: "POST",
+        //     url: "<?php echo site_url() . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
+        //     data: 	"action=getPropertiesEditorUrl" +
+        //             "&courseid=" + courseid,
+        //     success: function(data){
+        //         jQuery('tr.propseditor[key="'+ courseid + '"] iframe').attr('src',data);
+        //     }
+        // });
     }
     
     jQuery('tr.courseRow[key="'+ courseid + '"]').addClass('active');
     jQuery('tr.propseditor[key="'+ courseid + '"]').fadeIn();
 
-},
-function(){
-    var courseid = jQuery(this).attr('key');
-    jQuery('tr.courseRow[key="'+ courseid + '"]').removeClass('active');
-    jQuery('tr.propseditor[key="'+ courseid + '"]').fadeOut();
+}
+// ,function(){
+//     var courseid = jQuery(this).attr('key');
+//     jQuery('tr.courseRow[key="'+ courseid + '"]').removeClass('active');
+//     jQuery('tr.propseditor[key="'+ courseid + '"]').fadeOut();
     
-});
+// }
+);
 
 </script>
 

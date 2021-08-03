@@ -39,7 +39,7 @@ span.importMessage.hidden {display:none;}
 .scormcloud-admin-page tr.propseditor {display:none;}
 .scormcloud-admin-page tr.propseditor td {border-bottom-color:#666666;border-bottom-width:3px;}
 .scormcloud-admin-page tr.courseRow.active td {border-top:3px solid #666666;}
-.scormcloud-admin-page tr.propseditor iframe{border:medium none;height:375px;overflow:auto;width:100%;}
+.scormcloud-admin-page tr.propseditor iframe{border:medium none;height:210px;overflow:auto;width:100%;}
 
 .scormcloud-admin-page .passed, .scormcloud-admin-page  .complete{color:#41A317;}
 .scormcloud-admin-page .failed, .scormcloud-admin-page .incorrect {color:#F62817;}

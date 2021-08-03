@@ -6,6 +6,11 @@ else
 require_once('../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/admin.php');
 
+require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ModelInterface.php');
+require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ReportageAuthTokenSchema.php');
+require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ReportageLinkSchema.php');
+require_once(SCORMCLOUD_BASE.'/reportagehelper.php');
+
 global $wpdb;
 
 echo '<div class="scormcloud-admin-page startpage">';
@@ -29,8 +34,8 @@ if ($isValidAccount){
 
     //Check for some defaults to set the form up
     $rptService = $ScormService->getReportingService();
-    $rptAuth = $rptService->GetReportageAuth('FREENAV',true);
-    $rServiceUrl = $rptService->GetReportageServiceUrl();
+    $rptAuth = $rptService->getReportageAuthToken('FREENAV',true);
+    $rServiceUrl = "https://cloud.scorm.com/";
 
 }
 
@@ -43,7 +48,7 @@ echo '<div class="header">
 if ($isValidAccount){
     $reportageUrl = $rServiceUrl.'Reportage/reportage.php?appId='.$ScormService->getAppId()."&registrationTags=".$GLOBALS['blog_id']."|_all";
     echo '&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a id="ReportageLink" href="'.$rptService->GetReportUrl($rptAuth, $reportageUrl).'" 
+            <a id="ReportageLink" href="'.$rptService->getReportageLink($rptAuth->getQueryString(), $reportageUrl).'" 
 				target="_blank" title="'. __("Open the SCORM Reportage Console in a new window.","scormcloud").'">'. __("SCORM Cloud Reportage","scormcloud").'</a>';
 }
 echo "</div>";
@@ -114,11 +119,12 @@ if ($isValidAccount){
     $learnersWidgetSettings->setExpand(true);
     $learnersWidgetSettings->setDivname('LearnersListDiv');
 
-    $summaryUrl = $rptService->GetWidgetUrl($rptAuth,'allSummary',$sumWidgetSettings);
-    $coursesUrl = $rptService->GetWidgetUrl($rptAuth,'courseRegistration',$coursesWidgetSettings);
-    $learnersUrl = $rptService->GetWidgetUrl($rptAuth,'learnerRegistration',$learnersWidgetSettings);
+    $reportage_helper = new ReportageHelper($ScormService->getAppId());
+    $summaryUrl = $rServiceUrl.$rptService->getReportageLink($rptAuth->getQueryString(), $reportage_helper->GetWidgetUrl($rptAuth->getQueryString(),'allSummary',$sumWidgetSettings))->getReportageLink();
+    $coursesUrl = $rServiceUrl.$rptService->getReportageLink($rptAuth->getQueryString(), $reportage_helper->GetWidgetUrl($rptAuth->getQueryString(),'courseRegistration',$coursesWidgetSettings))->getReportageLink();
+    $learnersUrl = $rServiceUrl.$rptService->getReportageLink($rptAuth->getQueryString(), $reportage_helper->GetWidgetUrl($rptAuth->getQueryString(),'learnerRegistration',$learnersWidgetSettings))->getReportageLink();
 
-    $dateRelavance = $rptService->GetReportageDate();
+    $dateRelavance = $reportage_helper->GetReportageDate();
 
 
     echo "<div class='meta-box-sortables'>";

@@ -79,7 +79,7 @@ class ScormCloudPlugin {
 	 * @return ScormEngineService
 	 */
 	public static function get_cloud_service( $force_network_settings = false ) {
-		require_once( 'SCORMCloud_PHPLibrary/ScormEngineService.php' );
+		require_once( 'SCORMCloud_PHPLibrary/ScormEngineService2.php' );
 		require_once( 'SCORMCloud_PHPLibrary/ScormEngineUtilities.php' );
 
 		if ( ScormCloudPlugin::is_network_managed() || $force_network_settings ) {
@@ -124,15 +124,18 @@ class ScormCloudPlugin {
 	 */
 	public static function remaining_registrations() {
 		$cloud_service = ScormCloudPlugin::get_cloud_service();
-		$account_service  = $cloud_service->getAccountService();
-		$response     = $account_service->GetAccountInfo();
-		$response_xml      = simplexml_load_string( $response );
-
-		if ( 'trial' !== (string) $response_xml->account->accounttype && 'false' === (string) $response_xml->account->strictlimit ) {
+		$account_service  = $cloud_service->getReportingService();
+		$response     = $account_service->GetAccountInfo(); 
+		
+		$account_info = json_decode($response);
+		if ( 'trial' !== (string) $account_info->accountType && 'false' === (string) $account_info->strictLimit ) {
 			return 1;
 		} else {
-			$reg_limit = (int) $response_xml->account->reglimit;
-			$reg_usage = (int) $response_xml->account->usage->regcount;
+			$reg_limit = (int) $account_info->reglimit;
+			$reg_usage = (int) $account_info->usage->regcount;
+			if ($reg_limit == -1) {
+				$reg_limit = 10000;
+			}
 			return $reg_limit - $reg_usage;
 		}
 	}
