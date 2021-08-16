@@ -3,7 +3,7 @@ Contributors: troyef, stuartchilds, timedwards, brianrogers
 Tags: elearning, learning, scorm, aicc, education, training, cloud
 Requires at least: 4.3
 Tested up to: 4.7
-Stable tag: 1.2.3
+Stable tag: 2.0.0
 
 Tap the power of SCORM to deliver and track training right from your WordPress-powered site.
 

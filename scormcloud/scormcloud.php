@@ -13,7 +13,7 @@ define('SCORMCLOUD_BASE', WP_PLUGIN_DIR . '/' . str_replace(basename(__FILE__), 
 require_once 'scormcloudplugin.php';
 require_once 'scormcloudui.php';
 
-require plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+require plugin_dir_path(__FILE__) . 'lib/autoload.php';
 
 load_plugin_textdomain('scormcloud', false, dirname(plugin_basename(__FILE__)) . '/langs/');
 
