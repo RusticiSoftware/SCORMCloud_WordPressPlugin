@@ -67,20 +67,6 @@ if (!$isValidAccount){
 				title="'. __("Click here to configure your SCORM Cloud plugin.","scormcloud").'">'. __("Click Here to go to the settings page to configure the SCORM Cloud wordpress Plugin.","scormcloud").'</a></div>';
 
 }
-/*
- echo "<div class='meta-box-sortables'>";
- echo "<div class='reportageWrapper postbox ".($isValidAccount ? "closed" : "")."'>";
- echo "<div class='handlediv'><br></div><h3 class='hndle'><span>". __("About SCORM Cloud","scormcloud")."</span></h3>";
- echo "<div class='inside'>";
-
- echo '<div class="aboutScorm">
- <object style="float:right;" width="480" height="385"><param name="movie" value="http://www.youtube.com/v/nP657pV6OWU&hl=en_US&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/nP657pV6OWU&hl=en_US&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
- This will be an explantion of SCORM Cloud.  Maybe with a video of how it works... maybe like this...
- <div style="clear:both;"></div>
- </div>';
-
- echo "</div></div>";
- */
 
 if ($isValidAccount){
     //  AppId Summary Report

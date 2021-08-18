@@ -121,9 +121,6 @@ if ( $is_valid_account ) {
 				$j('#embedTrainingDialog .courseSelector').change(function () {
 					var selObj = $j('#embedTrainingDialog .courseSelector option:selected');
 					if (selObj.val() != '') {
-						//var newheader = 'Training: ' + selObj.text();
-						//$j('#embedTrainingDialog input[name="trainingHeaderTxt"]').val(newheader);
-						//$j('#embedTrainingDialog .previewDiv h3').text(newheader);
 						$j('#embedTrainingDialog .previewDiv div.courseInfo div.title').text('<?php esc_attr_e( 'Title', 'scormcloud' ); ?>: ' + selObj.text());
 						$j('#embedTrainingDialog .selectOptionsDiv').fadeIn('slow');
 						tb_position();

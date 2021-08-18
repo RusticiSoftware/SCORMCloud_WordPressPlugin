@@ -25,9 +25,6 @@ if (isset($_GET['inviteid'])) {
 } else {
 
     $regsRemaining = ScormCloudPlugin::remaining_registrations();
-    // TODO: change this back after fixing the API bug
-    $regsRemaining = 100;
-    //print($regsRemaining);
 
     ?>
 <div class="scormcloud-admin-page trainings">
@@ -63,7 +60,6 @@ $coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('sco
             echo "<option value='-1'></option>";
             $courseService = $ScormService->getCourseService();
             $allResults = $courseService->getCourses()->getCourses();
-//print($allResults);
             foreach ($allResults as $course) {
                 echo "<option value='" . $course->getId() . "'>" . $course->getTitle() . "</option>";
             }
@@ -201,8 +197,6 @@ jQuery("#btnAddRegistration").click(function(){
     	dataString += '&sendemail=on';
     }
 
-    //alert(dataString);
-
     scormcloud_showCreateTrainingMessage("<?php _e("Creating Trainings...", "scormcloud");?>","", false);
 
     jQuery.ajax({
@@ -291,9 +285,6 @@ jQuery("#btnAddRegistration").click(function(){
             echo "(<a href='#' key='" . $invite->invite_id . "' class='activateLink' active='" . $invite->active . "' >" . ($invite->active == 1 ? __("click to deactivate", "scormcloud") : __("click to activate", "scormcloud")) . "</a>)";
         }
         echo "</td>";
-
-        //$user_info = get_userdata($reg->user_id);
-        //echo $user_info->display_name;
         echo '</tr>';
     }
     echo '</table>';
@@ -308,7 +299,6 @@ jQuery(".viewReportageLink").click(function(){
         data: 	"action=getInviteReportUrl" +
                 "&inviteid=" + invId,
         success: function(url){
-            //alert(url);
             window.open(url);
 
         }
@@ -320,10 +310,7 @@ jQuery(".viewReportageLink").click(function(){
 
 
 jQuery('.viewRegsLink').click(function(){
-    console.log('clicked');
     var invId = jQuery(this).attr('key');
-    console.log(invId);
-    //var linkObj = jQuery(this);
     if (jQuery('tr.regList[key="'+ invId + '"]').length < 1){
         jQuery.ajax({
             type: "POST",
@@ -331,7 +318,6 @@ jQuery('.viewRegsLink').click(function(){
             data: 	"action=getRegistrations" +
                     "&inviteid=" + invId,
             success: function(data){
-                console.log(data);
                 var newRow = "<tr class='regList' key='"+invId+"' ><td class='regList' colspan='6'>"+data+"</td></tr>";
                 jQuery('tr.regRow[key="'+ invId + '"]').addClass('active').after(newRow);
 
@@ -343,19 +329,11 @@ jQuery('.viewRegsLink').click(function(){
     }
     return false;
  }
- //,
-// function(){
-//     var invId = jQuery(this).attr('key');
-//     jQuery('tr.regRow[key="'+ invId + '"]').removeClass('active');
-//     jQuery('tr.regList[key="'+ invId + '"]').fadeOut();
-
-// }
 );
 
 jQuery('.activateLink').click(function(){
     var invId = jQuery(this).attr('key');
     var wasActive = (jQuery(this).attr('active') == 1);
-    //var linkObj = jQuery(this);
 
     jQuery.ajax({
         type: "POST",
@@ -364,7 +342,6 @@ jQuery('.activateLink').click(function(){
                 "&inviteid=" + invId +
                 "&active=" + (wasActive ? '0' : '1'),
         success: function(data){
-            //alert(data);
 
         }
     });
@@ -390,7 +367,6 @@ function Scormcloud_loadRegReport(invId,regId){
                 "&inviteid=" + invId +
                 "&regid=" + regId,
         success: function(url){
-            //alert(url);
             window.open(url);
 
         }
@@ -398,8 +374,7 @@ function Scormcloud_loadRegReport(invId,regId){
     return true;
 }
 
-
-
-</script></div>
+</script>
+</div>
 
     <?php }?>

@@ -65,12 +65,8 @@ require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/SettingItem.php');
 
 require_once(SCORMCLOUD_BASE.'/reportagehelper.php');
 
-// require_once('/SCORMCloud_PHPLibrary/v2/Model/ReportageAuthTokenSchema.php');
-// require_once('/SCORMCloud_PHPLibrary/v2/Model/ReportageLinkSchema.php');
-
 $courseId = $_GET['courseid'];
 
-//$ScormService = ScormCloudPlugin::get_cloud_service();
 try {
     $isValidAccount = $ScormService->isValidAccount();
 } catch (Exception $e) {
@@ -138,7 +134,6 @@ var configsToSet = [];
 
 saveConfig.addEventListener("click", function() {
     console.log('clicked');
-    //var formdata = new FormData();
     var postData = {"settings":configsToSet};	
 	var ajax = new XMLHttpRequest();
 	ajax.addEventListener("load", completeHandler, false);

@@ -308,7 +308,6 @@ jQuery(".viewReportageLink").click(function(){
 jQuery('.activateLink').click(function(){
     var invId = jQuery(this).attr('key');
     var wasActive = (jQuery(this).attr('active') == 1);
-    //var linkObj = jQuery(this);
 
     jQuery.ajax({
         type: "POST",
@@ -317,7 +316,6 @@ jQuery('.activateLink').click(function(){
                 "&inviteid=" + invId +
                 "&active=" + (wasActive ? '0' : '1'),
         success: function(data){
-            //alert(data);
 
         }
     });

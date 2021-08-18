@@ -36,11 +36,9 @@ if ($isValidAccount){
     }
 	
     $courseService = $ScormService->getCourseService();
-    //$courseObjArray = $courseService->getCourses($coursesFilter);
+    
     $courseObjArray = $courseService->getCourses()->getCourses();
     $courseCount = count($courseObjArray);
-	
-	//$courseObjArray = array_reverse($courseObjArray);
 	
     if ($courseCount > 0){
         ?>
@@ -81,27 +79,12 @@ jQuery('.viewPkgPropsLink').click(function(){
     var courseid = jQuery(this).attr('key');
     if (jQuery('tr.propseditor[key="'+ courseid + '"] iframe').attr('src') == ''){
         jQuery('tr.propseditor[key="'+ courseid + '"] iframe').attr('src','<?php echo site_url() . "/wp-content/plugins/scormcloud/courseconfig.php?courseid=" ?>' + courseid);
-        // jQuery.ajax({
-        //     type: "POST",
-        //     url: "<?php echo site_url() . '/wp-content/plugins/scormcloud/ajax.php'; ?>",
-        //     data: 	"action=getPropertiesEditorUrl" +
-        //             "&courseid=" + courseid,
-        //     success: function(data){
-        //         jQuery('tr.propseditor[key="'+ courseid + '"] iframe').attr('src',data);
-        //     }
-        // });
     }
     
     jQuery('tr.courseRow[key="'+ courseid + '"]').addClass('active');
     jQuery('tr.propseditor[key="'+ courseid + '"]').fadeIn();
 
 }
-// ,function(){
-//     var courseid = jQuery(this).attr('key');
-//     jQuery('tr.courseRow[key="'+ courseid + '"]').removeClass('active');
-//     jQuery('tr.propseditor[key="'+ courseid + '"]').fadeOut();
-    
-// }
 );
 
 </script>

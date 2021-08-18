@@ -108,7 +108,6 @@ switch ($action) {
             $reg_id = $invite_id . '-' . uniqid();
             $registration_service = $cloud_service->getRegistrationService();
             $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
-            //$response = $registration_service->CreateRegistration( $reg_id, $course_id, $user_data->user_email, $user_first_name, $user_last_name, $user_data->user_email );
             $reg_schema->setCourseId($course_id);
             $reg_schema->setRegistrationId($reg_id);
             $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
@@ -118,13 +117,7 @@ switch ($action) {
             $learner_schema->setLastName($user_last_name);
             $reg_schema->setLearner($learner_schema);
             $response = $registration_service->createRegistration($reg_schema);
-            // error_log($response);
-            // $json = json_decode($response);
 
-            // error_log($json);
-
-            // $xml = simplexml_load_string( $response );
-            // if ( isset( $xml->success ) ) {
             $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
                 array(
                     'invite_id' => $invite_id,
@@ -143,13 +136,6 @@ switch ($action) {
                 ScormCloudEmailer::send_email($user_data, 'Training Invitation', $message);
             }
 
-            // need to catch the potential error from the API here?
-
-            // } elseif ( '4' === (string) $xml->err['code'] ) {
-            //     $response_string = 'There was a problem creating a new training. The maximum number of registrations for this account has been reached.';
-            // } else {
-            //     $response_string = 'There was a problem creating a new training. ' . $xml->err['msg'];
-            // }
         } // End foreach().
         echo esc_textarea($response_string);
 
@@ -578,11 +564,7 @@ switch ($action) {
         ]), OBJECT); // db call ok; no-cache ok.
 
         $registration_service = $cloud_service->getRegistrationService();
-        //$registration_xml_string  = $registration_service->GetRegistrationListResults( $invite_regs[0]->course_id, null, 0 );
         $reg_list = $registration_service->getRegistrations($invite_regs[0]->course_id)->getRegistrations();
-
-        //$regs_xml = simplexml_load_string( $registration_xml_string );
-        //$reg_list  = $regs_xml->registrationlist;
 
         echo '<table class="widefat" cellspacing="0" id="InvitationListTable" >';
         echo '<thead>';
