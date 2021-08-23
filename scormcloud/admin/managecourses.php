@@ -57,7 +57,12 @@ if ($isValidAccount){
 	foreach($courseObjArray as $course)
 	{
 	    echo "<tr key='".$course->getId()."' class='courseRow'><td class='title'>";
-	    echo $course->getTitle()."<a key='".$course->getId()."' class='previewLink' onclick='scormcloud_LaunchCoursePreview(\"".$course->getId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\",window.location);' href='javascript:void(0);'>".__("Preview","scormcloud")."</a>";
+	    echo $course->getTitle();
+        if ($course->getCourseLearningStandard() !== 'CMI5'){
+        echo "<a key='".$course->getId()."' class='previewLink' onclick='scormcloud_LaunchCoursePreview(\"".$course->getId()."\",\"".site_url() . "/wp-content/plugins/scormcloud/ajax.php\",window.location);' href='javascript:void(0);'>".__("Preview","scormcloud")."</a>";
+        } else {
+            echo "<span class='previewLink'>cmi5 content cannot be previewed currently</span>";
+        }
 	    echo '</td><td>';
 	    $regCount = $course->getRegistrationCount();
 	    echo "$regCount ".($regCount != 1 ? __("Learners","scormcloud") : __("Learner","scormcloud"));
