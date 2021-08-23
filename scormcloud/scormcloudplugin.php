@@ -95,11 +95,10 @@ class ScormCloudPlugin {
 			$proxy      = get_option( 'proxy' );
 		}
 
-		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '1.1.2' );
+		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.0' );
 
-		// arbitrary number 17 is the length of 'EngineWebServices'.
-		if ( strlen( $engine_url ) < 17 ) {
-			$engine_url = 'http://cloud.scorm.com/EngineWebServices';
+		if ( strlen( $engine_url ) < 1 ) {
+			$engine_url = 'https://cloud.scorm.com/api/v2';
 		}
 
 		return new ScormEngineService( $engine_url, $appid, $secretkey, $origin, $proxy );
@@ -131,11 +130,8 @@ class ScormCloudPlugin {
 		if ( 'trial' !== (string) $account_info->accountType && 'false' === (string) $account_info->strictLimit ) {
 			return 1;
 		} else {
-			$reg_limit = (int) $account_info->reglimit;
-			$reg_usage = (int) $account_info->usage->regcount;
-			if ($reg_limit == -1) {
-				$reg_limit = 10000;
-			}
+			$reg_limit = (int) $account_info->regLimit;
+			$reg_usage = (int) $account_info->usage->regCount;
 			return $reg_limit - $reg_usage;
 		}
 	}

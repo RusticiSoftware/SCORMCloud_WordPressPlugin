@@ -24,9 +24,9 @@ if ($isValidAccount){
     $packageid = $GLOBALS['blog_id'].'-'.uniqid();
     ?>
 <div id="UploadFrame">
-<iframe width="100%" height="100px"
+<iframe width="100%" height="110px"
 	style="border: 0;"
-	src="<?php echo site_url(); ?>/wp-content/plugins/scormcloud/uploadpif.php?id=<?php echo $packageid; ?>"
+	src="<?= plugin_dir_url( __FILE__ ) ?>uploadpif.php?id=<?php echo $packageid; ?>"
 	id="ifmImport"></iframe></div>
 
     <?php

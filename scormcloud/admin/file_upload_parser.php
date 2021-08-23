@@ -3,7 +3,7 @@ global $wpdb;
 if ( defined('ABSPATH') )
 require_once(ABSPATH . 'wp-load.php');
 else
-require_once('../../../wp-load.php');
+require_once('../../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/admin.php');
 require_once(SCORMCLOUD_BASE.'scormcloudplugin.php');
 $ScormService = ScormCloudPlugin::get_cloud_service();
@@ -42,7 +42,7 @@ if(move_uploaded_file($fileTmpLoc, $uploadDirectoryName.$fileName)){
         $courseService = $ScormService->getCourseService();
         $course_path = $uploadDirectoryName.$fileName;
         $course_file = new SplFileObject($course_path);
-        $import_token = $courseService->createUploadAndImportCourseJob($courseId, 'false', null, 'application/zip', null, $course_file)->getResult();
+        $import_token = $courseService->createUploadAndImportCourseJob($courseId, 'false', null, $fileType, null, $course_file)->getResult();
         echo '<span class="importMessage">' . __( "Processing Import....", "scormcloud" ) . '</span>';
         do {
             $importJobResultSchema = $courseService->getImportJobStatus($import_token);

@@ -37,11 +37,10 @@ function is_network_managed() {
         $proxy      = get_option( 'proxy' );
     }
 
-    $origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '1.1.2' );
+    $origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.0' );
 
-    // arbitrary number 17 is the length of 'EngineWebServices'.
-    if ( strlen( $engine_url ) < 17 ) {
-        $engine_url = 'http://cloud.scorm.com/EngineWebServices';
+    if ( strlen( $engine_url ) < 1 ) {
+        $engine_url = 'https://cloud.scorm.com/api/v2';
     }
 
     $ScormService = new ScormEngineService( $engine_url, $appid, $secretkey, $origin, $proxy );
