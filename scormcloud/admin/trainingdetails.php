@@ -171,10 +171,10 @@ if ($is_valid_account) {
 <div class='inside'>
     <?php
 
-    echo "<script type='text/javascript' src='http://cloud.scorm.com/Reportage/scripts/reportage.combined.js'></script>";
-    echo "<link rel='stylesheet' href='http://cloud.scorm.com/Reportage/css/reportage.combined.css' type='text/css' media='screen' />";
+    echo "<script type='text/javascript' src='https://cloud.scorm.com/Reportage/scripts/reportage.combined.js'></script>";
+    echo "<link rel='stylesheet' href='https://cloud.scorm.com/Reportage/css/reportage.combined.css' type='text/css' media='screen' />";
 
-    $reportage_service_url = "http://cloud.scorm.com/";
+    $reportage_service_url = "https://cloud.scorm.com/";
 
 //Check for some defaults to set the form up
     $rptService = $ScormService->getReportingService();
@@ -219,7 +219,7 @@ if ($is_valid_account) {
 
 <?php
 
-    $reportage_service_url = "http://cloud.scorm.com/";
+    $reportage_service_url = "https://cloud.scorm.com/";
     $rServiceUrl = $reportage_service_url;
     $reportageUrl = $rServiceUrl . 'Reportage/reportage.php?appId=' . $ScormService->getAppId() . "&viewall=learners&registrationTags=$inviteId|_all";
     $reportageViewAllUrl = $reportage_service_url . $rptService->getReportageLink($rptAuth->getQueryString(), $reportageUrl)->getReportageLink();

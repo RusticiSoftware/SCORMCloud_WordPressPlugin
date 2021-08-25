@@ -223,13 +223,13 @@ class ScormCloudAdminUi
                     break;
 
                 case 'scormcloud/admin/settings':
-                    $help_html .= '<p>The <span class="emph">App Id</span> and <span class="emph">Secret Key</span> can both be found by going to your <a href="http://cloud.scorm.com/sc/user/Apps">Apps Page</a> on the SCORM Cloud site. These values are essentially the "username and password" for WordPress to access your SCORM Cloud account.</p>';
+                    $help_html .= '<p>The <span class="emph">App Id</span> and <span class="emph">Secret Key</span> can both be found by going to your <a href="https://cloud.scorm.com/sc/user/Apps">Apps Page</a> on the SCORM Cloud site. These values are essentially the "username and password" for WordPress to access your SCORM Cloud account.</p>';
                     $help_html .= '<p>The <span class="emph">Cloud Engine URL</span> is set with a default value that does not need to be changed for most users.</p>';
                     $help_html .= '<p>The <span class="emph">SCORM Player Stylesheet URL</span> controls the CSS stylesheet used to style the user interface of the SCORM player.</p>';
                     break;
 
                 case 'scormcloud/network-admin/settings':
-                    $help_html .= '<p>The <span class="emph">App Id</span> and <span class="emph">Secret Key</span> can both be found by going to your <a href="http://cloud.scorm.com/sc/user/Apps">Apps Page</a> on the SCORM Cloud site. These values are essentially the "username and password" for WordPress to access your SCORM Cloud account.</p>';
+                    $help_html .= '<p>The <span class="emph">App Id</span> and <span class="emph">Secret Key</span> can both be found by going to your <a href="https://cloud.scorm.com/sc/user/Apps">Apps Page</a> on the SCORM Cloud site. These values are essentially the "username and password" for WordPress to access your SCORM Cloud account.</p>';
                     $help_html .= '<p><span class="emph">Use same SCORM Cloud account across all sites:</span> If enabled, all sites in the network will use the SCORM Cloud account credentials and Engine URL and administrators for those sites will not be able to change these settings.</p>';
                     $help_html .= '<p><span class="emph">Share courses among all sites:</span> If enabled, all sites will use and upload to the same course library on the SCORM Cloud for creating training.</p>';
                     $help_html .= '<p>The <span class="emph">Cloud Engine URL</span> is set with a default value that does not need to be changed for most users.</p>';

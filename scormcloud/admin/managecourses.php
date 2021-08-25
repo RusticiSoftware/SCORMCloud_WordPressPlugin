@@ -15,12 +15,44 @@ try {
     $isValidAccount = false;
 }
 
+function loadAllCourses($courseService) {
+	$courseResponse = $courseService->getCourses(null, null, 'updated', null, null, null, null, null, 'false', 'true');
+	$more = $courseResponse->getMore();
+	$courseArray = $courseResponse->getCourses();
+
+	if ($more != '') {
+		$moreCourses = handleMoreCourses($more, $courseService);
+		foreach($moreCourses as $course) {
+			array_push($courseArray, $course);
+		}
+	}
+
+	return $courseArray;
+}
+
+function handleMoreCourses($more, $courseService) {
+	if ($more != '') {
+		// there are more results to load them up recursively if needed
+		$moreResponse = $courseService->getCourses(null, null, 'updated', null, null, null, null, $more, 'false', 'true');
+		$moreCourses = $moreResponse->getCourses();
+		$moreMore = $moreResponse->getMore();
+		if ($moreMore != '') {
+			$evenMoreCourses = handleMoreCourses($moreMore, $courseService);
+			foreach($evenMoreCourses as $course) {
+				array_push($moreCourses, $course);
+			}
+		}
+		return $moreCourses;
+	}
+}
+
+
+
 echo '<div class="scormcloud-admin-page courses">';
 
 if ($isValidAccount){
 
     echo '<h2>'.__("Import a new course.","scormcloud").'</h2>';
-    //echo $GLOBALS['blog_id'];
     $packageid = $GLOBALS['blog_id'].'-'.uniqid();
     ?>
 <div id="UploadFrame">
@@ -36,14 +68,13 @@ if ($isValidAccount){
     }
 	
     $courseService = $ScormService->getCourseService();
+    $allCourses = loadAllCourses($courseService);
     
-    $courseObjArray = $courseService->getCourses()->getCourses();
-    $courseCount = count($courseObjArray);
-	
+    $courseCount = count($allCourses);
     if ($courseCount > 0){
         ?>
 <div>
-<h2><?php _e("All Courses","scormcloud"); ?></h2>
+<h2><?php _e("All Courses","scormcloud"); ?> [ <?=$courseCount?> courses ]</h2>
 </div>
 <table class="widefat" cellspacing="0" id="CourseListTable">
 	<thead>
@@ -54,7 +85,7 @@ if ($isValidAccount){
 		</tr>
 	</thead>
 	<?php
-	foreach($courseObjArray as $course)
+	foreach($allCourses as $course)
 	{
 	    echo "<tr key='".$course->getId()."' class='courseRow'><td class='title'>";
 	    echo $course->getTitle();

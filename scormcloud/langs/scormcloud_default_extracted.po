@@ -20,7 +20,7 @@ msgstr ""
 
 #. Text in echo
 #: scormcloud_settings.php:109
-msgid " ex: http://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css"
+msgid " ex: https://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css"
 msgstr ""
 
 #. Text in function

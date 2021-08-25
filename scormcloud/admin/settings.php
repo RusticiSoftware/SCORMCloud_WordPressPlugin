@@ -54,7 +54,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     $appid = get_option('scormcloud_appid');
     $secretkey = get_option('scormcloud_secretkey');
     $engine_url = (strlen(get_option('scormcloud_engine_url')) > 0) ? get_option('scormcloud_engine_url') : "https://cloud.scorm.com/api/v2/";
-    $player_cssurl = (strlen(get_option('scormcloud_player_cssurl')) > 0) ? get_option('scormcloud_player_cssurl') : 'http://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css';
+    $player_cssurl = (strlen(get_option('scormcloud_player_cssurl')) > 0) ? get_option('scormcloud_player_cssurl') : 'https://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css';
     $proxy = get_option('proxy');
     $network_managed = ScormCloudPlugin::is_network_managed();
 }

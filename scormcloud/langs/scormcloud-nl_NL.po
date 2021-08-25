@@ -26,8 +26,8 @@ msgstr " bv: fJ4Q2HwEZbhRLeftHLv0SjzIVpJLXRiyfyOiWBo0"
 
 #. Text in echo
 #: scormcloud_settings.php:109
-msgid " ex: http://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css"
-msgstr " bv: http://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css"
+msgid " ex: https://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css"
+msgstr " bv: https://cloud.scorm.com/sc/css/cloudPlayer/cloudstyles.css"
 
 #. Text in function
 #: scormcloud_startpage.php:1

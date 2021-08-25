@@ -29,7 +29,7 @@ You can download and install SCORM Cloud For WordPress using the built in WordPr
 
 Activate SCORM Cloud For WordPress in the "Plugins" admin panel using the "Activate" or "Network Activate"link. 
 
-On the left-hand Admin menu panel, open the SCORM Cloud menu and click on the Settings link.  On the SCORM Cloud Settings page, enter your AppID and Secret Key which can be found on the <a href='http://cloud.scorm.com/sc/user/Apps'>SCORM Cloud Apps</a> page by logging into your SCORM Cloud account.  If you are a super-admin and setting up a network-activated plugin, your credentials will be used for all sites and you need to choose whether to allow courses to be shared across all sites.  Click "Update Settings".
+On the left-hand Admin menu panel, open the SCORM Cloud menu and click on the Settings link.  On the SCORM Cloud Settings page, enter your AppID and Secret Key which can be found on the <a href='https://cloud.scorm.com/sc/user/Apps'>SCORM Cloud Apps</a> page by logging into your SCORM Cloud account.  If you are a super-admin and setting up a network-activated plugin, your credentials will be used for all sites and you need to choose whether to allow courses to be shared across all sites.  Click "Update Settings".
 
 
 

@@ -494,7 +494,7 @@ switch ($action) {
         break;
 
     case 'getCourseReportUrl':
-        $reportage_service_url = "http://cloud.scorm.com/";
+        $reportage_service_url = "https://cloud.scorm.com/";
         $course_id = get_post_arg_as_string('courseid');
         $reportage_service = $cloud_service->getReportingService();
         $reportage_auth = $reportage_service->getReportageAuthToken('FREENAV', true);
@@ -527,7 +527,7 @@ switch ($action) {
         $reportage_service = $cloud_service->getReportingService();
         $reportage_auth = $reportage_service->getReportageAuthToken('FREENAV', true);
 
-        $reportage_service_url = "http://cloud.scorm.com/";
+        $reportage_service_url = "https://cloud.scorm.com/";
         $reportage_url = $reportage_service_url . 'Reportage/reportage.php?appId=' . $cloud_service->getAppId() . '&registrationId=$regId';
         $reportage_url .= "&courseId=$course_id";
         $reportage_url .= "&learnerId=$user_id";
@@ -540,7 +540,7 @@ switch ($action) {
 
         $reportage_service = $cloud_service->getReportingService();
         $reportage_auth = $reportage_service->getReportageAuthToken('FREENAV', true);
-        $reportage_service_url = "http://cloud.scorm.com/";
+        $reportage_service_url = "https://cloud.scorm.com/";
         $reportage_url = $reportage_service_url . 'Reportage/reportage.php?appId=' . $cloud_service->getAppId() . '&registrationTags=$invite_id|_all';
         $reportage_link = $reportage_service->getReportageLink($reportage_auth->getQueryString(), $reportage_url);
         echo esc_url_raw($reportage_service_url . $reportage_link->getReportageLink());

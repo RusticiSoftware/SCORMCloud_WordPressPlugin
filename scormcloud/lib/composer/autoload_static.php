@@ -4,16 +4,20 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit9be51e0924b19342f7fd519e0d22bdbb
+class ComposerStaticInit3eafdd845078490c49a1f4bbbe5f11fe
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'R' => 
+        array (
+            'Rusticisoftware\\Scormcloud\\' => 27,
+        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
@@ -28,6 +32,10 @@ class ComposerStaticInit9be51e0924b19342f7fd519e0d22bdbb
     );
 
     public static $prefixDirsPsr4 = array (
+        'Rusticisoftware\\Scormcloud\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
@@ -57,9 +65,9 @@ class ComposerStaticInit9be51e0924b19342f7fd519e0d22bdbb
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit9be51e0924b19342f7fd519e0d22bdbb::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit9be51e0924b19342f7fd519e0d22bdbb::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit9be51e0924b19342f7fd519e0d22bdbb::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit3eafdd845078490c49a1f4bbbe5f11fe::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit3eafdd845078490c49a1f4bbbe5f11fe::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit3eafdd845078490c49a1f4bbbe5f11fe::$classMap;
 
         }, null, ClassLoader::class);
     }
