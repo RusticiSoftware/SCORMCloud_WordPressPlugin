@@ -184,7 +184,6 @@ jQuery("#btnAddRegistration").click(function(){
     var dataString = "action=addregistration" +
                 "&courseid=" + courseId +
                 "&coursetitle=" + courseTitle;
-    console.log(dataString);
     if (userPopulation == 'allUsers'){
         dataString += "&allusers=1";
     } else if (userPopulation == 'selectUsers'){

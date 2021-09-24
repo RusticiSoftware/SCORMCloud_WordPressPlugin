@@ -59,7 +59,6 @@ function errorHandler(event){
 function abortHandler(event){
 	_("status").innerHTML = "Upload Aborted";
 }
-console.log(parent);
 </script>
 <div class="scormcloud-admin-page courses">
 <table>

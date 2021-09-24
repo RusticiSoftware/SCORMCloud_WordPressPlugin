@@ -132,7 +132,6 @@ echo '</div>';
 var configsToSet = [];
 
 saveConfig.addEventListener("click", function() {
-    console.log('clicked');
     var postData = {"settings":configsToSet};	
 	var ajax = new XMLHttpRequest();
 	ajax.addEventListener("load", completeHandler, false);
@@ -142,7 +141,6 @@ saveConfig.addEventListener("click", function() {
 });
     
 function completeHandler(event){
-    console.log(event.target.responseText);
 	document.getElementById("status").innerHTML = event.target.responseText;
 }
 function errorHandler(event){
@@ -158,12 +156,10 @@ PlayerScoLaunchType.addEventListener("change", function(e) {
 });
 
 PlayerSuspendDataMaxLength.addEventListener("change", function(e) {
-    console.log(PlayerSuspendDataMaxLength.value);
     configsToSet.push({"settingId":PlayerSuspendDataMaxLength.id,"value":PlayerSuspendDataMaxLength.value});
 });
 
 PlayerResetRunTimeData.addEventListener("change", function(e) {
-    console.log(PlayerResetRunTimeData.value);
     configsToSet.push({"settingId":PlayerResetRunTimeData.id,"value":PlayerResetRunTimeData.value});
 });
 

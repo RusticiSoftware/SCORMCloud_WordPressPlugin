@@ -23,9 +23,12 @@ require_once 'SCORMCloud_PHPLibrary/v2/Model/RegistrationSuccess.php';
 require_once 'SCORMCloud_PHPLibrary/v2/Model/CourseReferenceSchema.php';
 require_once 'SCORMCloud_PHPLibrary/v2/Model/ActivityResultSchema.php';
 require_once 'SCORMCloud_PHPLibrary/v2/Model/StaticPropertiesSchema.php';
+require_once 'SCORMCloud_PHPLibrary/v2/Model/ScoreSchema.php';
 
 $cloud_service = ScormCloudPlugin::get_cloud_service();
 $action = get_post_arg_as_string('action');
+
+$reportage_service_url = "https://cloud.scorm.com/";
 
 global $current_user;
 wp_get_current_user();
@@ -116,8 +119,11 @@ switch ($action) {
             $learner_schema->setFirstName($user_first_name);
             $learner_schema->setLastName($user_last_name);
             $reg_schema->setLearner($learner_schema);
-            $response = $registration_service->createRegistration($reg_schema);
-
+            try {
+                $response = $registration_service->createRegistration($reg_schema);
+            } catch (Exception $ex) {
+                error_log($ex);
+            }
             $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
                 array(
                     'invite_id' => $invite_id,
@@ -241,8 +247,20 @@ switch ($action) {
             $reg_id = $invite_id . '-' . uniqid();
 
             // create the cloud registration.
-            $registration_service->CreateRegistration($reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email);
-
+            try {
+                $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+                $reg_schema->setCourseId($course_id);
+                $reg_schema->setRegistrationId($reg_id);
+                $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+                $learner_schema->setId($user_email);
+                $learner_schema->setEmail($user_email);
+                $learner_schema->setFirstName($user_first_name);
+                $learner_schema->setLastName($user_last_name);
+                $reg_schema->setLearner($learner_schema);
+                $registration_service->createRegistration($reg_schema);
+            } catch (Exception $ex) {
+                error_log($ex);
+            }
             $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
                 array(
                     'invite_id' => $invite_id,
@@ -287,9 +305,10 @@ switch ($action) {
             $bp_activity_id = bp_activity_add($activity_args);
         }
         $css_url = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
-
-        echo esc_url_raw($registration_service->GetLaunchUrl($reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags));
-
+        $launch_link_request = new \RusticiSoftware\Cloud\V2\Model\LaunchLinkRequestSchema();
+        $launch_link_request->setRedirectOnExitUrl($return_url);
+        $launch_link_request->setCssUrl($css_url);
+        echo esc_url_raw($registration_service->buildRegistrationLaunchLink($reg_id, $launch_link_request)->getLaunchLink());
         break;
 
     case 'addUserRegGetLaunchUrl':
@@ -342,8 +361,20 @@ switch ($action) {
 
         // create the cloud registration.
         $registration_service = $cloud_service->getRegistrationService();
-        $registration_service->CreateRegistration($reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email);
-
+        try {
+            $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+            $reg_schema->setCourseId($course_id);
+            $reg_schema->setRegistrationId($reg_id);
+            $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+            $learner_schema->setId($user_email);
+            $learner_schema->setEmail($user_email);
+            $learner_schema->setFirstName($user_first_name);
+            $learner_schema->setLastName($user_last_name);
+            $reg_schema->setLearner($learner_schema);
+            $registration_service->createRegistration($reg_schema);
+        } catch (Exception $ex) {
+            error_log($ex);
+        }
         $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
             array(
                 'invite_id' => $invite_id,
@@ -391,7 +422,10 @@ switch ($action) {
         } // End if().
         $css_url = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
-        echo esc_url_raw($registration_service->GetLaunchUrl($reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags));
+        $launch_link_request = new \RusticiSoftware\Cloud\V2\Model\LaunchLinkRequestSchema();
+        $launch_link_request->setRedirectOnExitUrl($return_url);
+        $launch_link_request->setCssUrl($css_url);
+        echo esc_url_raw($registration_service->buildRegistrationLaunchLink($reg_id, $launch_link_request)->getLaunchLink());
 
         break;
 
@@ -454,8 +488,10 @@ switch ($action) {
         } // End if().
         $css_url = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
-        echo esc_url_raw($registration_service->GetLaunchUrl($reg_id, $return_url, $css_url, null, null, $learner_tags, $reg_tags));
-
+        $launch_link_request = new \RusticiSoftware\Cloud\V2\Model\LaunchLinkRequestSchema();
+        $launch_link_request->setRedirectOnExitUrl($return_url);
+        $launch_link_request->setCssUrl($css_url);
+        echo esc_url_raw($registration_service->buildRegistrationLaunchLink($reg_id, $launch_link_request)->getLaunchLink());
         break;
 
     case 'getPropertiesEditorUrl':
@@ -494,7 +530,7 @@ switch ($action) {
         break;
 
     case 'getCourseReportUrl':
-        $reportage_service_url = "https://cloud.scorm.com/";
+
         $course_id = get_post_arg_as_string('courseid');
         $reportage_service = $cloud_service->getReportingService();
         $reportage_auth = $reportage_service->getReportageAuthToken('FREENAV', true);
@@ -526,8 +562,6 @@ switch ($action) {
 
         $reportage_service = $cloud_service->getReportingService();
         $reportage_auth = $reportage_service->getReportageAuthToken('FREENAV', true);
-
-        $reportage_service_url = "https://cloud.scorm.com/";
         $reportage_url = $reportage_service_url . 'Reportage/reportage.php?appId=' . $cloud_service->getAppId() . '&registrationId=$regId';
         $reportage_url .= "&courseId=$course_id";
         $reportage_url .= "&learnerId=$user_id";
@@ -540,7 +574,6 @@ switch ($action) {
 
         $reportage_service = $cloud_service->getReportingService();
         $reportage_auth = $reportage_service->getReportageAuthToken('FREENAV', true);
-        $reportage_service_url = "https://cloud.scorm.com/";
         $reportage_url = $reportage_service_url . 'Reportage/reportage.php?appId=' . $cloud_service->getAppId() . '&registrationTags=$invite_id|_all';
         $reportage_link = $reportage_service->getReportageLink($reportage_auth->getQueryString(), $reportage_url);
         echo esc_url_raw($reportage_service_url . $reportage_link->getReportageLink());
@@ -600,8 +633,14 @@ switch ($action) {
 
                 echo '<td class="' . esc_attr($regCompletionStatus) . '"">' . esc_textarea($regCompletionStatus) . '</td>';
                 echo '<td class="' . esc_attr($regSatisfactionStatus) . '"">' . esc_textarea($regSatisfactionStatus) . '</td>';
-                $score = (string) $reg_result[0]->getScore();
-                echo '<td>' . esc_textarea('unknown' === $score ? '-' : $score . '%') . '</td>';
+
+                $score = $reg_result[0]->getScore();
+                if ($score !== null) {
+                    $scaledScore = $score->getScaled();
+                } else {
+                    $scaledScore = "unknown";
+                }
+                echo '<td>' . esc_textarea('unknown' === $scaledScore ? '-' : $scaledScore . '%') . '</td>';
                 $seconds = $reg_result[0]->getTotalSecondsTracked();
                 echo '<td>' . esc_textarea(floor($seconds / 60) . 'min ' . ($seconds % 60)) . 'sec</td>';
                 echo "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"" . esc_js($invite_reg->invite_id) . '","' . esc_js($invite_reg->reg_id) . "\"); return false;' key='" . esc_attr($invite_reg->invite_id) . "'>View Details</a></tr>";
@@ -678,8 +717,20 @@ switch ($action) {
 
         // create the cloud registration.
         $registration_service = $cloud_service->getRegistrationService();
-        $registration_service->CreateRegistration($reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email);
-
+        try {
+            $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+            $reg_schema->setCourseId($course_id);
+            $reg_schema->setRegistrationId($reg_id);
+            $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+            $learner_schema->setId($user_email);
+            $learner_schema->setEmail($user_email);
+            $learner_schema->setFirstName($user_first_name);
+            $learner_schema->setLastName($user_last_name);
+            $reg_schema->setLearner($learner_schema);
+            $registration_service->createRegistration($reg_schema);
+        } catch (Exception $ex) {
+            error_log($ex);
+        }
         $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
             array(
                 'invite_id' => $invite_id,
@@ -722,7 +773,10 @@ switch ($action) {
 
         $css_url = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
-        echo esc_url_raw($registration_service->GetLaunchUrl($reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags));
+        $launch_link_request = new \RusticiSoftware\Cloud\V2\Model\LaunchLinkRequestSchema();
+        $launch_link_request->setRedirectOnExitUrl($return_url);
+        $launch_link_request->setCssUrl($css_url);
+        echo esc_url_raw($registration_service->buildRegistrationLaunchLink($reg_id, $launch_link_request)->getLaunchLink());
 
         break;
 
@@ -780,8 +834,20 @@ switch ($action) {
                 array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d')); // db call ok; no-cache ok.
 
             // create the cloud registration.
-            $registration_service->CreateRegistration($reg_id, $course_id, $user_email, $user_first_name, $user_last_name, $user_email);
-
+            try {
+                $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+                $reg_schema->setCourseId($course_id);
+                $reg_schema->setRegistrationId($reg_id);
+                $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+                $learner_schema->setId($user_email);
+                $learner_schema->setEmail($user_email);
+                $learner_schema->setFirstName($user_first_name);
+                $learner_schema->setLastName($user_last_name);
+                $reg_schema->setLearner($learner_schema);
+                $registration_service->createRegistration($reg_schema);
+            } catch (Exception $ex) {
+                error_log($ex);
+            }
             $wpdb->insert(ScormCloudDatabase::get_registrations_table(),
                 array(
                     'invite_id' => $invite_id,
@@ -828,7 +894,10 @@ switch ($action) {
 
         $css_url = ScormCloudPlugin::get_wp_option('scormcloud_player_cssurl');
 
-        echo esc_url_raw($registration_service->GetLaunchUrl($reg_id, $return_url, $css_url, null, $course_tags, $learner_tags, $reg_tags));
+        $launch_link_request = new \RusticiSoftware\Cloud\V2\Model\LaunchLinkRequestSchema();
+        $launch_link_request->setRedirectOnExitUrl($return_url);
+        $launch_link_request->setCssUrl($css_url);
+        echo esc_url_raw($registration_service->buildRegistrationLaunchLink($reg_id, $launch_link_request)->getLaunchLink());
 
         break;
 

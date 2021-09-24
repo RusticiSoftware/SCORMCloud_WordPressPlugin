@@ -209,7 +209,6 @@ if ($is_valid_account) {
     ?>
 
     <script type="text/javascript">
-    console.log("<?php echo $summaryUrlLink; ?>");
 	jQuery(document).ready(function(){
         loadScript("<?php echo $summaryUrlLink; ?>");
 	});
@@ -272,8 +271,13 @@ if ($is_valid_account) {
 
             $returnHTML .= "<td class='" . $regCompletionStatus . "'>" . __($regCompletionStatus) . "</td>";
             $returnHTML .= "<td class='" . $regCompletionStatus . "'>" . __($regCompletionStatus) . "</td>";
-            $score = $regResult[0]->getScore();
-            $returnHTML .= "<td>" . ($score == "unknown" ? "-" : $score . "%") . "</td>";
+            $score = $reg_result[0]->getScore();
+            if ($score !== null) {
+                $scaledScore = $score->getScaled();
+            } else {
+                $scaledScore = "unknown";
+            }
+            $returnHTML .= "<td>" . ($scaledScore == "unknown" ? "-" : $scaledScore . "%") . "</td>";
             $seconds = $regResult[0]->getTotalSecondsTracked();
             $returnHTML .= "<td>" . floor($seconds / 60) . "min " . ($seconds % 60) . "sec</td>";
             $returnHTML .= "<td><a href='javascript:void(0);' class='viewRegDetails' onclick='Scormcloud_loadRegReport(\"$inviteId\",\"" . $inviteReg->reg_id . "\"); return false;' key='" . $inviteReg->invite_id . "'>" . __("View Details", "scormcloud") . "</tr>";

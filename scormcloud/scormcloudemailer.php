@@ -4,11 +4,8 @@ class ScormCloudEmailer
 {
     public static function send_email($to, $subject, $message, $sender_name='SCORM Cloud', $sender_email='cloud@scorm.com')
     {
-        $headers  = "From: \"$sender_name\" <$sender_email>\n";
     	$headers .= "Return-Path: <" . $sender_email . ">\n";
-    	$headers .= "Reply-To: \"" . $sender_name . "\" <" . $sender_email . ">\n";
     	$headers .= "X-Mailer: PHP" . phpversion() . "\n";
-    	$headers .= "To: \"" . $to->display_name . "\" <" . $to->user_email . ">\n";
     
     	$subject = stripslashes($subject);
     	$message = stripslashes($message);

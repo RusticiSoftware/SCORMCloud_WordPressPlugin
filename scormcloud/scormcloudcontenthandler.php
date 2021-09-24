@@ -42,7 +42,7 @@ class ScormCloudContentHandler {
 
 			$course_service = $cloud_service->getCourseService();
 
-			if ( ! $course_service->Exists( $invite->course_id ) ) {
+			if ( ! ScormCloudPlugin::course_exists( $invite->course_id ) ) {
 				$invite_html .= '<h3>' . __( 'This training is not currently available.', 'scormcloud' ) . ' </h3>';
 			} else {
 
@@ -51,13 +51,14 @@ class ScormCloudContentHandler {
 					$invite_html .= "<div class='courseInfo'>";
 
 					if ( $is_valid_account ) {
-						$course_metadata_xml = $course_service->GetMetadata( $invite->course_id, 0, 0, 0 );
-						$course_metadata_xml = simplexml_load_string( $course_metadata_xml );
-						$metadata    = $course_metadata_xml->package->metadata;
+						$course_detail = $course_service->GetCourse( $invite->course_id, false, true );
+						if ($course_detail->metadata) {
+							$metadata    = $course_detail->metadata;
+						}
 					}
 					$invite_html .= '<div class="title">Title: ' . $invite->course_title . '</div>';
 
-					if ( $is_valid_account && null !== $metadata ) {
+					if ( $is_valid_account && null !== $metadata && $metadata != "") {
 						$invite_html .= '<div class="desc">' . $metadata->description . '</div>';
 
 						// assuming seconds coming back for now.
@@ -102,30 +103,29 @@ class ScormCloudContentHandler {
 							$reg_id = $reg->reg_id;
 
 							$registration_service       = $cloud_service->getRegistrationService();
-							$registration_result = $registration_service->GetRegistrationResult( $reg_id, 0, 0 );
-							$result_xml           = simplexml_load_string( $registration_result );
+							if (ScormCloudPlugin::registration_exists($reg_id)){
+								$registration_result = $registration_service->getRegistrationProgress($reg_id);
+
+								$completion = (string) $registration_result->registrationCompletion;
+								$success    = (string) $registration_result->registrationSuccess;
+								$seconds    = $registration_result->totalSecondsTracked;
+								$score      = $registration_result->score;
+
+								$invite_html .= '<table class="result_table"><tr>' .
+											'<td class="head">' . __( 'Completion', 'scormcloud' ) . '</td>' .
+											'<td class="head">' . __( 'Success', 'scormcloud' ) . '</td>' .
+											'<td class="head">' . __( 'Score', 'scormcloud' ) . '</td>' .
+											'<td class="head">' . __( 'Total Time', 'scormcloud' ) . '</td>' .
+											'</tr><tr>' .
+											"<td class='$completion'>" . $completion . '</td>' .
+											"<td class='$success'>" . $success . '</td>' .
+											"<td class='' . ( $score === 'unknown' ? __( 'unknown' ) : '' ) . ''>" . ( 'unknown' === $score ? '-' : $score . '%' ) . '</td>' .
+												'<td class="time">' . floor( $seconds / 60 ) . 'min ' . ( $seconds % 60 ) . __( 'sec spent in course', 'scormcloud' ) . '</td>' .
+											'</tr></table>';
 
 
-							$completion = (string) $result_xml->registrationreport->complete;
-							$success    = (string) $result_xml->registrationreport->success;
-							$seconds    = (string) $result_xml->registrationreport->totaltime;
-							$score      = (string) $result_xml->registrationreport->score;
-
-							$invite_html .= '<table class="result_table"><tr>' .
-							               '<td class="head">' . __( 'Completion', 'scormcloud' ) . '</td>' .
-							               '<td class="head">' . __( 'Success', 'scormcloud' ) . '</td>' .
-							               '<td class="head">' . __( 'Score', 'scormcloud' ) . '</td>' .
-							               '<td class="head">' . __( 'Total Time', 'scormcloud' ) . '</td>' .
-							               '</tr><tr>' .
-							               "<td class='$completion'>" . $completion . '</td>' .
-							               "<td class='$success'>" . $success . '</td>' .
-							               "<td class='' . ( $score === 'unknown' ? __( 'unknown' ) : '' ) . ''>" . ( 'unknown' === $score ? '-' : $score . '%' ) . '</td>' .
-							                '<td class="time">' . floor( $seconds / 60 ) . 'min ' . ( $seconds % 60 ) . __( 'sec spent in course', 'scormcloud' ) . '</td>' .
-							               '</tr></table>';
-
-
-							$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.getLaunchURL(\"$invite_id\",\"$reg_id\");' url='" . site_url() . "/wp-content/plugins/scormcloud/ajax.php' value='" . __( 'Relaunch Training', 'scormcloud' ) . "' />";
-
+								$invite_html .= "<input name='launch' type='button' key='$invite_id' onclick='ScormCloud.Post.getLaunchURL(\"$invite_id\",\"$reg_id\");' url='" . site_url() . "/wp-content/plugins/scormcloud/ajax.php' value='" . __( 'Relaunch Training', 'scormcloud' ) . "' />";
+							}
 
 						} else {
 							if ( $remaining_registrations > 0 ) {

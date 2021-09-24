@@ -137,6 +137,42 @@ class ScormCloudPlugin {
 	}
 
 	/**
+	 * Check to see if this Registration already exists.
+	 *
+	 * @return bool
+	 */
+	public static function registration_exists($regId) {
+		$exists = false;
+		$cloud_service = ScormCloudPlugin::get_cloud_service();
+		$reg_service  = $cloud_service->getRegistrationService();
+		try{
+			$response     = $reg_service->GetRegistration($regId); 
+			$exists = true;
+		} catch (Exception $ex) {
+			$exists = false;
+		}
+		return $exists;
+	}
+
+	/**
+	 * Check to see if this Course already exists.
+	 *
+	 * @return bool
+	 */
+	public static function course_exists($courseId) {
+		$exists = false;
+		$cloud_service = ScormCloudPlugin::get_cloud_service();
+		$course_service  = $cloud_service->getCourseService();
+		try{
+			$response     = $course_service->GetCourse($courseId); 
+			$exists = true;
+		} catch (Exception $ex) {
+			$exists = false;
+		}
+		return $exists;
+	}
+
+	/**
 	 * Removes http: and https: from a url.
 	 *
 	 * @param string $src The url to strip.
@@ -146,6 +182,43 @@ class ScormCloudPlugin {
 	 */
 	public static function agnostic_loader( $src, $handle ) {
 		return preg_replace( '/^(http|https):/', '', $src );
+	}
+
+	/**
+	 * Helper method to get all courses recursively to match v1 functionality
+	 */
+	function loadAllCourses($courseService) {
+		$courseResponse = $courseService->getCourses(null, null, 'updated', null, null, null, null, null, 'false', 'true');
+		$more = $courseResponse->getMore();
+		$courseArray = $courseResponse->getCourses();
+	
+		if ($more != '') {
+			$moreCourses = self::handleMoreCourses($more, $courseService);
+			foreach($moreCourses as $course) {
+				array_push($courseArray, $course);
+			}
+		}
+	
+		return $courseArray;
+	}
+	
+	/**
+	 * Helper method to handle the more courses token
+	 */
+	function handleMoreCourses($more, $courseService) {
+		if ($more != '') {
+			// there are more results to load them up recursively if needed
+			$moreResponse = $courseService->getCourses(null, null, 'updated', null, null, null, null, $more, 'false', 'true');
+			$moreCourses = $moreResponse->getCourses();
+			$moreMore = $moreResponse->getMore();
+			if ($moreMore != '') {
+				$evenMoreCourses = self::handleMoreCourses($moreMore, $courseService);
+				foreach($evenMoreCourses as $course) {
+					array_push($moreCourses, $course);
+				}
+			}
+			return $moreCourses;
+		}
 	}
 }
 

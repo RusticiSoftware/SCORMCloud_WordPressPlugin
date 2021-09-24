@@ -50,7 +50,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 		$courses_filter  = ( ScormCloudPlugin::is_network_managed() && (int) get_site_option( 'scormcloud_sharecourses' ) !== 1 ) ? $GLOBALS['blog_id'] . '-.*' : null;
 		$cloud_service   = ScormCloudPlugin::get_cloud_service();
 		$course_service  = $cloud_service->getCourseService();
-		$course_list = $course_service->GetCourseList( $courses_filter );
+		$course_list = ScormCloudPlugin::loadAllCourses($course_service);	
 
 		if ( $require_login && ! is_user_logged_in() ) {
 
@@ -72,7 +72,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 			echo '</div>';
 			foreach ( $course_list as $course ) {
 
-				$course_id    = $course->getCourseId();
+				$course_id    = $course->getId();
 				$course_title = $course->getTitle();
 
 				if ( isset( $current_user->user_login ) && '' !== $current_user->user_login ) {
@@ -88,13 +88,17 @@ class ScormCloudCatalogWidget extends WP_Widget {
 
 					if ( null !== $reg ) {
 						$reg_id            = $reg->reg_id;
-						$registration_result = $registration_service->GetRegistrationResult( $reg_id, 0, 0 );
-						$res_xml           = simplexml_load_string( $registration_result );
+						$registration_result = $registration_service->getRegistrationInstanceProgress( $reg_id, 0, false, false, false);
+						$completion = $registration_result->getRegistrationCompletion();
+						$success = $registration_result->getRegistrationSuccess();
+						$seconds = $registration_result->getTotalSecondsTracked();
+						$score = $registration_result->getScore();
+						if ($score !== null) {
+							$scaledScore = $score->getScaled();
+						} else {
+							$scaledScore = "unknown";
+						}
 
-						$completion = (string) $res_xml->registrationreport->complete;
-						$success    = (string) $res_xml->registrationreport->success;
-						$seconds    = (string) $res_xml->registrationreport->totaltime;
-						$score      = (string) $res_xml->registrationreport->score;
 
 						echo "<div class='usercourseblock'>";
 
@@ -110,7 +114,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
 						if ( $seconds > 0 ) {
 							echo "<div class=''>" . esc_attr__( 'Completion', 'scormcloud' ) . ": <span class='" . esc_attr( $completion ) . '>' . esc_attr( $completion ) . '</span></div>';
 							echo "<div class=''>" . esc_attr__( 'Success', 'scormcloud' ) . ": <span class='" . esc_attr( $success ) . "'>" . esc_attr( $success ) . '</span></div>';
-							echo "<div class=''>" . esc_textarea( __( 'Score', 'scormcloud' ) . ': ' . ( 'unknown' === $score ? '-' : $score . '%' ) ) . '</div>';
+							echo "<div class=''>" . esc_textarea( __( 'Score', 'scormcloud' ) . ': ' . ( 'unknown' === $scaledScore ? '-' : $scaledScore . '%' ) ) . '</div>';
 
 							echo '<div class="time">' . esc_textarea( floor( $seconds / 60 ) . 'min ' . ( $seconds % 60 ) . __( 'sec spent in course', 'scormcloud' ) ) . '</div>';
 
