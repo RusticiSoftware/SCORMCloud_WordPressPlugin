@@ -89,18 +89,22 @@ var $j = jQuery.noConflict();
 
 $j(document).ready(function(){
 
-    $j(".courselistDiv .anonLaunch").toggle(function(){
-        $j(".courselistDiv .anonlaunchdiv[key='" + $j(this).attr('key') +"']").fadeIn('fast');
-    },function(){
-        $j(".courselistDiv .anonlaunchdiv[key='" + $j(this).attr('key') +"']").fadeOut('fast');
+    $j(".courselistDiv .anonLaunch").click(function(){
+        if($j(".courselistDiv .anonlaunchdiv[key='" + $j(this).attr('key') +"']").is(":visible")){
+            $j(".courselistDiv .anonlaunchdiv[key='" + $j(this).attr('key') +"']").fadeOut('fast');
+        } else {
+            $j(".courselistDiv .anonlaunchdiv[key='" + $j(this).attr('key') +"']").fadeIn('fast');    
+        }
     });
     
 
-    $j('.courselistDiv .toggleButton').toggle(function(){
-        $j($j(this).attr('toggleobject')).fadeIn();
-        $j(this).text($j(this).attr('onText'));
-    },function(){
-        $j($j(this).attr('toggleobject')).fadeOut();
-        $j(this).text($j(this).attr('offText'));
+    $j('.courselistDiv .toggleButton').click(function(){
+        if($j($j(this).attr('toggleobject')).is(":visible")){
+            $j($j(this).attr('toggleobject')).fadeOut();
+            $j(this).text($j(this).attr('offText'));
+        } else {
+            $j($j(this).attr('toggleobject')).fadeIn();
+            $j(this).text($j(this).attr('onText'));
+        }
     });
 });

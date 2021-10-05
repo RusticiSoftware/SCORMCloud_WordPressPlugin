@@ -1,0 +1,22 @@
+{
+    "name": "rusticisoftware/scormcloud",
+    "description": "SCORM Cloud plug-in for Wordpress",
+    "type": "wordpress-plugin",
+    "autoload": {
+        "psr-4": {
+            "Rusticisoftware\\Scormcloud\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Brian Rogers",
+            "email": "brian.rogers@rusticisoftware.com"
+        }
+    ],
+    "require": {
+      "guzzlehttp/guzzle": "^7.0"
+    },
+    "config": {
+      "vendor-dir": "lib"
+   }
+}

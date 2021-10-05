@@ -69,18 +69,29 @@ class ScormCloudRegistrationsWidget extends WP_Widget {
 			foreach ( $regs as $reg ) {
 				try {
 					$reg_id = $reg->reg_id;
-					if ( ( $limitregs && in_array( $reg->course_id, $courses_displayed, true ) ) || ! $registration_service->Exists( $reg_id ) ) {
+					$reg_exists = false;
+					try {
+						$registration_service->getRegistration( $reg_id );
+						$reg_exists = true;
+					} catch (Exception $e) {
+						// gonna get a 404 here if it doesn't exist
+						$reg_exists = false;
+					}
+					if ( ( $limitregs && in_array( $reg->course_id, $courses_displayed, true ) ) || !$reg_exists ) {
 						continue;
 					} else {
 						$courses_displayed[] = $reg->course_id;
 
-						$registration_result = $registration_service->GetRegistrationResult( $reg_id, 0, 0 );
-						$result_xml           = simplexml_load_string( $registration_result );
-
-						$completion = (string) $result_xml->registrationreport->complete;
-						$success    = (string) $result_xml->registrationreport->success;
-						$seconds    = (string) $result_xml->registrationreport->totaltime;
-						$score      = (string) $result_xml->registrationreport->score;
+						$registration_result = $registration_service->getRegistrationInstanceProgress( $reg_id, 0, false, false, false);
+						$completion = $registration_result->getRegistrationCompletion();
+						$success = $registration_result->getRegistrationSuccess();
+						$seconds = $registration_result->getTotalSecondsTracked();
+						$score = $registration_result->getScore();
+						if ($score !== null) {
+							$scaledScore = $score->getScaled();
+						} else {
+							$scaledScore = "unknown";
+						}
 
 						$course_title = $reg->course_title;
 						echo "<div class='usercourseblock'>";
@@ -96,7 +107,7 @@ class ScormCloudRegistrationsWidget extends WP_Widget {
 						if ( $seconds > 0 ) {
 							echo  "<div class=''>" . esc_textarea( __( 'Completion', 'scormcloud' ) ) . ": <span class='" . esc_attr( $completion ) . "'>" . esc_textarea( $completion ) . '</span></div>';
 							echo  "<div class=''>" . esc_textarea( __( 'Success', 'scormcloud' ) ) . ": <span class='" . esc_attr( $success ) . "'>" . esc_textarea( $success ) . '</span></div>';
-							echo  "<div class=''>" . esc_textarea( __( 'Score', 'scormcloud' ) . ': ' . ( 'unknown' === $score ? '-' : $score . '%' ) ) . '</div>';
+							echo  "<div class=''>" . esc_textarea( __( 'Score', 'scormcloud' ) . ': ' . ( 'unknown' === $scaledScore ? '-' : $scaledScore . '%' ) ) . '</div>';
 
 							echo  '<div class="time">' . esc_textarea( floor( $seconds / 60 ) . 'min ' . ( $seconds % 60 ) . __( 'sec spent in course', 'scormcloud' ) ) . '</div>';
 

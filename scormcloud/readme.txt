@@ -1,9 +1,9 @@
 === Plugin Name ===
-Contributors: troyef, stuartchilds, timedwards
+Contributors: troyef, stuartchilds, timedwards, brianrogers
 Tags: elearning, learning, scorm, aicc, education, training, cloud
 Requires at least: 4.3
-Tested up to: 4.7
-Stable tag: 1.2.3
+Tested up to: 5.8
+Stable tag: 2.0.0
 
 Tap the power of SCORM to deliver and track training right from your WordPress-powered site.
 
@@ -27,9 +27,9 @@ Visit the <a href='http://www.scorm.com/scorm-solved/scorm-cloud/'>SCORM Cloud w
 
 You can download and install SCORM Cloud For WordPress using the built in WordPress plugin installer. If you download SCORM Cloud For WordPress manually, make sure it is uploaded to "/wp-content/plugins/scormcloud/".
 
-Activate SCORM Cloud For WordPress in the "Plugins" admin panel using the "Activate" or "Network Activate"link. 
+Activate SCORM Cloud For WordPress in the "Plugins" admin panel using the "Activate" or "Network Activate" link. 
 
-On the left-hand Admin menu panel, open the SCORM Cloud menu and click on the Settings link.  On the SCORM Cloud Settings page, enter your AppID and Secret Key which can be found on the <a href='http://cloud.scorm.com/sc/user/Apps'>SCORM Cloud Apps</a> page by logging into your SCORM Cloud account.  If you are a super-admin and setting up a network-activated plugin, your credentials will be used for all sites and you need to choose whether to allow courses to be shared across all sites.  Click "Update Settings".
+On the left-hand Admin menu panel, open the SCORM Cloud menu and click on the Settings link.  On the SCORM Cloud Settings page, enter your AppID and Secret Key which can be found on the <a href='https://cloud.scorm.com/sc/user/Apps'>SCORM Cloud Apps</a> page by logging into your SCORM Cloud account.  If you are a super-admin and setting up a network-activated plugin, your credentials will be used for all sites and you need to choose whether to allow courses to be shared across all sites.  Click "Update Settings".
 
 
 
@@ -48,6 +48,9 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 2.0.0 =
+* Update to SCORM Cloud API v2.
+
 = 1.2.3 =
 * Fixed bug in course catalog widget
 
@@ -153,6 +156,11 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 * Original Release.
 
 == Upgrade Notice ==
+= 2.0.0 =
+* Updates to v2 Cloud API
+* Updates Upload process
+* Updates to new package configuration
+
 = 1.1.9 =
 * Updates Training View
 * Updates to synching learner information

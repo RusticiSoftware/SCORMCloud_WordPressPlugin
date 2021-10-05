@@ -52,7 +52,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     
     $appid = get_site_option('scormcloud_appid');
     $secretkey = get_site_option('scormcloud_secretkey');
-    $engine_url = (strlen(get_site_option('scormcloud_engine_url')) > 0) ? get_site_option('scormcloud_engine_url') : "http://cloud.scorm.com/EngineWebServices";
+    $engine_url = (strlen(get_site_option('scormcloud_engine_url')) > 0) ? get_site_option('scormcloud_engine_url') : "https://cloud.scorm.com/api/v2/";
     $sharecourses = get_site_option('scormcloud_sharecourses');
     $network_managed = get_site_option('scormcloud_networkmanaged');
     

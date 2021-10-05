@@ -6,6 +6,11 @@ else
 require_once('../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/admin.php');
 
+require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ModelInterface.php');
+require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ReportageAuthTokenSchema.php');
+require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ReportageLinkSchema.php');
+require_once(SCORMCLOUD_BASE.'/reportagehelper.php');
+
 global $wpdb;
 
 echo '<div class="scormcloud-admin-page startpage">';
@@ -29,8 +34,8 @@ if ($isValidAccount){
 
     //Check for some defaults to set the form up
     $rptService = $ScormService->getReportingService();
-    $rptAuth = $rptService->GetReportageAuth('FREENAV',true);
-    $rServiceUrl = $rptService->GetReportageServiceUrl();
+    $rptAuth = $rptService->getReportageAuthToken('FREENAV',true);
+    $rServiceUrl = "https://cloud.scorm.com/";
 
 }
 
@@ -43,7 +48,7 @@ echo '<div class="header">
 if ($isValidAccount){
     $reportageUrl = $rServiceUrl.'Reportage/reportage.php?appId='.$ScormService->getAppId()."&registrationTags=".$GLOBALS['blog_id']."|_all";
     echo '&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a id="ReportageLink" href="'.$rptService->GetReportUrl($rptAuth, $reportageUrl).'" 
+            <a id="ReportageLink" href="'.$rptService->getReportageLink($rptAuth->getQueryString(), $reportageUrl).'" 
 				target="_blank" title="'. __("Open the SCORM Reportage Console in a new window.","scormcloud").'">'. __("SCORM Cloud Reportage","scormcloud").'</a>';
 }
 echo "</div>";
@@ -62,20 +67,6 @@ if (!$isValidAccount){
 				title="'. __("Click here to configure your SCORM Cloud plugin.","scormcloud").'">'. __("Click Here to go to the settings page to configure the SCORM Cloud wordpress Plugin.","scormcloud").'</a></div>';
 
 }
-/*
- echo "<div class='meta-box-sortables'>";
- echo "<div class='reportageWrapper postbox ".($isValidAccount ? "closed" : "")."'>";
- echo "<div class='handlediv'><br></div><h3 class='hndle'><span>". __("About SCORM Cloud","scormcloud")."</span></h3>";
- echo "<div class='inside'>";
-
- echo '<div class="aboutScorm">
- <object style="float:right;" width="480" height="385"><param name="movie" value="http://www.youtube.com/v/nP657pV6OWU&hl=en_US&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/nP657pV6OWU&hl=en_US&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
- This will be an explantion of SCORM Cloud.  Maybe with a video of how it works... maybe like this...
- <div style="clear:both;"></div>
- </div>';
-
- echo "</div></div>";
- */
 
 if ($isValidAccount){
     //  AppId Summary Report
@@ -114,11 +105,12 @@ if ($isValidAccount){
     $learnersWidgetSettings->setExpand(true);
     $learnersWidgetSettings->setDivname('LearnersListDiv');
 
-    $summaryUrl = $rptService->GetWidgetUrl($rptAuth,'allSummary',$sumWidgetSettings);
-    $coursesUrl = $rptService->GetWidgetUrl($rptAuth,'courseRegistration',$coursesWidgetSettings);
-    $learnersUrl = $rptService->GetWidgetUrl($rptAuth,'learnerRegistration',$learnersWidgetSettings);
+    $reportage_helper = new ReportageHelper($ScormService->getAppId());
+    $summaryUrl = $rServiceUrl.$rptService->getReportageLink($rptAuth->getQueryString(), $reportage_helper->GetWidgetUrl($rptAuth->getQueryString(),'allSummary',$sumWidgetSettings))->getReportageLink();
+    $coursesUrl = $rServiceUrl.$rptService->getReportageLink($rptAuth->getQueryString(), $reportage_helper->GetWidgetUrl($rptAuth->getQueryString(),'courseRegistration',$coursesWidgetSettings))->getReportageLink();
+    $learnersUrl = $rServiceUrl.$rptService->getReportageLink($rptAuth->getQueryString(), $reportage_helper->GetWidgetUrl($rptAuth->getQueryString(),'learnerRegistration',$learnersWidgetSettings))->getReportageLink();
 
-    $dateRelavance = $rptService->GetReportageDate();
+    $dateRelavance = $reportage_helper->GetReportageDate();
 
 
     echo "<div class='meta-box-sortables'>";
