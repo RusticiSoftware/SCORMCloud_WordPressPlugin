@@ -159,7 +159,7 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 * Original Release.
 
 == Upgrade Notice ==
-= 2.0.0 =
+= 2.0.1 =
 * Fixes bug with updating Learner info.
 
 = 2.0.0 =
