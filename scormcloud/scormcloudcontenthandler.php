@@ -211,14 +211,23 @@ class ScormCloudContentHandler {
 	public static function update_learner_info( $user_id ) {
 		global $wpdb;
 		$cloud_service = ScormCloudPlugin::get_cloud_service();
-		$registration_service   = $cloud_service->getRegistrationService();
+		$learner_service   = $cloud_service->getLearnerService();
 		$user_data     = get_userdata( $user_id );
 		/* pushing blank data into SCORMCloud generates a stack trace */
 		if ( ! empty( $user_data->user_firstname ) &&
 		     ! empty( $user_data->user_lastname )
 		) {
-			$response = $registration_service->UpdateLearnerInfo( $user_data->user_email, $user_data->user_firstname, $user_data->user_lastname );
-			write_log( $response );
+			$learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+            $learner_schema->setId($user_data->user_email);
+            $learner_schema->setEmail($user_data->user_email);
+            $learner_schema->setFirstName($user_first_name);
+            $learner_schema->setLastName($user_last_name);
+			try {
+				$response = $learner_service->updateLearnerInfo( $user_data->user_email, $learner_schema );
+			} catch (Exception $ex) {
+				// Ignore this since we don't really mind if cloud is updated if the ID isn't found.
+				// Wordpress will still be updated either way
+			}
 		} else {
 			write_log( "profile update skipped for {$user_data->user_email} due to missing first or last name" );
 		}

@@ -47,6 +47,7 @@ require_once 'v2/Api/ReportingApi.php';
 require_once 'v2/Api/PingApi.php';
 require_once 'v2/Api/DispatchApi.php';
 require_once 'v2/Api/XapiApi.php';
+require_once 'v2/Api/LearnerApi.php';
 
 require_once 'v2/Model/ModelInterface.php';
 require_once 'v2/Model/PingSchema.php';
@@ -86,6 +87,7 @@ class ScormEngineService
     private $_dispatchService = null;
     private $_invitationService = null;
     private $_lrsAccountService = null;
+    private $_learnerService = null;
 
     public function __construct($scormEngineServiceUrl, $appId, $securityKey, $originString, $proxy = null)
     {
@@ -101,6 +103,7 @@ class ScormEngineService
         $this->_dispatchService = new RusticiSoftware\Cloud\V2\Api\DispatchApi(null, $this->_configuration, null);
         $this->_invitationService = new RusticiSoftware\Cloud\V2\Api\InvitationsApi(null, $this->_configuration, null);
         $this->_lrsAccountService = new RusticiSoftware\Cloud\V2\Api\XapiApi(null, $this->_configuration, null);
+        $this->_learnerService = new RusticiSoftware\Cloud\V2\Api\LearnerApi(null, $this->_configuration, null);
     }
 
     public function isValidAccount()
@@ -230,6 +233,17 @@ class ScormEngineService
     {
         return $this->_lrsAccountService;
     }
+
+    /**
+     * <summary>
+     * Contains SCORM Engine Learner functionality.
+     * </summary>
+     */
+    public function getLearnerService()
+    {
+        return $this->_learnerService;
+    }
+
 
     /**
      * <summary>
