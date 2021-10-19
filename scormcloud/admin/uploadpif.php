@@ -24,6 +24,8 @@ $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
 $basepath = $protocol . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], 'scormcloud')) . 'scormcloud/';
 $import_callback = $basepath . '/importcallback.php';
 
+$_SESSION['token'] = bin2hex(random_bytes(35));
+
 ?>
 <link rel="stylesheet" href="../css/scormcloud.admin.css" />
 <script>
@@ -66,10 +68,11 @@ function abortHandler(event){
 		<td>
 			<form id="upload_form" enctype="multipart/form-data" method="post">
 				<h5>Choose ZIP/MP3/MP4/PDF File</h5>
-				<input type="file" name="file1" id="file1" ><br>
+				<input type="file" name="file1" id="file1" accept="application/zip, video/mp4, audio/mp3, application/pdf"><br>
 				<input type="button" id="submit" value="Upload File" onclick="uploadFile()">
 				<input type="hidden" value="<?=$id?>" name="courseId" id="courseId">
 				<span class="importMessage" style="display:none;"><?=__("Importing Package......", "scormcloud")?></span>
+				<input type="hidden" name="token" value="<?= $_SESSION['token'] ?? '' ?>">
 				<h3 id="status"></h3>
 				<p id="loaded_n_total"></p>
 			</form>
