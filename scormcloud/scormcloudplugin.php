@@ -46,8 +46,10 @@ class ScormCloudPlugin {
 
 		add_action( 'save_post', array( 'ScormCloudContentHandler', 'update_post_invite' ) );
 		add_action( 'profile_update', array( 'ScormCloudContentHandler', 'update_learner_info' ) );
+		
+		add_action('wp_loaded',array( 'ScormCloudContentHandler','boot_session'));
 	}
-
+	  
 	/**
 	 * Check for updates.
 	 */

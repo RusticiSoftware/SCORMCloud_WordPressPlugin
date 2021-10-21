@@ -8,8 +8,6 @@ if (defined('ABSPATH')) {
 }
 require_once ABSPATH . 'wp-admin/includes/admin.php';
 
-// define( 'SCORMCLOUD_BASE', '../' );
-
 require_once SCORMCLOUD_BASE . 'scormcloudplugin.php';
 $scorm_service = ScormCloudPlugin::get_cloud_service();
 
@@ -38,6 +36,7 @@ function uploadFile(){
 	var formdata = new FormData();
 	formdata.append("file1", file);
 	formdata.append("courseid", "<?=$id?>");
+	formdata.append("token", "<?= $_SESSION['token'] ?? '' ?>");
 	var ajax = new XMLHttpRequest();
 	ajax.upload.addEventListener("progress", progressHandler, false);
 	ajax.addEventListener("load", completeHandler, false);

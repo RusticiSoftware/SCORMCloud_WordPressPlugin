@@ -21,11 +21,10 @@ if(!is_dir($uploadDirectoryName)){
     mkdir($uploadDirectoryName, 0755);
 }
 
-$token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
-
+$token = $_POST["token"];
 if (!$token || $token !== $_SESSION['token']) {
     // show an error message
-    echo '<p class="error">Error: invalid form submission</p>';
+    echo '<p class="error">Error: invalid form submission </p>';
     // return 405 http status code
     header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
     exit;

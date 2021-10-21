@@ -232,4 +232,11 @@ class ScormCloudContentHandler {
 			write_log( "profile update skipped for {$user_data->user_email} due to missing first or last name" );
 		}
 	}
+
+	/**
+	 * Make sure the session is started and available
+	 */
+	public static function boot_session() {
+		session_start();
+	}
 }
