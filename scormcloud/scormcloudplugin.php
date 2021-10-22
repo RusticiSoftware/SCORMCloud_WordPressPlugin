@@ -46,8 +46,10 @@ class ScormCloudPlugin {
 
 		add_action( 'save_post', array( 'ScormCloudContentHandler', 'update_post_invite' ) );
 		add_action( 'profile_update', array( 'ScormCloudContentHandler', 'update_learner_info' ) );
+		
+		add_action('wp_loaded',array( 'ScormCloudContentHandler','boot_session'));
 	}
-
+	  
 	/**
 	 * Check for updates.
 	 */
@@ -95,7 +97,7 @@ class ScormCloudPlugin {
 			$proxy      = get_option( 'proxy' );
 		}
 
-		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.1' );
+		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.2' );
 
 		if ( strlen( $engine_url ) < 1 ) {
 			$engine_url = 'https://cloud.scorm.com/api/v2';

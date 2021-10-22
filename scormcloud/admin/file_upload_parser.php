@@ -21,6 +21,15 @@ if(!is_dir($uploadDirectoryName)){
     mkdir($uploadDirectoryName, 0755);
 }
 
+$token = $_POST["token"];
+if (!$token || $token !== $_SESSION['token']) {
+    // show an error message
+    echo '<p class="error">Error: invalid form submission </p>';
+    // return 405 http status code
+    header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+    exit;
+}
+
 $fileName = $_FILES["file1"]["name"]; // The file name
 $fileTmpLoc = $_FILES["file1"]["tmp_name"]; // File in the PHP tmp folder
 $fileType = $_FILES["file1"]["type"]; // The type of file it is
