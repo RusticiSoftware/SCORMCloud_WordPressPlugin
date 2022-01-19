@@ -228,9 +228,7 @@ class ScormCloudContentHandler {
 				// Ignore this since we don't really mind if cloud is updated if the ID isn't found.
 				// Wordpress will still be updated either way
 			}
-		} else {
-			write_log( "profile update skipped for {$user_data->user_email} due to missing first or last name" );
-		}
+		} 
 	}
 
 	/**
