@@ -36,42 +36,6 @@
  * @package RusticiSoftware.ScormEngine.Cloud
  */
 
-require_once 'v2/Configuration.php';
-require_once 'v2/HeaderSelector.php';
-require_once 'v2/ObjectSerializer.php';
-require_once 'v2/ApiException.php';
-require_once 'v2/Api/CourseApi.php';
-require_once 'v2/Api/InvitationsApi.php';
-require_once 'v2/Api/RegistrationApi.php';
-require_once 'v2/Api/ReportingApi.php';
-require_once 'v2/Api/PingApi.php';
-require_once 'v2/Api/DispatchApi.php';
-require_once 'v2/Api/XapiApi.php';
-require_once 'v2/Api/LearnerApi.php';
-
-require_once 'v2/Model/ModelInterface.php';
-require_once 'v2/Model/PingSchema.php';
-require_once 'v2/Model/MessageSchema.php';
-require_once 'v2/Model/CourseListSchema.php';
-require_once 'v2/Model/CourseSchema.php';
-require_once 'v2/Model/CourseActivitySchema.php';
-require_once 'v2/Model/LaunchLinkSchema.php';
-require_once 'v2/Model/ReportageAccountInfoSchema.php';
-require_once 'v2/Model/ReportageAccountInfoUsageSchema.php';
-require_once 'v2/Model/StringResultSchema.php';
-require_once 'v2/Model/ImportJobResultSchema.php';
-require_once 'v2/Model/ImportResultSchema.php';
-require_once 'v2/Model/SettingsPostSchema.php';
-require_once 'v2/Model/SettingsIndividualSchema.php';
-require_once 'v2/Model/RegistrationSchema.php';
-require_once 'v2/Model/RegistrationCompletion.php';
-require_once 'v2/Model/RegistrationSuccess.php';
-require_once 'v2/Model/CourseReferenceSchema.php';
-require_once 'v2/Model/LearnerSchema.php';
-require_once 'v2/Model/ActivityResultSchema.php';
-require_once 'v2/Model/StaticPropertiesSchema.php';
-require_once 'v2/Model/ScoreSchema.php';
-
 class ScormEngineService
 {
 

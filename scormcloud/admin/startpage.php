@@ -6,9 +6,6 @@ else
 require_once('../../../wp-load.php');
 require_once(ABSPATH . 'wp-admin/admin.php');
 
-require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ModelInterface.php');
-require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ReportageAuthTokenSchema.php');
-require_once(SCORMCLOUD_BASE.'/SCORMCloud_PHPLibrary/v2/Model/ReportageLinkSchema.php');
 require_once(SCORMCLOUD_BASE.'/reportagehelper.php');
 
 global $wpdb;

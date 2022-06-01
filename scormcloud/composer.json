@@ -2,11 +2,6 @@
     "name": "rusticisoftware/scormcloud",
     "description": "SCORM Cloud plug-in for Wordpress",
     "type": "wordpress-plugin",
-    "autoload": {
-        "psr-4": {
-            "Rusticisoftware\\Scormcloud\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Brian Rogers",
@@ -14,6 +9,7 @@
         }
     ],
     "require": {
+        "rustici-software/scormcloud-api-v2-client-php": "^2.0",
         "guzzlehttp/guzzle": "7.3.0"
     },
     "config": {

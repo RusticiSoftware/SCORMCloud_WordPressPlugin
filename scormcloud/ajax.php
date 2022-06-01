@@ -1,4 +1,6 @@
 <?php
+require_once 'vendor/autoload.php';
+
 if (defined('ABSPATH')) {
     require_once ABSPATH . 'wp-load.php';
 } else {
@@ -9,21 +11,6 @@ require_once ABSPATH . 'wp-admin/includes/admin.php';
 require_once SCORMCLOUD_BASE . 'scormcloudplugin.php';
 require_once SCORMCLOUD_BASE . 'scormcloudemailer.php';
 require_once SCORMCLOUD_BASE . 'db/scormclouddatabase.php';
-
-require_once 'SCORMCloud_PHPLibrary/v2/Model/ModelInterface.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/LaunchLinkRequestSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/LearnerSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/CreateRegistrationSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/ReportageAuthTokenSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/ReportageLinkSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/RegistrationListSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/RegistrationSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/RegistrationCompletion.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/RegistrationSuccess.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/CourseReferenceSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/ActivityResultSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/StaticPropertiesSchema.php';
-require_once 'SCORMCloud_PHPLibrary/v2/Model/ScoreSchema.php';
 
 $cloud_service = ScormCloudPlugin::get_cloud_service();
 $action = get_post_arg_as_string('action');
@@ -110,10 +97,10 @@ switch ($action) {
 
             $reg_id = $invite_id . '-' . uniqid();
             $registration_service = $cloud_service->getRegistrationService();
-            $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+            $reg_schema = new \RusticiSoftware\Cloud\V2\Model\CreateRegistrationSchema();
             $reg_schema->setCourseId($course_id);
             $reg_schema->setRegistrationId($reg_id);
-            $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+            $learner_schema = new \RusticiSoftware\Cloud\V2\Model\LearnerSchema();
             $learner_schema->setId($user_data->user_email);
             $learner_schema->setEmail($user_data->user_email);
             $learner_schema->setFirstName($user_first_name);
@@ -248,10 +235,10 @@ switch ($action) {
 
             // create the cloud registration.
             try {
-                $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+                $reg_schema = new \RusticiSoftware\Cloud\V2\Model\CreateRegistrationSchema();
                 $reg_schema->setCourseId($course_id);
                 $reg_schema->setRegistrationId($reg_id);
-                $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+                $learner_schema = new \RusticiSoftware\Cloud\V2\Model\LearnerSchema();
                 $learner_schema->setId($user_email);
                 $learner_schema->setEmail($user_email);
                 $learner_schema->setFirstName($user_first_name);
@@ -362,10 +349,10 @@ switch ($action) {
         // create the cloud registration.
         $registration_service = $cloud_service->getRegistrationService();
         try {
-            $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+            $reg_schema = new \RusticiSoftware\Cloud\V2\Model\CreateRegistrationSchema();
             $reg_schema->setCourseId($course_id);
             $reg_schema->setRegistrationId($reg_id);
-            $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+            $learner_schema = new \RusticiSoftware\Cloud\V2\Model\LearnerSchema();
             $learner_schema->setId($user_email);
             $learner_schema->setEmail($user_email);
             $learner_schema->setFirstName($user_first_name);
@@ -718,10 +705,10 @@ switch ($action) {
         // create the cloud registration.
         $registration_service = $cloud_service->getRegistrationService();
         try {
-            $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+            $reg_schema = new \RusticiSoftware\Cloud\V2\Model\CreateRegistrationSchema();
             $reg_schema->setCourseId($course_id);
             $reg_schema->setRegistrationId($reg_id);
-            $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+            $learner_schema = new \RusticiSoftware\Cloud\V2\Model\LearnerSchema();
             $learner_schema->setId($user_email);
             $learner_schema->setEmail($user_email);
             $learner_schema->setFirstName($user_first_name);
@@ -835,10 +822,10 @@ switch ($action) {
 
             // create the cloud registration.
             try {
-                $reg_schema = new \RusticiSoftware\Cloud\v2\Model\CreateRegistrationSchema();
+                $reg_schema = new \RusticiSoftware\Cloud\V2\Model\CreateRegistrationSchema();
                 $reg_schema->setCourseId($course_id);
                 $reg_schema->setRegistrationId($reg_id);
-                $learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+                $learner_schema = new \RusticiSoftware\Cloud\V2\Model\LearnerSchema();
                 $learner_schema->setId($user_email);
                 $learner_schema->setEmail($user_email);
                 $learner_schema->setFirstName($user_first_name);
