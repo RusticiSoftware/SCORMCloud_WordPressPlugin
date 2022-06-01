@@ -23,15 +23,14 @@ try {
 if (isset($_GET['inviteid'])) {
     include 'trainingdetails.php';
 } else {
-
-    $regsRemaining = ScormCloudPlugin::remaining_registrations();
-
     ?>
 <div class="scormcloud-admin-page trainings">
-
 <h2><?php _e("SCORM Cloud Training", "scormcloud");?></h2>
+    
     <?php
 if ($isValidAccount) {
+        $regsRemaining = ScormCloudPlugin::remaining_registrations();
+
         if ($regsRemaining < 1) {
             echo "<div>
             <h3>" . __("The maximum number of registrations for this account has been reached.  Visit the <a href='https://cloud.scorm.com'>SCORM Cloud site</a> to upgrade your account.", "scormcloud") . "</h3>

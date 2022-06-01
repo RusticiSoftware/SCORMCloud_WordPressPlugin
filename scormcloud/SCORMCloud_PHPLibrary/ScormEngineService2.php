@@ -79,12 +79,7 @@ class ScormEngineService
         if (empty($appId) || empty($key) || empty($url) || empty($origin)) {
             return false;
         }
-
-        return $this->_debugService->pingAppId();
-    }
-
-    public function isValidUrl()
-    {
+        
         return $this->_debugService->pingAppId();
     }
 

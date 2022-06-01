@@ -19,21 +19,14 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     
     $ScormService = ScormCloudPlugin::get_cloud_service($force_network_settings);
 
-    if (!$ScormService->isValidUrl()){
-        echo "<div class='updated'><p class='failed'><strong>". __("Invalid Service Url.  Check your URL and try again or clear out the bad URL and the default URL will be used.","scormcloud")."</strong></p></div>";
-    } else {
-        try {
-            $valid = $ScormService->isValidAccount();
-        } catch (Exception $e) {
-            $valid = false;
-        }
-        if ($valid === "107") {
-            echo "<div class='updated'><p class='failed'><strong>". __("It appears that your server UTC time is out of sync with that of the SCORM Cloud. Try updating the time on your server using ntpdate or something equivalent.  Authenticated calls to the server require a timestamp within 15 minutes of current UTC time.","scormcloud")."</strong></p></div>";
-        } elseif ($valid !== true) {
-            echo "<div class='updated'><p class='failed'><strong>". __("Invalid Credentials.  Check your App Id and Secret Key and try again.","scormcloud")."</strong></p></div>";
+    try {
+        if (!$ScormService->isValidAccount()) {
+            echo "<div class='updated'><p><strong>". __("Please fill in your SCORM Cloud credentials and click 'Update Settings'.","scormcloud")."</strong></p></div>";
         } else {
             echo "<div class='updated'><p><strong>". __("Settings saved.","scormcloud")."</strong></p></div>";
         }
+    } catch (Exception $e) {
+        echo '<div class="updated"><p class="failed"><strong>'. __('Your SCORM Cloud credentials could not be verified. Please check that the Service URL, App ID, and Secret Key options are correct.', 'scormcloud').'</strong></p></div>';
     }
 
 
@@ -41,9 +34,7 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
     $ScormService = ScormCloudPlugin::get_cloud_service($force_network_settings);
 
     try {
-        if (!$ScormService->isValidUrl()) {
-            echo "<div class='updated'><p class='failed'><strong>". __("Invalid Service Url.  Check your URL and click 'Update Settings' or clear out the bad URL and the default URL will be used.","scormcloud")."</strong></p></div>";
-        } elseif (!$ScormService->isValidAccount()) {
+        if (!$ScormService->isValidAccount()) {
             echo "<div class='updated'><p><strong>". __("Please fill in your SCORM Cloud credentials and click 'Update Settings'.","scormcloud")."</strong></p></div>";
         }
     } catch (Exception $e) {
