@@ -348,7 +348,7 @@ function Scormcloud_loadRegReport(invId,regId){
     echo "<div>
             <h2>" . __("Please configure your SCORM Cloud settings to see training results.", "scormcloud") . "</h2>
         </div>";
-    echo '<div class="settingsPageLink"><a href="' . site_url() . '/wp-admin/admin.php?page=scormcloudsettings"
+    echo '<div class="settingsPageLink"><a href="' . site_url() . '/wp-admin/admin.php?page=scormcloud/admin/settings"
 				title="' . __("Click here to configure your SCORM Cloud plugin.", "scormcloud") . '">' . __("Click Here to go to the settings page.", "scormcloud") . '</a></div>';
 
 }
