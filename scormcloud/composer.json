@@ -4,8 +4,8 @@
     "type": "wordpress-plugin",
     "authors": [
         {
-            "name": "Brian Rogers",
-            "email": "brian.rogers@rusticisoftware.com"
+            "name": "Rustici Software",
+            "homepage": "https://rusticisoftware.com"
         }
     ],
     "require": {
