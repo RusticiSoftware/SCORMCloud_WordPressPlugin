@@ -10,7 +10,7 @@
     ],
     "require": {
         "rustici-software/scormcloud-api-v2-client-php": "^2.0",
-        "guzzlehttp/guzzle": "7.3.0"
+        "guzzlehttp/guzzle": "7.4.3"
     },
     "config": {
       "vendor-dir": "vendor"
