@@ -3,7 +3,7 @@ Contributors: troyef, stuartchilds, timedwards, brianrogers
 Tags: elearning, learning, scorm, aicc, education, training, cloud
 Requires at least: 4.3
 Tested up to: 5.8
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 
 Tap the power of SCORM to deliver and track training right from your WordPress-powered site.
 
@@ -48,6 +48,12 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 2.0.4 =
+* Updates 3rd party libraries
+* Adds dependency on SCORM Cloud v2 API client library
+* Fixes various bugs related to invalid credentials passed
+* Fixes various bugs related to missing require statements
+
 = 2.0.3 =
 * Removes potentially bad logging call
 * Allows for accounts with unlimited Registrations
@@ -167,6 +173,10 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 * Original Release.
 
 == Upgrade Notice ==
+= 2.0.4 =
+* Updates to third party libraries
+* Fixes bugs from missing require statements: PHP Fatal error: Uncaught Error: Class '\RusticiSoftware\Cloud\V2\Model\...' not found in .../ObjectSerializer.php:299
+
 = 2.0.3 =
 * Removes potentially bad logging call
 * Allows for accounts with unlimited Registrations

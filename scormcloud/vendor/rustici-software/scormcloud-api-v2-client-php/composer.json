@@ -1,0 +1,31 @@
+{
+    "name": "rustici-software/scormcloud-api-v2-client-php",
+    "version": "2.0.0",
+    "description": "",
+    "keywords": [
+        "scorm",
+        "cloud",
+        "scormcloud",
+        "rustici",
+        "software",
+        "rusticisoftware"
+    ],
+    "homepage": "https://github.com/RusticiSoftware/scormcloud-api-v2-client-php",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Rustici Software",
+            "homepage": "https://rusticisoftware.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "guzzlehttp/guzzle": "^7.3"
+    },
+    "autoload": {
+        "psr-4": { "RusticiSoftware\\Cloud\\V2\\" : "src/" }
+    }
+}

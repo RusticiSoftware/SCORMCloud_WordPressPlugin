@@ -1,4 +1,5 @@
 <?php
+require_once('vendor/autoload.php');
 
 require_once( SCORMCLOUD_BASE . 'scormcloudplugin.php' );
 require_once( SCORMCLOUD_BASE . 'db/scormclouddatabase.php' );
@@ -217,7 +218,7 @@ class ScormCloudContentHandler {
 		if ( ! empty( $user_data->user_firstname ) &&
 		     ! empty( $user_data->user_lastname )
 		) {
-			$learner_schema = new \RusticiSoftware\Cloud\v2\Model\LearnerSchema();
+			$learner_schema = new \RusticiSoftware\Cloud\V2\Model\LearnerSchema();
             $learner_schema->setId($user_data->user_email);
             $learner_schema->setEmail($user_data->user_email);
             $learner_schema->setFirstName($user_first_name);

@@ -1,4 +1,5 @@
 <?php
+require_once('vendor/autoload.php');
 
 define( 'SCORMCLOUD_BASE', './' );
 
@@ -44,23 +45,6 @@ function is_network_managed() {
     }
 
     $ScormService = new ScormEngineService( $engine_url, $appid, $secretkey, $origin, $proxy );
-
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/ModelInterface.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/LaunchLinkRequestSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/LearnerSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/CreateRegistrationSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/ReportageAuthTokenSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/ReportageLinkSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/RegistrationListSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/RegistrationSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/RegistrationCompletion.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/RegistrationSuccess.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/CourseReferenceSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/ActivityResultSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/StaticPropertiesSchema.php');
-
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/SettingListSchema.php');
-require_once(SCORMCLOUD_BASE.'SCORMCloud_PHPLibrary/v2/Model/SettingItem.php');
 
 require_once(SCORMCLOUD_BASE.'/reportagehelper.php');
 

@@ -1,4 +1,6 @@
 <?php
+require_once('vendor/autoload.php');
+
     global $wpdb;
     if ( defined('ABSPATH') )
     require_once(ABSPATH . 'wp-load.php');
@@ -19,9 +21,9 @@
 
     if ($isValidAccount){
         $settingsIndSchemaList = [];
-        $settingsPostSchema = new \RusticiSoftware\Cloud\v2\Model\SettingsPostSchema();
+        $settingsPostSchema = new \RusticiSoftware\Cloud\V2\Model\SettingsPostSchema();
         foreach($configOptionsToSet as $config) {
-            $settingsIndividualSchema = new \RusticiSoftware\Cloud\v2\Model\SettingsIndividualSchema();
+            $settingsIndividualSchema = new \RusticiSoftware\Cloud\V2\Model\SettingsIndividualSchema();
             $settingsIndividualSchema->setSettingId($config->settingId);
             $settingsIndividualSchema->setValue($config->value);
             array_push($settingsIndSchemaList, $settingsIndividualSchema);

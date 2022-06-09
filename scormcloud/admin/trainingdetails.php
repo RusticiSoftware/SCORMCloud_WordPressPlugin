@@ -1,20 +1,8 @@
 <?php
+require_once('vendor/autoload.php');
 
 require_once SCORMCLOUD_BASE . 'scormcloudplugin.php';
 require_once SCORMCLOUD_BASE . 'db/scormclouddatabase.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/ModelInterface.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/LaunchLinkRequestSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/LearnerSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/CreateRegistrationSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/ReportageAuthTokenSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/ReportageLinkSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/RegistrationListSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/RegistrationSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/RegistrationCompletion.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/RegistrationSuccess.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/CourseReferenceSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/ActivityResultSchema.php';
-require_once SCORMCLOUD_BASE . 'SCORMCloud_PHPLibrary/v2/Model/StaticPropertiesSchema.php';
 require_once SCORMCLOUD_BASE . '/reportagehelper.php';
 
 $inviteId = $_GET['inviteid'];
@@ -360,7 +348,7 @@ function Scormcloud_loadRegReport(invId,regId){
     echo "<div>
             <h2>" . __("Please configure your SCORM Cloud settings to see training results.", "scormcloud") . "</h2>
         </div>";
-    echo '<div class="settingsPageLink"><a href="' . site_url() . '/wp-admin/admin.php?page=scormcloudsettings"
+    echo '<div class="settingsPageLink"><a href="' . site_url() . '/wp-admin/admin.php?page=scormcloud/admin/settings"
 				title="' . __("Click here to configure your SCORM Cloud plugin.", "scormcloud") . '">' . __("Click Here to go to the settings page.", "scormcloud") . '</a></div>';
 
 }

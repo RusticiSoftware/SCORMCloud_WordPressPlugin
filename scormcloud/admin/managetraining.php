@@ -23,22 +23,20 @@ try {
 if (isset($_GET['inviteid'])) {
     include 'trainingdetails.php';
 } else {
-
-    $regsRemaining = ScormCloudPlugin::remaining_registrations();
-
-    ?>
-<div class="scormcloud-admin-page trainings">
-
-<h2><?php _e("SCORM Cloud Training", "scormcloud");?></h2>
+?>
+    <div class="scormcloud-admin-page trainings">
+    <h2><?php _e("SCORM Cloud Training", "scormcloud");?></h2>
+    
     <?php
-if ($isValidAccount) {
+    if ($isValidAccount) {
+        $regsRemaining = ScormCloudPlugin::remaining_registrations();
+
         if ($regsRemaining < 1) {
             echo "<div>
             <h3>" . __("The maximum number of registrations for this account has been reached.  Visit the <a href='https://cloud.scorm.com'>SCORM Cloud site</a> to upgrade your account.", "scormcloud") . "</h3>
         </div>";
         } else {
-
-            ?>
+    ?>
 
 
 <div class='meta-box-sortables'>
@@ -219,7 +217,7 @@ jQuery("#btnAddRegistration").click(function(){
         echo "<div>
             <h3>" . __("Please configure your SCORM Cloud settings to add registrations.", "scormcloud") . "</h3>
         </div>";
-        echo '<div class="settingsPageLink"><a href="' . site_url() . '/wp-admin/admin.php?page=scormcloudsettings"
+        echo '<div class="settingsPageLink"><a href="' . site_url() . '/wp-admin/admin.php?page=scormcloud/admin/settings"
 				title="' . __("Click here to configure your SCORM Cloud plugin.", "scormcloud") . '">' . __("Click Here to go to the settings page.", "scormcloud") . '</a></div>';
 
     }

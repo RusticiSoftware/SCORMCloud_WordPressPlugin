@@ -181,7 +181,7 @@ if ($is_valid_account) {
     echo '<div>
 			<h2>' . esc_attr(__('Please configure your SCORM Cloud settings to add training to your posts.', 'scormcloud')) . '</h2>
 		</div>';
-    echo '<div class="settingsPageLink"><a href="' . esc_url_raw(site_url() . '/wp-admin/admin.php?page=scormcloudsettings') .
+    echo '<div class="settingsPageLink"><a href="' . esc_url_raw(site_url() . '/wp-admin/admin.php?page=scormcloud/admin/settings') .
     'title="' . esc_attr(__('Click here to configure your SCORM Cloud plugin.', 'scormcloud')) . '">' . esc_attr(__('Click Here to go to the settings page.', 'scormcloud')) . '</a></div>';
 
 }

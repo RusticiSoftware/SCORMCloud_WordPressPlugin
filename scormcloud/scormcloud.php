@@ -4,7 +4,7 @@ Plugin Name: SCORM Cloud For WordPress
 Plugin URI: http://scorm.com/wordpress
 Description: Tap the power of SCORM to deliver and track training right from your WordPress-powered site. Just add the SCORM Cloud widget to the sidebar or use the SCORM Cloud button to add a link directly in a post or page.
 Author: Rustici Software
-Version: 2.0.3
+Version: 2.0.4
 Author URI: http://www.scorm.com
  */
 
@@ -13,7 +13,7 @@ define('SCORMCLOUD_BASE', WP_PLUGIN_DIR . '/' . str_replace(basename(__FILE__), 
 require_once 'scormcloudplugin.php';
 require_once 'scormcloudui.php';
 
-require plugin_dir_path(__FILE__) . 'lib/autoload.php';
+require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 
 load_plugin_textdomain('scormcloud', false, dirname(plugin_basename(__FILE__)) . '/langs/');
 
