@@ -107,10 +107,10 @@ class ScormCloudContentHandler {
 							if (ScormCloudPlugin::registration_exists($reg_id)){
 								$registration_result = $registration_service->getRegistrationProgress($reg_id);
 
-								$completion = (string) $registration_result->registrationCompletion;
-								$success    = (string) $registration_result->registrationSuccess;
-								$seconds    = $registration_result->totalSecondsTracked;
-								$score      = $registration_result->score;
+								$completion = (string) $registration_result->getRegistrationCompletion();
+								$success    = (string) $registration_result->getRegistrationSuccess();
+								$seconds    = $registration_result->getTotalSecondsTracked();
+								$score      = $registration_result->getScore()->getScaled();
 
 								$invite_html .= '<table class="result_table"><tr>' .
 											'<td class="head">' . __( 'Completion', 'scormcloud' ) . '</td>' .
