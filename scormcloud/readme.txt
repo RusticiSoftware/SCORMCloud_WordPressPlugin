@@ -48,6 +48,12 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 2.0.6 =
+Fixes an issue displaying results when registration score is undefined / null
+
+= 2.0.5 =
+Fixes a bug displaying training results in posts
+
 = 2.0.4 =
 * Updates 3rd party libraries
 * Adds dependency on SCORM Cloud v2 API client library
@@ -173,6 +179,12 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 * Original Release.
 
 == Upgrade Notice ==
+= 2.0.6 =
+Fixes an issue displaying results when registration score is undefined / null
+
+= 2.0.5 =
+Fixes a bug displaying training results in posts
+
 = 2.0.4 =
 * Updates to third party libraries
 * Fixes bugs from missing require statements: PHP Fatal error: Uncaught Error: Class '\RusticiSoftware\Cloud\V2\Model\...' not found in .../ObjectSerializer.php:299

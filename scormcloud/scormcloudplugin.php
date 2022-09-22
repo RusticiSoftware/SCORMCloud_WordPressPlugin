@@ -97,7 +97,7 @@ class ScormCloudPlugin {
 			$proxy      = get_option( 'proxy' );
 		}
 
-		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.4' );
+		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.6' );
 
 		if ( strlen( $engine_url ) < 1 ) {
 			$engine_url = 'https://cloud.scorm.com/api/v2';
