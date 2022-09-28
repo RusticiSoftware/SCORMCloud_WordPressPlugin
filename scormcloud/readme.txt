@@ -48,6 +48,9 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 2.0.7 =
+Fixes an issue loading the training details page
+
 = 2.0.6 =
 Fixes an issue displaying results when registration score is undefined / null
 
@@ -179,6 +182,9 @@ Fixes a bug displaying training results in posts
 * Original Release.
 
 == Upgrade Notice ==
+= 2.0.7 =
+Fixes an issue loading the training details page
+
 = 2.0.6 =
 Fixes an issue displaying results when registration score is undefined / null
 
