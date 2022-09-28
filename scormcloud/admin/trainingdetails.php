@@ -1,5 +1,5 @@
 <?php
-require_once('vendor/autoload.php');
+require_once SCORMCLOUD_BASE . 'vendor/autoload.php';
 
 require_once SCORMCLOUD_BASE . 'scormcloudplugin.php';
 require_once SCORMCLOUD_BASE . 'db/scormclouddatabase.php';
