@@ -221,8 +221,8 @@ class ScormCloudContentHandler {
 			$learner_schema = new \RusticiSoftware\Cloud\V2\Model\LearnerSchema();
             $learner_schema->setId($user_data->user_email);
             $learner_schema->setEmail($user_data->user_email);
-            $learner_schema->setFirstName($user_first_name);
-            $learner_schema->setLastName($user_last_name);
+            $learner_schema->setFirstName($user_data->user_firstname);
+            $learner_schema->setLastName($user_data->user_lastname);
 			try {
 				$response = $learner_service->updateLearnerInfo( $user_data->user_email, $learner_schema );
 			} catch (Exception $ex) {
