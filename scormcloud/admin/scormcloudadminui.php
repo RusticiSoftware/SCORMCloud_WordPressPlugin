@@ -51,7 +51,7 @@ class ScormCloudAdminUi
             'show_settings',
         ]);
 
-        add_action('contextual_help', [__CLASS__, 'contextual_help'], 10, 3);
+        add_action('in_admin_header', [__CLASS__, 'contextual_help']);
     }
 
     /**
@@ -72,7 +72,7 @@ class ScormCloudAdminUi
             'show_network_settings',
         ]);
 
-        add_action('contextual_help', [__CLASS__, 'contextual_help'], 10, 3);
+        add_action('in_admin_header', [__CLASS__, 'contextual_help']);
     }
 
     /**
@@ -140,10 +140,12 @@ class ScormCloudAdminUi
     /**
      * Build contextual help stubs.
      */
-    public static function contextual_help($text, $screen_id, $screen)
+    public static function contextual_help()
     {
         $plugin_hooks = ScormCloudPlugin::$hooks;
 
+        $screen = get_current_screen();
+        $screen_id = $screen->id;
         if (substr($screen_id, -8) == '-network') {
             $screen_id = substr_replace($screen_id, '', -8);
         }
@@ -248,9 +250,12 @@ class ScormCloudAdminUi
 
             $help_html .= "</div>";
 
-            return $help_html;
-        } else {
-            return $text;
+            // Add the contextual help tab
+            $screen->add_help_tab(array(
+                'title' => 'Overview',
+                'id' => 'scormcloud-help',
+                'content' => $help_html,
+            ));
         }
     }
 }
