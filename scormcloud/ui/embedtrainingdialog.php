@@ -61,13 +61,13 @@ if ($is_valid_account) {
 					</td>
 				</tr>
 				<tr>
-					<td colspan='2'><input type="checkbox" checked
-										   name="trainingRequireLogin"/><?php esc_attr_e('Require that learners be authenticated users.', 'scormcloud');?>
+					<td colspan='2'><label><input type="checkbox" checked
+										   name="trainingRequireLogin"/><?php esc_attr_e('Require that learners be authenticated users.', 'scormcloud');?></label>
 					</td>
 				</tr>
 				<tr>
-					<td colspan='2'><input type="checkbox" checked
-										   name="showCourseInfo"/><?php esc_attr_e('Show the course title and description.', 'scormcloud');?>
+					<td colspan='2'><label><input type="checkbox" checked
+										   name="showCourseInfo"/><?php esc_attr_e('Show the course title and description.', 'scormcloud');?></label>
 					</td>
 				</tr>
 
