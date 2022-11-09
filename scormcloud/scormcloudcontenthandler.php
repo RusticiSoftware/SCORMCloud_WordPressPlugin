@@ -51,9 +51,10 @@ class ScormCloudContentHandler {
 					// get course info.
 					$invite_html .= "<div class='courseInfo'>";
 
+					$metadata = null;
 					if ( $is_valid_account ) {
 						$course_detail = $course_service->GetCourse( $invite->course_id, false, true );
-						if ($course_detail->metadata) {
+						if (isset($course_detail->metadata)) {
 							$metadata    = $course_detail->metadata;
 						}
 					}
