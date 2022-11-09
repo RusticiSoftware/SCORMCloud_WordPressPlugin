@@ -84,7 +84,7 @@ class ScormCloudCatalogWidget extends WP_Widget {
                                                                     ON reg.invite_id = inv.invite_id
                                                                 WHERE reg.user_id = %s AND inv.course_id = %s
                                                                 ORDER BY reg.update_date DESC',
-					array( $current_user->ID, $course_id ), OBJECT ));// db call ok; no-cache ok.
+					array( $current_user->ID, $course_id )), OBJECT );// db call ok; no-cache ok.
 
 					if ( null !== $reg ) {
 						$reg_id            = $reg->reg_id;
