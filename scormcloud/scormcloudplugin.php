@@ -97,7 +97,7 @@ class ScormCloudPlugin {
 			$proxy      = get_option( 'proxy' );
 		}
 
-		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.7' );
+		$origin = ScormEngineUtilities::getCanonicalOriginString( 'Rustici Software', 'WordPress', '2.0.8' );
 
 		if ( strlen( $engine_url ) < 1 ) {
 			$engine_url = 'https://cloud.scorm.com/api/v2';
@@ -129,7 +129,7 @@ class ScormCloudPlugin {
 		$response     = $account_service->GetAccountInfo(); 
 		
 		$account_info = json_decode($response);
-		if ( 'trial' !== (string) $account_info->accountType && 'false' === (string) $account_info->strictLimit ) {
+		if ( 'trial' !== (string) $account_info->accountType && !$account_info->strictLimit ) {
 			return 1;
 		} else {
 			$reg_limit = (int) $account_info->regLimit;

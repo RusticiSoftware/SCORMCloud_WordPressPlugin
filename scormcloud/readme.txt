@@ -48,6 +48,9 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 2.0.8 =
+Fixes an issue determining whether an account has a strict registration limit
+
 = 2.0.7 =
 Fixes an issue loading the training details page
 
