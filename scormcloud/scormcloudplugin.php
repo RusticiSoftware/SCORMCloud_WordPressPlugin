@@ -129,7 +129,7 @@ class ScormCloudPlugin {
 		$response     = $account_service->GetAccountInfo(); 
 		
 		$account_info = json_decode($response);
-		if ( 'trial' !== (string) $account_info->accountType && 'false' === (string) $account_info->strictLimit ) {
+		if ( 'trial' !== (string) $account_info->accountType && !$account_info->strictLimit ) {
 			return 1;
 		} else {
 			$reg_limit = (int) $account_info->regLimit;
