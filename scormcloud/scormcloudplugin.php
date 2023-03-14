@@ -193,7 +193,7 @@ class ScormCloudPlugin {
 	/**
 	 * Helper method to get all courses recursively to match v1 functionality
 	 */
-	function loadAllCourses($courseService) {
+	public static function loadAllCourses($courseService) {
 		$courseResponse = $courseService->getCourses(null, null, 'updated', null, null, null, null, null, 'false', 'true');
 		$more = $courseResponse->getMore();
 		$courseArray = $courseResponse->getCourses();
@@ -211,7 +211,7 @@ class ScormCloudPlugin {
 	/**
 	 * Helper method to handle the more courses token
 	 */
-	function handleMoreCourses($more, $courseService) {
+	protected static function handleMoreCourses($more, $courseService) {
 		if ($more != '') {
 			// there are more results to load them up recursively if needed
 			$moreResponse = $courseService->getCourses(null, null, 'updated', null, null, null, null, $more, 'false', 'true');
