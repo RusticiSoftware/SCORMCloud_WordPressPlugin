@@ -69,12 +69,12 @@ $coursesFilter = (ScormCloudPlugin::is_network_managed() && get_site_option('sco
 <table class="learnerSelection">
 	<tr>
 		<td>
-		<div><input type='radio' name='learnerPopulationType' value='allUsers' /><?php _e("All Users", "scormcloud");?></div>
+		<div><label><input type='radio' name='learnerPopulationType' value='allUsers' /><?php _e("All Users", "scormcloud");?></label></div>
 
 		</td>
 		<td>
-		<div><input type='radio' name='learnerPopulationType'
-			value='selectUsers' /><?php _e("Select User(s)", "scormcloud");?></div>
+		<div><label><input type='radio' name='learnerPopulationType'
+			value='selectUsers' /><?php _e("Select User(s)", "scormcloud");?></label></div>
 		<ul class="userHolder selectionHolder"></ul>
 		<?php
 $userArgs = array('show_option_none' => ' ',
@@ -89,8 +89,8 @@ $userArgs = array('show_option_none' => ' ',
 
             ?></td>
 		<td class='lastCol'>
-		<div><input type='radio' name='learnerPopulationType'
-			value='selectRoles' /><?php _e("Select Role(s)", "scormcloud");?></div>
+		<div><label><input type='radio' name='learnerPopulationType'
+			value='selectRoles' /><?php _e("Select Role(s)", "scormcloud");?></label></div>
 		<ul class="roleHolder selectionHolder"></ul>
 		<select class="roleSelector">
 			<option selected value='-1'></option>
@@ -104,7 +104,7 @@ $roleArgs = array();
 	</tr>
 </table>
 
-<p><input name="sendemail" type="checkbox" />Send invitation email to selected user(s)</p>
+<p><label><input name="sendemail" type="checkbox" />Send invitation email to selected user(s)</label></p>
 
 <p><input id="btnAddRegistration" type="button"
 	value="<?php _e("Create Training", "scormcloud");?>" /><span
