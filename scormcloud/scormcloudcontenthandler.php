@@ -236,6 +236,8 @@ class ScormCloudContentHandler {
 	 * Make sure the session is started and available
 	 */
 	public static function boot_session() {
-		session_start();
+		if ( ! session_id() && ! headers_sent() ) {
+			session_start();
+		}
 	}
 }
