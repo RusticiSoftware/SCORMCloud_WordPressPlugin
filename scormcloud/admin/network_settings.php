@@ -67,10 +67,10 @@ if(isset($_POST['scormcloud_hidden']) && $_POST['scormcloud_hidden'] == 'Y') {
 <p><?php _e("Secret Key: ","scormcloud" ); ?><input type="text"	name="scormcloud_secretkey" value="<?php echo $secretkey; ?>" size="50"></p>
 
 <h3><?php _e('Network Settings'); ?></h3>
-<p><input type="checkbox" name="scormcloud_networkmanaged" <?php echo ($network_managed ? "checked" : "") ?> />
-    <?php _e('Use same SCORM Cloud account across all sites.', 'scormcloud'); ?></p>
-<p><input type="checkbox" name="scormcloud_sharecourses"<?php echo ($sharecourses ? "checked" : ""); ?> />
-    <?php _e(" Share courses among all sites.","scormcloud" ); ?></p>
+<p><label><input type="checkbox" name="scormcloud_networkmanaged" <?php echo ($network_managed ? "checked" : "") ?> />
+    <?php _e('Use same SCORM Cloud account across all sites.', 'scormcloud'); ?></label></p>
+<p><label><input type="checkbox" name="scormcloud_sharecourses"<?php echo ($sharecourses ? "checked" : ""); ?> />
+    <?php _e(" Share courses among all sites.","scormcloud" ); ?></label></p>
 	
 <h3><?php _e('Advanced Settings'); ?></h3>
 <p><?php _e("Cloud Engine URL: ","scormcloud" ); ?><input type="text"

@@ -58,14 +58,14 @@ if ($invite->active != 2) {
 				<td><textarea type="text" name="trainingDesc"><?php echo $invite->description; ?></textarea></td>
 			</tr>
 			<tr>
-				<td colspan='2'><input type="checkbox"
+				<td colspan='2'><label><input type="checkbox"
 				<?php echo ($invite->require_login == 1 ? "checked" : ""); ?>
-					name="trainingRequireLogin" /><?php _e("Require that learners be authenticated users.", "scormcloud");?></td>
+					name="trainingRequireLogin" /><?php _e("Require that learners be authenticated users.", "scormcloud");?></label></td>
 			</tr>
 			<tr>
-				<td colspan='2'><input type="checkbox"
+				<td colspan='2'><label><input type="checkbox"
 				<?php echo ($invite->show_course_info == 1 ? "checked" : ""); ?>
-					name="showCourseInfo" /><?php _e("Show the course title and description.", "scormcloud");?></td>
+					name="showCourseInfo" /><?php _e("Show the course title and description.", "scormcloud");?></label></td>
 			</tr>
 		</table>
 		<input type="button" class="updateInvitation button"
