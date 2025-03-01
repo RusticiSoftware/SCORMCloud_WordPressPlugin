@@ -48,6 +48,14 @@ The SCORM Cloud For WordPress basic functionality works with BuddyPress without 
 
 
 == Changelog ==
+= 2.0.9 =
+* Fixes issue where plugin would attempt to start new sessions when one already exists, leading to excessive warning logs
+* Fixes Undefined variable error when a user changes their first or last name
+* Fixes Undefined property error when course metadata does not exist
+* Replaces deprecated contextual_help hook with add_help_tab()
+* Adds labels to checkbox and radio button controls to allow for easier selection
+* Adds missing static declaration to some functions
+
 = 2.0.8 =
 Fixes an issue determining whether an account has a strict registration limit
 
